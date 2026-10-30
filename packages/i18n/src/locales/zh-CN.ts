@@ -83,6 +83,11 @@ export const zhCN = {
     save: '保存',
     defaultName: '输入 {{index}}',
   },
+  sheet: {
+    close: '关闭',
+    expand: '展开积木编辑器',
+    collapse: '收起积木编辑器',
+  },
   templates: {
     title: '新建工程',
     subtitle: '从一个空工程开始，或直接用模板上手',

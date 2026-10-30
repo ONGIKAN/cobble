@@ -28,7 +28,7 @@
       <a class="brand" href="./">
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <span class="brand-name">Cobble Studio</span>
-        <span class="brand-ver" title="当前版本">v0.12.2</span>
+        <span class="brand-ver" title="当前版本">v0.12.3</span>
       </a>
       <nav class="site-nav">
         <a href="#features"><span class="zh">功能</span><span class="en">Features</span></a>
@@ -218,7 +218,7 @@
         <p class="eyebrow">Download</p>
         <h2><span class="zh">下载安装包</span><span class="en">Get the apps</span></h2>
         <p class="section-sub">
-          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.12.2 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
+          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.12.3 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
           <span class="en">Windows and Android builds ship through GitHub Releases, both from the v0.11.0 stable build. Projects live on your machine and desktop installs store them as .gproj files — fully offline.</span>
         </p>
         <div class="download-grid">
@@ -434,11 +434,21 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <p class="eyebrow">Release log</p>
         <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
         <p class="section-sub">
-          <span class="zh">当前稳定版 <strong>v0.12.2</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
-          <span class="en">Current stable release <strong>v0.12.2</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
+          <span class="zh">当前稳定版 <strong>v0.12.3</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
+          <span class="en">Current stable release <strong>v0.12.3</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
         </p>
         <ol class="release-list">
           <li class="release is-current">
+            <div class="release-head"><span class="release-ver">v0.12.3</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">预览隔离 + 快捷键</span><span class="en">Preview sandbox + shortcuts</span></div>
+            <ul>
+              <li><span class="zh">运行预览的 iframe 加了 sandbox 隔离（allow-scripts / allow-same-origin / allow-pointer-lock），阻止脚本导航顶层页面或弹窗。</span><span class="en">The preview iframe is now sandboxed (allow-scripts / allow-same-origin / allow-pointer-lock), blocking top-level navigation and popups.</span></li>
+              <li><span class="zh">编辑器快捷键：Ctrl/Cmd+S 保存工程、Ctrl/Cmd+O 打开工程、Ctrl/Cmd+E 导出 HTML5。</span><span class="en">Editor shortcuts: Ctrl/Cmd+S save, Ctrl/Cmd+O open, Ctrl/Cmd+E export HTML5.</span></li>
+              <li><span class="zh">手机/平板积木编辑改为底部抽屉：默认约六成屏高，可展开到接近全屏，点遮罩或「关闭」收起，底部标签栏保持可用。</span><span class="en">Blocks editing on phone/tablet now opens as a bottom sheet (about 60% height, expandable to near full screen); close via overlay or the Close button, bottom tabs remain usable.</span></li>
+              <li><span class="zh">桌面冒烟 34/34、手机/平板 36/36，预览隔离后运行时无回归。</span><span class="en">Desktop smoke 34/34 and mobile 36/36; runtime unaffected by the sandbox.</span></li>
+            </ul>
+          </li>
+          <li class="release">
             <div class="release-head"><span class="release-ver">v0.12.2</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <div class="release-tagline"><span class="zh">方向输入积木 + 安卓状态栏修复</span><span class="en">Direction input block + Android status bar fix</span></div>
             <ul>
@@ -581,7 +591,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <div>
           <strong>Cobble Studio</strong>
-          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.12.2</span><span class="en">A lightweight 2D block game maker · v0.12.0</span></p>
+          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.12.3</span><span class="en">A lightweight 2D block game maker · v0.12.0</span></p>
         </div>
       </div>
       <nav class="foot-links">

@@ -14,6 +14,7 @@ import { StatusBar } from './components/StatusBar';
 import { MobileTabs } from './components/MobileTabs';
 import { NewProjectDialog } from './components/NewProjectDialog';
 import { InputSettingsDialog } from './components/InputSettingsDialog';
+import { MobileBlocksDrawer } from './components/MobileBlocksDrawer';
 import { onNewProjectDialog } from './new-project';
 import { onInputSettings } from './input-settings';
 import { useCompact, type MobileTab } from './useCompact';
@@ -66,9 +67,40 @@ export function App({ projectId }: { projectId: string }) {
   const [ready, setReady] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [inputOpen, setInputOpen] = useState(false);
+  const [blocksOpen, setBlocksOpen] = useState(false);
 
   useEffect(() => onNewProjectDialog(() => setDialogOpen(true)), []);
   useEffect(() => onInputSettings(() => setInputOpen(true)), []);
+
+  // 常用快捷键：Ctrl/Cmd+S 保存工程、Ctrl/Cmd+O 打开工程、Ctrl/Cmd+E 导出 HTML5
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (!(event.ctrlKey || event.metaKey) || event.altKey) return;
+      const key = event.key.toLowerCase();
+      const target = event.target as HTMLElement | null;
+      const typing =
+        Boolean(target) &&
+        (target!.tagName === 'INPUT' || target!.tagName === 'TEXTAREA' || target!.isContentEditable);
+      const click = (selector: string): boolean => {
+        const button = document.querySelector<HTMLButtonElement>(selector);
+        if (!button) return false;
+        button.click();
+        return true;
+      };
+      if (key === 's') {
+        event.preventDefault();
+        click('[data-testid="save-project"]') || click('[data-testid="m-save-project"]');
+      } else if (key === 'o') {
+        event.preventDefault();
+        click('[data-testid="open-project"]') || click('[data-testid="m-open-project"]');
+      } else if (key === 'e' && !typing) {
+        event.preventDefault();
+        click('[data-testid="export-html5"]') || click('[data-testid="m-export-html5"]');
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   useEffect(() => {
     const loaded = useEditorStore.getState().loadProject(projectId);
@@ -133,6 +165,15 @@ export function App({ projectId }: { projectId: string }) {
     );
   }
 
+  const handleTabChange = (next: MobileTab): void => {
+    if (next === 'blocks') {
+      setBlocksOpen(true);
+      return;
+    }
+    setBlocksOpen(false);
+    setTab(next);
+  };
+
   return (
     <div className={`app${compact ? ' app-compact' : ''}`}>
       <Topbar />
@@ -143,7 +184,6 @@ export function App({ projectId }: { projectId: string }) {
               <StageView compact />
               <CompactSpriteStrip />
             </div>
-            {tab === 'blocks' && <BlocksView />}
           </main>
           {tab === 'sprites' && <SpriteRail />}
           {tab === 'props' && <Inspector />}
@@ -158,7 +198,12 @@ export function App({ projectId }: { projectId: string }) {
           <Inspector />
         </div>
       )}
-      {compact && <MobileTabs value={tab} onChange={setTab} />}
+      {compact && (
+        <>
+          <MobileTabs value={blocksOpen ? 'blocks' : tab} onChange={handleTabChange} />
+          <MobileBlocksDrawer open={blocksOpen} onClose={() => setBlocksOpen(false)} />
+        </>
+      )}
       <NewProjectDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
       <InputSettingsDialog open={inputOpen} onClose={() => setInputOpen(false)} />
       <StatusBar />

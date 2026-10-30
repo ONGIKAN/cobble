@@ -145,7 +145,6 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 
 - 安装包签名与自动更新（当前是未签名安装包；Windows 首次运行会有 SmartScreen 提示）
 - 精确像素级碰撞（目前是 AABB 矩形近似）
-- 预览 iframe 的 sandbox 隔离（导出文件本身已是单文件，不依赖 iframe）
 - RPG 战斗系统与吃豆豆多关卡等示例游戏深化
 
 ## 工程结构
@@ -191,6 +190,8 @@ cobble/
 - **相对路径发布**：编辑器与演示构建使用 `base: './'`，可直接放在 Pages 的 `/demo/` 子路径下运行。
 
 ## 已知限制
+
+- 预览 iframe 已启用 sandbox 隔离；导出的单文件 HTML5 可直接双击运行，不依赖 iframe。
 
 - 工程库只保存在当前浏览器的 localStorage：换设备、换浏览器或清缓存会丢失，重要作品请导出 `.gproj` 备份。
 

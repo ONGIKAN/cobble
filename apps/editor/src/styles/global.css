@@ -1015,6 +1015,8 @@ button {
   border-top: 1px solid var(--border-strong);
   background: var(--panel);
   padding-bottom: env(safe-area-inset-bottom, 0);
+  position: relative;
+  z-index: 92;
 }
 
 .mobile-tab {
@@ -2117,4 +2119,101 @@ button {
 
 .hub-community-sep {
   opacity: 0.5;
+}
+
+/* ── 移动端积木抽屉：从底部弹出，可展开放大 ── */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(8, 8, 12, 0.5);
+}
+.blocks-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+  z-index: 91;
+  display: flex;
+  flex-direction: column;
+  height: 55vh;
+  max-height: calc(100vh - 52px - 76px);
+  background: var(--panel);
+  border-top: 1px solid var(--border-strong);
+  box-shadow: 0 -18px 40px rgba(0, 0, 0, 0.35);
+  transform: translateY(100%);
+  animation: sheet-in 180ms ease-out forwards;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.blocks-sheet.is-expanded {
+  height: 85vh;
+}
+@keyframes sheet-in {
+  to {
+    transform: translateY(0);
+  }
+}
+.sheet-grip {
+  flex: none;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 4px;
+  touch-action: none;
+  cursor: grab;
+}
+.sheet-grip-bar {
+  display: block;
+  width: 46px;
+  height: 4px;
+  background: var(--border-strong);
+}
+.sheet-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 14px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.sheet-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  font-size: 14px;
+}
+.sheet-title strong {
+  font-size: 14px;
+}
+.sheet-sprite {
+  color: var(--text-dim);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sheet-close {
+  min-height: 32px;
+  padding: 0 12px;
+}
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sheet-body .blocks-panel {
+  flex: 1;
+  min-height: 0;
+  border: 0;
+}
+.sheet-body .blocks-panel .panel-head {
+  display: none;
+}
+.sheet-body .blocks-host {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
 }

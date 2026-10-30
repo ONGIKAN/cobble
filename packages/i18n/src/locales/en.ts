@@ -85,6 +85,11 @@ export const en: Messages = {
     save: 'Save',
     defaultName: 'Input {{index}}',
   },
+  sheet: {
+    close: 'Close',
+    expand: 'Expand blocks editor',
+    collapse: 'Collapse blocks editor',
+  },
   templates: {
     title: 'New project',
     subtitle: 'Start from a blank canvas, or pick a template',

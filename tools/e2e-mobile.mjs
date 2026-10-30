@@ -108,7 +108,17 @@ async function runPhone() {
   check('blocks tab shows workspace', await page.locator('[data-testid="blocks-host"] .blocklySvg').isVisible());
   const blockCount = await page.locator('[data-testid="blocks-host"] .blocklyBlockCanvas .blocklyDraggable').count();
   check('blocks rendered', blockCount > 5, `${blockCount} blocks`);
+  const sheetHalf = await page.locator('[data-testid="blocks-drawer"]').boundingBox();
   await page.screenshot({ path: 'tools/shots/m-phone-blocks.png' });
+  check('blocks drawer from bottom', Boolean(sheetHalf) && sheetHalf.y > 300, `y=${Math.round(sheetHalf?.y ?? 0)}`);
+  await page.locator('[data-testid="blocks-drawer-grip"]').tap();
+  await page.waitForTimeout(500);
+  const sheetFull = await page.locator('[data-testid="blocks-drawer"]').boundingBox();
+  check('blocks drawer expands', Boolean(sheetHalf && sheetFull) && sheetFull.height > sheetHalf.height * 1.2, `${Math.round(sheetHalf?.height ?? 0)} -> ${Math.round(sheetFull?.height ?? 0)}`);
+  await page.screenshot({ path: 'tools/shots/m-phone-blocks-sheet.png' });
+  await page.locator('[data-testid="blocks-drawer-close"]').tap();
+  await page.waitForTimeout(400);
+  check('blocks drawer closes', (await page.locator('[data-testid="blocks-drawer"]').count()) === 0);
 
   await page.locator('[data-testid="tab-sprites"]').tap();
   await page.waitForTimeout(500);
@@ -181,6 +191,7 @@ async function runTablet() {
   await page.locator('[data-testid="tab-blocks"]').tap();
   await page.waitForTimeout(1200);
   check('tablet blocks rendered', (await page.locator('[data-testid="blocks-host"] .blocklySvg').isVisible()));
+  check('tablet blocks drawer', await page.locator('[data-testid="blocks-drawer"]').isVisible());
   await page.screenshot({ path: 'tools/shots/m-tablet-blocks.png' });
 
   await page.locator('[data-testid="tab-stage"]').tap();

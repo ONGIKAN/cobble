@@ -240,6 +240,7 @@ export function StageView({ compact = false }: Props) {
           data-testid="stage-iframe"
           src={`${PLAYER_SRC}?touch=0`}
           title={t('panels.stage')}
+          sandbox="allow-scripts allow-same-origin allow-pointer-lock"
         />
           {!playerReady && <div className="stage-loading">{t('stage.loading')}</div>}
         </div>

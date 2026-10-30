@@ -91,6 +91,18 @@ try {
 
   const initial = await readCat();
   const moved = await holdUntil('ArrowRight', (state) => state.x >= 120);
+  // 预览 iframe 隔离：沙箱属性必须存在（阻止顶层跳转 / 弹窗等）
+  const sandboxAttr = await page.getAttribute('[data-testid="stage-iframe"]', 'sandbox');
+  record('preview iframe sandboxed', Boolean(sandboxAttr && sandboxAttr.includes('allow-scripts')), sandboxAttr ?? 'missing');
+
+  // 快捷键：Ctrl+S 下载 .gproj（合成键盘事件，避免浏览器占用真实快捷键）
+  const shortcutDownload = page.waitForEvent('download', { timeout: 8000 }).then((d) => d.suggestedFilename()).catch(() => '');
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 's', code: 'KeyS', ctrlKey: true, bubbles: true }));
+  });
+  const savedName = await shortcutDownload;
+  record('ctrl+s saves project', savedName.endsWith('.gproj'), savedName || 'no download');
+
   record('arrow key moves cat', Number.isFinite(moved.x) && moved.x > initial.x, `x ${initial.x} -> ${moved.x}`);
 
   // 3. 吃金币：向右对准金币，再向上靠近，撞到金币后分数 +1
