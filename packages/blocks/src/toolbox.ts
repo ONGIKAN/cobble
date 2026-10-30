@@ -34,12 +34,16 @@ const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
       'motion_changey',
       'motion_bounce',
       'motion_rotationstyle',
+      'motion_gotosprite',
+      'motion_xpos',
+      'motion_ypos',
+      'motion_direction',
     ],
   },
   {
     key: 'looks',
     colour: '#8d79b7',
-    types: ['looks_say', 'looks_show', 'looks_hide', 'looks_nextcostume', 'looks_setsize', 'looks_layer'],
+    types: ['looks_say', 'looks_show', 'looks_hide', 'looks_nextcostume', 'looks_switchcostume', 'looks_setsize', 'looks_layer'],
   },
   {
     key: 'sound',
@@ -49,7 +53,7 @@ const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
   {
     key: 'control',
     colour: '#b79537',
-    types: ['control_wait', 'control_repeat', 'control_forever', 'control_if', 'control_ifelse', 'control_stop'],
+    types: ['control_wait', 'control_waituntil', 'control_repeat', 'control_forever', 'control_if', 'control_ifelse', 'control_stop'],
   },
   {
     key: 'sensing',

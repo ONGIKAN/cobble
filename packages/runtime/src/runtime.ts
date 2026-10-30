@@ -317,6 +317,26 @@ export class Runtime {
         if (count > 0) sprite.costumeIndex = (sprite.costumeIndex + 1) % count;
         return;
       }
+      case 'switchCostume': {
+        const def = this.project.sprites.find((s) => s.id === spriteId);
+        const index = def?.costumes.findIndex((c) => c.name === node.costume) ?? -1;
+        if (index >= 0) sprite.costumeIndex = index;
+        return;
+      }
+      case 'gotoSprite': {
+        const target = this.sprites.get(node.spriteId);
+        if (target) {
+          sprite.x = target.x;
+          sprite.y = target.y;
+        }
+        return;
+      }
+      case 'waitUntil': {
+        while (this.running && !truthy(this.evalExpr(spriteId, node.cond))) {
+          yield FRAME;
+        }
+        return;
+      }
       case 'setSize':
         sprite.size = num(node.percent);
         return;
@@ -511,6 +531,12 @@ export class Runtime {
         return this.input.mouseDown ? 1 : 0;
       case 'timer':
         return this.timeMs / 1000;
+      case 'xpos':
+        return this.sprites.get(spriteId)?.x ?? 0;
+      case 'ypos':
+        return this.sprites.get(spriteId)?.y ?? 0;
+      case 'direction':
+        return this.sprites.get(spriteId)?.direction ?? 90;
       default:
         return 0;
     }

@@ -36,6 +36,16 @@ function spriteOptions(project: ProjectDoc): Array<[string, string]> {
   return project.sprites.map((s) => [s.name, s.id]);
 }
 
+/** 全工程造型名去重后的下拉选项（切换造型用） */
+function costumeOptions(project: ProjectDoc): Array<[string, string]> {
+  const names = new Set<string>();
+  for (const sprite of project.sprites) {
+    for (const costume of sprite.costumes) names.add(costume.name);
+  }
+  if (names.size === 0) return [['—', '']];
+  return [...names].map((name) => [name, name]);
+}
+
 /** 输入事件下拉：来自工程的 input.bindings（默认 左/右/上/下/跳跃/动作） */
 function inputOptions(project: ProjectDoc, t: TFunc): Array<[string, string]> {
   const bindings = inputConfig(project).bindings;
@@ -544,6 +554,50 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
     },
     // ── 变量 ───────────────────────────────────────────────
     ...pickPrefix('var_'),
+    // ── v0.7.0 能力块：坐标上报 / 切换造型 / 等待直到 / 移到角色 ──
+    {
+      type: 'motion_xpos',
+      message0: t('blocks.motion.xpos'),
+      output: 'Number',
+      style: 'motion',
+    },
+    {
+      type: 'motion_ypos',
+      message0: t('blocks.motion.ypos'),
+      output: 'Number',
+      style: 'motion',
+    },
+    {
+      type: 'motion_direction',
+      message0: t('blocks.motion.direction'),
+      output: 'Number',
+      style: 'motion',
+    },
+    {
+      type: 'motion_gotosprite',
+      message0: t('blocks.motion.gotosprite'),
+      args0: [{ type: 'field_dropdown', name: 'TARGET', options: spriteOptions(project) }],
+      previousStatement: null,
+      nextStatement: null,
+      style: 'motion',
+    },
+    {
+      type: 'looks_switchcostume',
+      message0: t('blocks.looks.switchcostume'),
+      args0: [{ type: 'field_dropdown', name: 'COSTUME', options: costumeOptions(project) }],
+      previousStatement: null,
+      nextStatement: null,
+      style: 'looks',
+    },
+    {
+      type: 'control_waituntil',
+      message0: t('blocks.control.waituntil'),
+      args0: [{ type: 'input_value', name: 'COND', check: 'Boolean' }],
+      inputsInline: true,
+      previousStatement: null,
+      nextStatement: null,
+      style: 'control',
+    },
   ];
 
   Blockly.defineBlocksWithJsonArray(ops);

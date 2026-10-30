@@ -138,6 +138,229 @@ function randomWait(ws: Blockly.Workspace, min: number, max: number): Blockly.Bl
   return wait;
 }
 
+// ── v0.7.0 变量/逻辑辅助 ────────────────────────────────────
+function seq(first: Blockly.Block, ...rest: Blockly.Block[]): Blockly.Block {
+  chain([first, ...rest]);
+  return first;
+}
+
+function varGet(ws: Blockly.Workspace, varId: string): Blockly.Block {
+  return makeBlock(ws, 'var_get', { VAR: varId });
+}
+
+function setVar(ws: Blockly.Workspace, varId: string, value: Blockly.Block): Blockly.Block {
+  const block = makeBlock(ws, 'var_set', { VAR: varId });
+  attachValue(block, 'VALUE', value);
+  return block;
+}
+
+function changeVar(ws: Blockly.Workspace, varId: string, delta: Blockly.Block): Blockly.Block {
+  const block = makeBlock(ws, 'var_change', { VAR: varId });
+  attachValue(block, 'VALUE', delta);
+  return block;
+}
+
+function compareBlock(ws: Blockly.Workspace, op: string, left: Blockly.Block, right: Blockly.Block): Blockly.Block {
+  const block = makeBlock(ws, 'operators_compare', { OP: op });
+  attachValue(block, 'A', left);
+  attachValue(block, 'B', right);
+  return block;
+}
+
+function logicAnd(ws: Blockly.Workspace, left: Blockly.Block, right: Blockly.Block): Blockly.Block {
+  const block = makeBlock(ws, 'operators_logic', { OP: 'and' });
+  attachValue(block, 'A', left);
+  attachValue(block, 'B', right);
+  return block;
+}
+
+// ── 平台跳跃（v0.7.0 示例游戏）──────────────────────────────
+const HERO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="64" viewBox="0 0 56 64">
+  <ellipse cx="28" cy="60" rx="19" ry="4" fill="rgba(0,0,0,.28)"/>
+  <path d="M40 46 q14 -6 14 -20" stroke="#8b5cf6" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <ellipse cx="28" cy="42" rx="17" ry="15" fill="#8b5cf6"/>
+  <rect x="17" y="52" width="8" height="8" fill="#6d4bd8"/>
+  <rect x="31" y="52" width="8" height="8" fill="#6d4bd8"/>
+  <path d="M13 14 L9 0 L24 8 Z" fill="#8b5cf6"/>
+  <path d="M43 14 L47 0 L32 8 Z" fill="#8b5cf6"/>
+  <circle cx="28" cy="22" r="16" fill="#9d7bff"/>
+  <rect x="20" y="17" width="5" height="6" fill="#1b1330"/>
+  <rect x="31" y="17" width="5" height="6" fill="#1b1330"/>
+  <rect x="25" y="27" width="6" height="3" fill="#e8dcff"/>
+  <rect x="14" y="27" width="6" height="2" fill="#6d4bd8"/>
+  <rect x="16" y="31" width="6" height="2" fill="#6d4bd8"/>
+  <rect x="36" y="27" width="6" height="2" fill="#6d4bd8"/>
+  <rect x="34" y="31" width="6" height="2" fill="#6d4bd8"/>
+  <rect x="24" y="10" width="3" height="3" fill="#6d4bd8"/>
+  <rect x="30" y="12" width="3" height="3" fill="#6d4bd8"/>
+</svg>`;
+
+const HERO_JUMP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="64" viewBox="0 0 56 64">
+  <path d="M40 34 q14 2 16 16" stroke="#8b5cf6" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <ellipse cx="28" cy="40" rx="17" ry="15" fill="#8b5cf6" transform="rotate(-8 28 40)"/>
+  <rect x="14" y="46" width="9" height="7" fill="#6d4bd8" transform="rotate(-18 18 49)"/>
+  <rect x="33" y="46" width="9" height="7" fill="#6d4bd8" transform="rotate(18 38 49)"/>
+  <path d="M13 14 L9 0 L24 8 Z" fill="#8b5cf6"/>
+  <path d="M43 14 L47 0 L32 8 Z" fill="#8b5cf6"/>
+  <circle cx="28" cy="22" r="16" fill="#9d7bff"/>
+  <rect x="20" y="16" width="5" height="7" fill="#1b1330"/>
+  <rect x="31" y="16" width="5" height="7" fill="#1b1330"/>
+  <rect x="25" y="27" width="6" height="3" fill="#e8dcff"/>
+  <rect x="24" y="10" width="3" height="3" fill="#6d4bd8"/>
+  <rect x="30" y="12" width="3" height="3" fill="#6d4bd8"/>
+</svg>`;
+
+const GROUND_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="90" viewBox="0 0 960 90">
+  <rect width="960" height="90" fill="#241f3d"/>
+  <rect width="960" height="16" fill="#4fbf7a"/>
+  <rect y="16" width="960" height="6" fill="#3d9c60"/>
+  <g fill="#332a52">
+    <rect x="40" y="36" width="26" height="10"/><rect x="120" y="52" width="34" height="12"/>
+    <rect x="210" y="34" width="20" height="10"/><rect x="300" y="60" width="28" height="10"/>
+    <rect x="380" y="40" width="30" height="10"/><rect x="470" y="56" width="22" height="10"/>
+    <rect x="560" y="36" width="26" height="10"/><rect x="650" y="58" width="30" height="10"/>
+    <rect x="740" y="42" width="24" height="10"/><rect x="830" y="60" width="28" height="10"/>
+  </g>
+</svg>`;
+
+const CLOUD_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60">
+  <path d="M40 52 q-26 0 -26 -18 q0 -16 18 -16 q4 -14 22 -14 q14 0 20 10 q10 -8 24 -2 q16 6 14 22 q14 2 14 10 q0 8 -12 8 Z" fill="rgba(226,220,255,.28)"/>
+</svg>`;
+
+const GOAL_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="140" viewBox="0 0 80 140">
+  <rect x="14" y="6" width="7" height="130" fill="#c9c2e8"/>
+  <path d="M21 12 L74 30 L21 52 Z" fill="#9d7bff"/>
+  <circle cx="21" cy="10" r="6" fill="#e8dcff"/>
+  <rect x="4" y="130" width="34" height="8" fill="#6d4bd8"/>
+</svg>`;
+
+function projectPlatformer(): ProjectDoc {
+  const project: ProjectDoc = {
+    schemaVersion: 1,
+    meta: nowMeta('platformer', '平台跳跃'),
+    stage: { width: 960, height: 540, background: '#1d1b33' },
+    assets: [
+      imageAsset('asset_hero', '英雄站立', HERO_SVG),
+      imageAsset('asset_hero_jump', '英雄跳跃', HERO_JUMP_SVG),
+      imageAsset('asset_ground', '地面', GROUND_SVG),
+      imageAsset('asset_cloud', '云朵', CLOUD_SVG),
+      imageAsset('asset_coin', '金币', COIN_SVG),
+      imageAsset('asset_goal', '终点旗', GOAL_SVG),
+    ],
+    variables: [
+      { id: 'var_vy', name: '速度', value: 0 },
+      { id: 'var_ground', name: '落地', value: 1 },
+      { id: 'var_score', name: '分数', value: 0 },
+    ],
+    sprites: [
+      sprite({
+        id: 'sprite_hero',
+        name: '英雄',
+        x: -380,
+        y: -148,
+        zIndex: 3,
+        rotationStyle: 'left-right',
+        costumes: [
+          { name: '站立', assetId: 'asset_hero' },
+          { name: '跳跃', assetId: 'asset_hero_jump' },
+        ],
+      }),
+      sprite({ id: 'sprite_ground', name: '地面', y: -225, zIndex: 1, costumes: [{ name: '地面', assetId: 'asset_ground' }] }),
+      sprite({ id: 'sprite_cloud_a', name: '云朵 A', x: -180, y: 110, zIndex: 1, costumes: [{ name: '云朵', assetId: 'asset_cloud' }] }),
+      sprite({ id: 'sprite_cloud_b', name: '云朵 B', x: 160, y: 60, zIndex: 1, costumes: [{ name: '云朵', assetId: 'asset_cloud' }] }),
+      sprite({ id: 'sprite_coin_a', name: '金币 A', x: -120, y: -40, zIndex: 2, costumes: [{ name: '金币', assetId: 'asset_coin' }] }),
+      sprite({ id: 'sprite_coin_b', name: '金币 B', x: 60, y: -90, zIndex: 2, costumes: [{ name: '金币', assetId: 'asset_coin' }] }),
+      sprite({ id: 'sprite_goal', name: '终点', x: 360, y: -150, zIndex: 2, costumes: [{ name: '旗子', assetId: 'asset_goal' }] }),
+    ],
+    scripts: {},
+  };
+  return project;
+}
+
+function workspacesPlatformer(): Record<string, unknown> {
+  const heroId = 'sprite_hero';
+  const coinA = 'sprite_coin_a';
+  const coinB = 'sprite_coin_b';
+  const goalId = 'sprite_goal';
+  const score = 'var_score';
+  const vy = 'var_vy';
+  const grounded = 'var_ground';
+
+  const hero = serialize((ws) => {
+    const right = makeBlock(ws, 'control_if');
+    attachValue(right, 'COND', makeBlock(ws, 'sensing_input', { INPUT: 'right' }));
+    const faceRight = makeBlock(ws, 'motion_point');
+    attachValue(faceRight, 'DIRECTION', num(ws, 90));
+    const stepRight = makeBlock(ws, 'motion_changex');
+    attachValue(stepRight, 'VALUE', num(ws, 7));
+    attachStatement(right, 'DO', seq(faceRight, stepRight));
+
+    const left = makeBlock(ws, 'control_if');
+    attachValue(left, 'COND', makeBlock(ws, 'sensing_input', { INPUT: 'left' }));
+    const faceLeft = makeBlock(ws, 'motion_point');
+    attachValue(faceLeft, 'DIRECTION', num(ws, 270));
+    const stepLeft = makeBlock(ws, 'motion_changex');
+    attachValue(stepLeft, 'VALUE', num(ws, -7));
+    attachStatement(left, 'DO', seq(faceLeft, stepLeft));
+
+    const jump = makeBlock(ws, 'control_if');
+    attachValue(
+      jump,
+      'COND',
+      logicAnd(ws, makeBlock(ws, 'sensing_input', { INPUT: 'jump' }), compareBlock(ws, '=', varGet(ws, grounded), num(ws, 1))),
+    );
+    attachStatement(jump, 'DO', seq(setVar(ws, vy, num(ws, 15)), setVar(ws, grounded, num(ws, 0))));
+
+    const gravity = changeVar(ws, vy, num(ws, -1));
+    const applyY = makeBlock(ws, 'motion_changey');
+    attachValue(applyY, 'VALUE', varGet(ws, vy));
+
+    const land = makeBlock(ws, 'control_if');
+    attachValue(land, 'COND', compareBlock(ws, '<', makeBlock(ws, 'motion_ypos'), num(ws, -152)));
+    const landX = makeBlock(ws, 'motion_gotoxy');
+    attachValue(landX, 'X', makeBlock(ws, 'motion_xpos'));
+    attachValue(landX, 'Y', num(ws, -148));
+    attachStatement(land, 'DO', seq(landX, setVar(ws, vy, num(ws, 0)), setVar(ws, grounded, num(ws, 1))));
+
+    const costume = makeBlock(ws, 'control_ifelse');
+    attachValue(costume, 'COND', compareBlock(ws, '>', varGet(ws, vy), num(ws, 0)));
+    attachStatement(costume, 'DO', makeBlock(ws, 'looks_switchcostume', { COSTUME: '跳跃' }));
+    attachStatement(costume, 'ELSE', makeBlock(ws, 'looks_switchcostume', { COSTUME: '站立' }));
+
+    chain([right, left, jump, gravity, applyY, land, costume]);
+    flagForever(ws, right);
+  });
+
+  const coinScript = (): Record<string, unknown> =>
+    serialize((ws) => {
+      const collect = makeBlock(ws, 'control_if');
+      attachValue(collect, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: heroId }));
+      const hide = makeBlock(ws, 'looks_hide');
+      const add = changeVar(ws, score, num(ws, 10));
+      const cheer = makeBlock(ws, 'control_if');
+      attachValue(cheer, 'COND', compareBlock(ws, '=', varGet(ws, score), num(ws, 20)));
+      const say = makeBlock(ws, 'looks_say', { TEXT: '金币收集完成，冲向终点！' });
+      attachValue(say, 'SECS', num(ws, 3));
+      attachStatement(cheer, 'DO', say);
+      const stopThis = makeBlock(ws, 'control_stop', { MODE: 'this' });
+      attachStatement(collect, 'DO', seq(hide, add, cheer, stopThis));
+      chain([collect]);
+      flagForever(ws, collect);
+    });
+
+  const goal = serialize((ws) => {
+    const win = makeBlock(ws, 'control_if');
+    attachValue(win, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: heroId }));
+    const say = makeBlock(ws, 'looks_say', { TEXT: '🎉 到达终点，恭喜通关！' });
+    attachValue(say, 'SECS', num(ws, 5));
+    attachStatement(win, 'DO', say);
+    chain([win]);
+    flagForever(ws, win);
+  });
+
+  return { [heroId]: hero, [coinA]: coinScript(), [coinB]: coinScript(), [goalId]: goal };
+}
+
 // ── 空白工程 ────────────────────────────────────────────────
 function projectBlank(): ProjectDoc {
   const project: ProjectDoc = {
@@ -380,6 +603,15 @@ export const TEMPLATES: TemplateDefinition[] = [
     project: projectCatchApple,
     workspaces: workspacesCatchApple,
     build: () => ({ project: projectCatchApple(), workspaces: workspacesCatchApple() }),
+  },
+  {
+    id: 'platformer',
+    nameKey: 'templates.platformer',
+    taglineKey: 'templates.platformerTagline',
+    scriptGroups: 4,
+    project: projectPlatformer,
+    workspaces: workspacesPlatformer,
+    build: () => ({ project: projectPlatformer(), workspaces: workspacesPlatformer() }),
   },
 ];
 

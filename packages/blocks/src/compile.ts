@@ -65,6 +65,12 @@ function toExpr(b: Blockly.Block | null): IRExpr {
       return { kind: 'input', bindingId: String(b.getFieldValue('INPUT') ?? '') };
     case 'sensing_mousedown':
       return { kind: 'mousedown' };
+    case 'motion_xpos':
+      return { kind: 'xpos' };
+    case 'motion_ypos':
+      return { kind: 'ypos' };
+    case 'motion_direction':
+      return { kind: 'direction' };
     case 'sensing_timer':
       return { kind: 'timer' };
     default:
@@ -138,6 +144,12 @@ function compileNode(b: Blockly.Block): IRNode | null {
       return { op: 'hide' };
     case 'looks_nextcostume':
       return { op: 'nextCostume' };
+    case 'looks_switchcostume':
+      return { op: 'switchCostume', costume: String(b.getFieldValue('COSTUME') ?? '') };
+    case 'motion_gotosprite':
+      return { op: 'gotoSprite', spriteId: String(b.getFieldValue('TARGET') ?? '') };
+    case 'control_waituntil':
+      return { op: 'waitUntil', cond: numOf(b.getInputTargetBlock('COND')) };
     case 'looks_setsize':
       return { op: 'setSize', percent: numOf(b.getInputTargetBlock('SIZE')) };
     case 'looks_layer':

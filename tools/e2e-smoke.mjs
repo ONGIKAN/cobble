@@ -278,7 +278,23 @@ try {
   const tmplSprites = await page.locator('.sprite-card').count();
   const tmplName = await page.locator('.sprite-name').first().innerText();
   const tmplBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
-  record('new project template', templateCards === 4 && tmplSprites === 1 && tmplName.includes('地鼠') && tmplBlocks > 10, `cards=${templateCards} sprites=${tmplSprites} name=${tmplName} blocks=${tmplBlocks}`);
+  record('new project template', templateCards === 5 && tmplSprites === 1 && tmplName.includes('地鼠') && tmplBlocks > 10, `cards=${templateCards} sprites=${tmplSprites} name=${tmplName} blocks=${tmplBlocks}`);
+
+  // 10b. 平台跳跃模板（v0.7.0 能力块：坐标上报 / 切换造型 / 等待直到 / 移到角色）
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.click('[data-testid="reset-project"]');
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
+  await page.click('[data-testid="hub-new"]');
+  await page.waitForSelector('[data-testid="new-project-dialog"]', { timeout: 5000 });
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.click('[data-testid="template-platformer"]');
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
+  await page.waitForTimeout(900);
+  const platSprites = await page.locator('.sprite-card').count();
+  const platBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
+  record('platformer template', platSprites === 7 && platBlocks > 12, `sprites=${platSprites} blocks=${platBlocks}`);
 
   // 回到工程管理页，避免模板工程影响下次运行
   page.once('dialog', (dialog) => void dialog.accept());

@@ -22,13 +22,17 @@ export type IRExpr =
   | { kind: 'keydown'; key: string }
   | { kind: 'input'; bindingId: string }
   | { kind: 'mousedown' }
-  | { kind: 'timer' };
+  | { kind: 'timer' }
+  | { kind: 'xpos' }
+  | { kind: 'ypos' }
+  | { kind: 'direction' };
 
 export type IRNode =
   | { op: 'move'; steps: IRExpr }
   | { op: 'turn'; degrees: IRExpr }
   | { op: 'point'; direction: IRExpr }
   | { op: 'goto'; x: IRExpr; y: IRExpr }
+  | { op: 'gotoSprite'; spriteId: string }
   | { op: 'glide'; seconds: IRExpr; x: IRExpr; y: IRExpr }
   | { op: 'changeX'; value: IRExpr }
   | { op: 'changeY'; value: IRExpr }
@@ -38,12 +42,14 @@ export type IRNode =
   | { op: 'show' }
   | { op: 'hide' }
   | { op: 'nextCostume' }
+  | { op: 'switchCostume'; costume: string }
   | { op: 'setSize'; percent: IRExpr }
   | { op: 'setLayer'; front: boolean }
   | { op: 'playSound'; soundId: string }
   | { op: 'stopSounds' }
   | { op: 'setVolume'; percent: IRExpr }
   | { op: 'wait'; seconds: IRExpr }
+  | { op: 'waitUntil'; cond: IRExpr }
   | { op: 'repeat'; times: IRExpr; body: IRNode[] }
   | { op: 'forever'; body: IRNode[] }
   | { op: 'if'; cond: IRExpr; then: IRNode[] }
