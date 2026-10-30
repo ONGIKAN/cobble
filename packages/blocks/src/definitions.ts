@@ -36,6 +36,78 @@ function spriteOptions(project: ProjectDoc): Array<[string, string]> {
   return project.sprites.map((s) => [s.name, s.id]);
 }
 
+/** 依赖工程内容（素材/变量列表）生成下拉选项的积木，新增素材后需要重新定义 */
+function assetBlockDefs({ t, project }: BlockContext): Array<Record<string, unknown>> {
+  return [
+    {
+      type: 'sound_play',
+      message0: t('blocks.sound.play'),
+      args0: [{ type: 'field_dropdown', name: 'SOUND', options: soundOptions(project) }],
+      previousStatement: null,
+      nextStatement: null,
+      style: 'sound',
+    },
+    {
+      type: 'sensing_touching',
+      message0: t('blocks.sensing.touching'),
+      args0: [
+        {
+          type: 'field_dropdown',
+          name: 'TARGET',
+          options: [
+            [t('blocks.sensing.touchingEdge'), 'edge'],
+            [t('blocks.sensing.touchingMouse'), 'mouse'],
+            ...spriteOptions(project),
+          ],
+        },
+      ],
+      output: 'Boolean',
+      style: 'sensing',
+    },
+    {
+      type: 'var_set',
+      message0: t('blocks.variables.set'),
+      args0: [
+        { type: 'field_dropdown', name: 'VAR', options: variableOptions(project) },
+        { type: 'input_value', name: 'VALUE', check: 'Number' },
+      ],
+      inputsInline: true,
+      previousStatement: null,
+      nextStatement: null,
+      style: 'variables',
+    },
+    {
+      type: 'var_change',
+      message0: t('blocks.variables.change'),
+      args0: [
+        { type: 'field_dropdown', name: 'VAR', options: variableOptions(project) },
+        { type: 'input_value', name: 'VALUE', check: 'Number' },
+      ],
+      inputsInline: true,
+      previousStatement: null,
+      nextStatement: null,
+      style: 'variables',
+    },
+    {
+      type: 'var_get',
+      message0: t('blocks.variables.get'),
+      args0: [{ type: 'field_dropdown', name: 'VAR', options: variableOptions(project) }],
+      output: 'Number',
+      style: 'variables',
+    },
+  ];
+}
+
+/** 新增/删除素材后调用：只重定义受影响的积木，让下拉选项跟上最新工程内容 */
+export function defineAssetBlocks(context: BlockContext): void {
+  const registry = (Blockly as unknown as { Blocks?: Record<string, unknown> }).Blocks;
+  const defs = assetBlockDefs(context);
+  if (registry) {
+    for (const def of defs) delete registry[def.type as string];
+  }
+  Blockly.defineBlocksWithJsonArray(defs);
+}
+
 /** 定义全部自定义积木（POC 42 块），重复调用安全 */
 export function defineGameBlocks({ t, project }: BlockContext): void {
   const ops: Array<Record<string, unknown>> = [
@@ -245,14 +317,7 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
       style: 'looks',
     },
     // ── 声音 ───────────────────────────────────────────────
-    {
-      type: 'sound_play',
-      message0: t('blocks.sound.play'),
-      args0: [{ type: 'field_dropdown', name: 'SOUND', options: soundOptions(project) }],
-      previousStatement: null,
-      nextStatement: null,
-      style: 'sound',
-    },
+    ...assetBlockDefs({ t, project }).filter((def) => (def as { type: string }).type === 'sound_play'),
     {
       type: 'sound_stop',
       message0: t('blocks.sound.stop'),
@@ -341,23 +406,7 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
       style: 'control',
     },
     // ── 侦测 ───────────────────────────────────────────────
-    {
-      type: 'sensing_touching',
-      message0: t('blocks.sensing.touching'),
-      args0: [
-        {
-          type: 'field_dropdown',
-          name: 'TARGET',
-          options: [
-            [t('blocks.sensing.touchingEdge'), 'edge'],
-            [t('blocks.sensing.touchingMouse'), 'mouse'],
-            ...spriteOptions(project),
-          ],
-        },
-      ],
-      output: 'Boolean',
-      style: 'sensing',
-    },
+    ...assetBlockDefs({ t, project }).filter((def) => (def as { type: string }).type === 'sensing_touching'),
     {
       type: 'sensing_keydown',
       message0: t('blocks.sensing.keydown'),
@@ -466,37 +515,7 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
       style: 'operators',
     },
     // ── 变量 ───────────────────────────────────────────────
-    {
-      type: 'var_set',
-      message0: t('blocks.variables.set'),
-      args0: [
-        { type: 'field_dropdown', name: 'VAR', options: variableOptions(project) },
-        { type: 'input_value', name: 'VALUE', check: 'Number' },
-      ],
-      inputsInline: true,
-      previousStatement: null,
-      nextStatement: null,
-      style: 'variables',
-    },
-    {
-      type: 'var_change',
-      message0: t('blocks.variables.change'),
-      args0: [
-        { type: 'field_dropdown', name: 'VAR', options: variableOptions(project) },
-        { type: 'input_value', name: 'VALUE', check: 'Number' },
-      ],
-      inputsInline: true,
-      previousStatement: null,
-      nextStatement: null,
-      style: 'variables',
-    },
-    {
-      type: 'var_get',
-      message0: t('blocks.variables.get'),
-      args0: [{ type: 'field_dropdown', name: 'VAR', options: variableOptions(project) }],
-      output: 'Number',
-      style: 'variables',
-    },
+    ...assetBlockDefs({ t, project }).filter((def) => (def as { type: string }).type.startsWith('var_')),
   ];
 
   Blockly.defineBlocksWithJsonArray(ops);

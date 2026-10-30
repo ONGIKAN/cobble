@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import i18n from 'i18next';
-import { defineGameBlocks } from '@cobble/blocks';
 import { AUTOSAVE_KEY, useEditorStore } from './store';
-import { buildDemoWorkspaces } from './demo-scripts';
+import { bootstrapBlocks, refreshAssetBlocks } from './block-defs';
 import { Topbar } from './components/Topbar';
 import { SpriteRail } from './components/SpriteRail';
 import { StageView } from './components/StageView';
@@ -14,6 +12,12 @@ import { MobileTabs } from './components/MobileTabs';
 import { useCompact, type MobileTab } from './useCompact';
 
 let bootstrapped = false;
+
+function bootstrap(): void {
+  if (bootstrapped) return;
+  bootstrapped = true;
+  bootstrapBlocks();
+}
 
 /** 触屏舞台页底部的角色快捷条：不用切到「角色」页也能看到并切换当前角色 */
 function CompactSpriteStrip() {
@@ -48,21 +52,6 @@ function CompactSpriteStrip() {
   );
 }
 
-function bootstrap(): void {
-  if (bootstrapped) return;
-  bootstrapped = true;
-  const state = useEditorStore.getState();
-  const translate = (key: string, options?: Record<string, unknown>): string =>
-    String(i18n.t(key, options as never));
-  defineGameBlocks({ t: translate, project: state.project });
-  // 首次打开：没有历史脚本时，为内置演示工程生成「小猫吃金币」脚本
-  if (Object.keys(state.workspaces).length === 0 && state.project.meta.id === 'demo-cat-coin') {
-    for (const [spriteId, workspace] of Object.entries(buildDemoWorkspaces(state.project))) {
-      state.setWorkspace(spriteId, workspace);
-    }
-  }
-}
-
 export function App() {
   const { t } = useTranslation();
   const compact = useCompact();
@@ -90,6 +79,19 @@ export function App() {
           // 存储配额不足时静默失败，不影响编辑
         }
       }, 350);
+    });
+    return () => {
+      unsubscribe();
+      window.clearTimeout(timer);
+    };
+  }, []);
+
+  useEffect(() => {
+    let timer: number | undefined;
+    const unsubscribe = useEditorStore.subscribe((state, previous) => {
+      if (state.project === previous.project) return;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => refreshAssetBlocks(), 300);
     });
     return () => {
       unsubscribe();

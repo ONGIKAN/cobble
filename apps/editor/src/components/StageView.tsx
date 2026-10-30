@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compileProject } from '@cobble/blocks';
 import { sendRun, setPlayerFrame } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
+import { StageSettings } from './StageSettings';
 import { useEditorStore } from '../store';
 import { useCoarsePointer } from '../useCompact';
 
@@ -88,6 +89,7 @@ export function StageView({ compact = false }: Props) {
         <span className="panel-meta mono">
           {t('stage.size', { w: project.stage.width, h: project.stage.height })}
         </span>
+        <StageSettings />
         {compact && <ProjectFileButtons variant="inline" />}
       </div>
       <div className="stage-body">

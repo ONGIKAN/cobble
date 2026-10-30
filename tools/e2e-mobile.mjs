@@ -96,6 +96,28 @@ async function runPhone() {
   check('sprites tab shows 2 sprites', (await page.locator('.sprite-card').count()) === 2);
   await page.screenshot({ path: 'tools/shots/m-phone-sprites.png' });
 
+  await page.locator('[data-testid="add-sprite"]').tap();
+  await page.waitForTimeout(500);
+  check('phone add sprite', (await page.locator('.sprite-card').count()) === 3, '3 sprites after add');
+  await page.locator('[data-testid="tab-props"]').tap();
+  await page.waitForTimeout(400);
+  check('phone costume upload visible', await page.locator('[data-testid="costume-add-input"]').count() === 1);
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.locator('[data-testid="delete-sprite"]').tap();
+  await page.waitForTimeout(500);
+  await page.locator('[data-testid="tab-sprites"]').tap();
+  await page.waitForTimeout(400);
+  check('phone delete sprite', (await page.locator('.sprite-card').count()) === 2, 'sprites back to 2');
+
+  await page.locator('[data-testid="tab-stage"]').tap();
+  await page.waitForTimeout(400);
+  check('phone stage settings visible', await page.locator('[data-testid="stage-settings-toggle"]').isVisible());
+  await page.locator('[data-testid="stage-settings-toggle"]').tap();
+  await page.waitForTimeout(300);
+  check('phone stage settings panel', await page.locator('[data-testid="stage-background"]').isVisible());
+  await page.locator('[data-testid="stage-settings-toggle"]').tap();
+  await page.waitForTimeout(200);
+
   await page.locator('[data-testid="tab-props"]').tap();
   await page.waitForTimeout(500);
   check('props tab shows inspector', (await page.locator('.inspector input').count()) >= 4);

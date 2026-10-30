@@ -126,6 +126,66 @@ try {
   await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
   await page.waitForTimeout(1200);
 
+  // 素材与角色管理 (v0.2.0)
+  const spriteCount = () => page.locator('.sprite-card').count();
+  const costumeRows = () => page.locator('[data-testid^="costume-row-"]').count();
+
+  const before = await spriteCount();
+  await page.click('[data-testid="add-sprite"]');
+  await page.waitForTimeout(400);
+  const after = await spriteCount();
+  const newName = await page.locator('[data-testid="sprite-name"]').inputValue();
+  record('add sprite', after === before + 1 && /角色/.test(newName), `sprites ${before} -> ${after}, name=${newName}`);
+
+  await page.fill('[data-testid="sprite-name"]', '敌人');
+  await page.waitForTimeout(300);
+  const renamed = await page.locator(`.sprite-card:has-text("敌人")`).count();
+  record('rename sprite', renamed === 1, 'sprite card shows 敌人');
+
+  const beforeVars = await page.locator('[data-testid^="var-row-"]').count();
+  await page.click('[data-testid="add-variable"]');
+  await page.waitForTimeout(400);
+  const afterVars = await page.locator('[data-testid^="var-row-"]').count();
+  record('add variable', afterVars === beforeVars + 1, `variables ${beforeVars} -> ${afterVars}`);
+
+  const pixelPath = `${shotDir}/tmp-pixel.png`;
+  writeFileSync(
+    pixelPath,
+    Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    ),
+  );
+  const beforeCostumes = await costumeRows();
+  await page.setInputFiles('[data-testid="costume-add-input"]', pixelPath);
+  await page.waitForTimeout(600);
+  const afterCostumes = await costumeRows();
+  record('upload costume', afterCostumes === beforeCostumes + 1, `costumes ${beforeCostumes} -> ${afterCostumes}`);
+  await page.click(`[data-testid="costume-remove-${afterCostumes - 1}"]`);
+  await page.waitForTimeout(400);
+  record('remove costume', (await costumeRows()) === beforeCostumes, 'costume removed');
+  rmSync(pixelPath, { force: true });
+
+  await page.click('[data-testid="stage-settings-toggle"]');
+  await page.waitForTimeout(300);
+  await page.fill('[data-testid="stage-background"]', '#112233');
+  await page.selectOption('[data-testid="stage-size"]', '1280x720');
+  await page.waitForTimeout(400);
+  const stageBg = await page.locator('[data-testid="stage-background"]').inputValue();
+  const stageSize = await page.locator('[data-testid="stage-size"]').inputValue();
+  record('stage settings', stageBg === '#112233' && stageSize === '1280x720', `bg=${stageBg} size=${stageSize}`);
+  await page.click('[data-testid="stage-settings-toggle"]');
+
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.click('[data-testid="delete-sprite"]');
+  await page.waitForTimeout(500);
+  record('delete sprite', (await spriteCount()) === before, `sprites back to ${before}`);
+
+  await page.click('[data-testid="reset-project"]');
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
+  await page.waitForTimeout(1200);
+
   // 5. 深色截图（先重新运行）
   await page.click('[data-testid="run"]');
   await page.waitForTimeout(900);

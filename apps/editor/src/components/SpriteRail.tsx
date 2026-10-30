@@ -12,6 +12,11 @@ export function SpriteRail() {
   const project = useEditorStore((state) => state.project);
   const selectedSpriteId = useEditorStore((state) => state.selectedSpriteId);
   const selectSprite = useEditorStore((state) => state.selectSprite);
+  const addSprite = useEditorStore((state) => state.addSprite);
+  const addVariable = useEditorStore((state) => state.addVariable);
+  const renameVariable = useEditorStore((state) => state.renameVariable);
+  const removeVariable = useEditorStore((state) => state.removeVariable);
+  const setVariableValue = useEditorStore((state) => state.setVariableValue);
 
   const assetOf = (assetId: string): AssetDef | undefined => project.assets.find((asset) => asset.id === assetId);
 
@@ -20,6 +25,15 @@ export function SpriteRail() {
       <div className="panel-head">
         <span className="panel-label">{t('panels.sprites')}</span>
         <span className="panel-meta mono">{project.sprites.length}</span>
+        <button
+          type="button"
+          className="mini-btn"
+          data-testid="add-sprite"
+          title={t('sprites.add')}
+          onClick={() => addSprite()}
+        >
+          ＋
+        </button>
       </div>
 
       <div className="sprite-list">
@@ -49,15 +63,50 @@ export function SpriteRail() {
 
       <div className="panel-head">
         <span className="panel-label">{t('panels.variables')}</span>
+        <button
+          type="button"
+          className="mini-btn"
+          data-testid="add-variable"
+          title={t('variables.add')}
+          onClick={() => addVariable()}
+        >
+          ＋
+        </button>
       </div>
-      <div className="var-list">
-        {project.variables.map((variable) => (
-          <div className="var-row" key={variable.id}>
-            <span className="var-name">{variable.name}</span>
-            <span className="var-value mono">{String(variable.value)}</span>
-          </div>
-        ))}
-      </div>
+      {project.variables.length === 0 ? (
+        <p className="empty-hint">{t('inspector.none')}</p>
+      ) : (
+        <div className="var-list">
+          {project.variables.map((variable) => (
+            <div className="var-row" key={variable.id} data-testid={`var-row-${variable.id}`}>
+              <input
+                className="field-input var-name-input"
+                value={variable.name}
+                aria-label={t('variables.name')}
+                data-testid={`var-name-${variable.id}`}
+                onChange={(event) => renameVariable(variable.id, event.target.value)}
+              />
+              <input
+                className="field-input mono var-value-input"
+                type="number"
+                value={variable.value}
+                aria-label={t('variables.value')}
+                data-testid={`var-value-${variable.id}`}
+                onChange={(event) => setVariableValue(variable.id, Number(event.target.value) || 0)}
+              />
+              <button
+                type="button"
+                className="icon-btn icon-danger"
+                title={t('variables.remove')}
+                data-testid={`var-remove-${variable.id}`}
+                onClick={() => removeVariable(variable.id)}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </aside>
   );
 }
