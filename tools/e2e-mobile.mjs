@@ -66,13 +66,15 @@ async function runPhone() {
   check('phone boots', (await page.locator('[data-testid="stage-iframe"]').count()) === 1);
   check('compact layout', (await page.locator('.layout-compact').count()) === 1);
   check('4 bottom tabs', (await page.locator('.mobile-tab').count()) === 4);
-  check('touch pad visible', await page.locator('[data-testid="stage-pad"]').isVisible());
+  check('phone edit mode hint', await page.locator('[data-testid="stage-edit-hint"]').isVisible());
+  check('phone pad hidden in edit mode', (await page.locator('[data-testid="stage-pad"]').count()) === 0);
   check('phone save/open buttons', await page.locator('[data-testid="m-save-project"]').isVisible() && (await page.locator('[data-testid="m-open-project"]').isVisible()) && (await page.locator('[data-testid="m-export-html5"]').isVisible()));
   check('phone topbar files hidden', !(await page.locator('[data-testid="save-project"]').isVisible()));
 
-  // 贪吃蛇会自动前进，先重开一局再测摇杆（避免开局撞墙导致线程已停止）
+  // 点「运行」进入运行模式，摇杆才会出现
   await page.getByTestId('run').click();
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(400);
+  check('phone pad visible when running', await page.locator('[data-testid="stage-pad"]').isVisible());
   const before = await runtimeState(page);
   check('phone runtime running', Boolean(before?.snake));
 
@@ -206,6 +208,8 @@ async function runTablet() {
   await page.waitForTimeout(2200);
 
   check('tablet compact layout', (await page.locator('.layout-compact').count()) === 1);
+  await page.getByTestId('run').click();
+  await page.waitForTimeout(400);
   check('tablet stage running', Boolean(await runtimeState(page)));
   check('tablet pad visible', await page.locator('[data-testid="stage-pad"]').isVisible());
   await page.screenshot({ path: 'tools/shots/m-tablet-stage.png' });
@@ -233,6 +237,8 @@ async function runTablet() {
   await page.locator('[data-testid="template-snake"]').tap();
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1600);
+  await page.getByTestId('run').click();
+  await page.waitForTimeout(400);
   const tabletJoy = await page.locator('[data-testid="pad-joystick"]').boundingBox();
   check('tablet snake joystick', (tabletJoy?.width ?? 0) >= 110, `w=${Math.round(tabletJoy?.width ?? 0)}`);
 
@@ -242,7 +248,9 @@ async function runTablet() {
   await page.waitForTimeout(300);
   await page.locator('[data-testid="touch-mode-direct"]').tap();
   await page.locator('[data-testid="input-settings-save"]').tap();
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(1200);
+  await page.getByTestId('run').click();
+  await page.waitForTimeout(400);
   const directPad = await page.locator('[data-testid="stage-pad"]').count();
   const directHint = await page.locator('[data-testid="stage-direct-hint"]').count();
   check('direct touch mode', directPad === 0 && directHint === 1, `pad=${directPad} hint=${directHint}`);

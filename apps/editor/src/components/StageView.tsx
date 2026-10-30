@@ -9,7 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { compileProject } from '@cobble/blocks';
 import { inputConfig, type TouchButtonDef } from '@cobble/project';
-import { sendRun, sendTouch, setPlayerFrame } from '../bridge';
+import { sendPreview, sendRun, sendTouch, setPlayerFrame } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';
 import { StageSettings } from './StageSettings';
@@ -28,6 +28,7 @@ interface Props {
 export function StageView({ compact = false }: Props) {
   const { t } = useTranslation();
   const project = useEditorStore((state) => state.project);
+  const workspaces = useEditorStore((state) => state.workspaces);
   const running = useEditorStore((state) => state.running);
   const setRunning = useEditorStore((state) => state.setRunning);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -35,6 +36,7 @@ export function StageView({ compact = false }: Props) {
   const stageFrameRef = useRef<HTMLDivElement | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
   const touchSetRef = useRef<Set<string>>(new Set());
+  const lastDragRef = useRef(0);
   const joystickRef = useRef<HTMLDivElement | null>(null);
   const joyActiveRef = useRef(false);
   const [knob, setKnob] = useState({ x: 0, y: 0 });
@@ -48,6 +50,11 @@ export function StageView({ compact = false }: Props) {
   const [fullscreen, setFullscreen] = useState(false);
   const [rotation, setRotation] = useState<Rotation>(0);
   const coarse = useCoarsePointer();
+
+  const sendPreviewNow = useCallback(() => {
+    const state = useEditorStore.getState();
+    sendPreview(compileProject(state.project, state.workspaces));
+  }, []);
 
   const run = useCallback(() => {
     const state = useEditorStore.getState();
@@ -63,11 +70,18 @@ export function StageView({ compact = false }: Props) {
       if (!data || typeof data !== 'object') return;
       if (data.type === 'ready') {
         setPlayerReady(true);
-        run();
+        sendPreviewNow();
+      } else if (data.type === 'sprite-moved') {
+        const moved = data as { id?: string; x?: number; y?: number };
+        if (typeof moved.id === 'string' && typeof moved.x === 'number' && typeof moved.y === 'number') {
+          lastDragRef.current = Date.now();
+          useEditorStore.getState().updateSprite(moved.id, { x: moved.x, y: moved.y });
+        }
       } else if (data.type === 'stopped') {
         touchSetRef.current.clear();
         flushTouch();
         useEditorStore.getState().setRunning(false);
+        sendPreviewNow();
       }
     };
     window.addEventListener('message', handleMessage);
@@ -75,7 +89,17 @@ export function StageView({ compact = false }: Props) {
       window.removeEventListener('message', handleMessage);
       setPlayerFrame(null);
     };
-  }, [run]);
+  }, [run, sendPreviewNow]);
+
+  // 编辑模式：工程/积木变化后刷新静态预览（运行中不刷新；刚拖动过精灵时也不立刻刷新）
+  useEffect(() => {
+    if (!playerReady || running) return;
+    const timer = window.setTimeout(() => {
+      if (Date.now() - lastDragRef.current < 600) return;
+      sendPreviewNow();
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [playerReady, running, project, workspaces, sendPreviewNow]);
 
   /**
    * 全屏时按游戏画幅（横屏/竖屏）适配设备方向：
@@ -297,7 +321,7 @@ export function StageView({ compact = false }: Props) {
             {t('stage.exitFullscreen')}
           </button>
         )}
-        {coarse && mode === 'pad' && (
+        {coarse && running && mode === 'pad' && (
           <div className={`stage-pad${fullscreen ? ' is-overlay' : ''}`} data-testid="stage-pad">
             <div
               ref={joystickRef}
@@ -331,9 +355,14 @@ export function StageView({ compact = false }: Props) {
             </div>
           </div>
         )}
-        {coarse && mode === 'direct' && (
+        {running && coarse && mode === 'direct' && (
           <div className="stage-direct-hint" data-testid="stage-direct-hint">
             {t('stage.directHint')}
+          </div>
+        )}
+        {!running && (
+          <div className="stage-edit-hint" data-testid="stage-edit-hint">
+            {t('stage.editHint')}
           </div>
         )}
       </div>

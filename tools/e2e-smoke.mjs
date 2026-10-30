@@ -58,9 +58,11 @@ try {
   record('player iframe', Boolean(frame), frame?.url() ?? 'missing');
   if (!frame) throw new Error('player iframe missing');
 
+  // 编辑模式默认只做静态预览，点「运行」才创建运行时
+  await page.getByTestId('run').click();
   await page.waitForFunction(
     () => {
-      const child = document.querySelector('iframe');
+      const child = document.querySelector('[data-testid="stage-iframe"]');
       const win = child?.contentWindow;
       return Boolean(win && win.__cobbleRuntime);
     },
@@ -89,9 +91,7 @@ try {
     return state;
   };
 
-  // 贪吃蛇会自动前进，先重开一局再测方向输入（避免开局撞墙导致线程已停止）
-  await page.getByTestId('run').click();
-  await page.waitForTimeout(250);
+  // 贪吃蛇开局静止，按方向键才启动；这里直接测方向输入
   const initial = await readSnake();
   const moved = await holdUntil('ArrowUp', (state) => state.y >= initial.y + 60);
   // 预览 iframe 隔离：沙箱属性必须存在（阻止顶层跳转 / 弹窗等）
@@ -441,12 +441,13 @@ try {
   const tmplName = await page.locator('.project-name-text').innerText();
   record('new project template', templateCards === 2 && snakeCard === 1 && tmplSprites === 10 && tmplBlocks > 60 && tmplName.includes('贪吃蛇'), `cards=${templateCards} sprites=${tmplSprites} blocks=${tmplBlocks} name=${tmplName}`);
 
-  // 10b. 贪吃蛇能跑：蛇头在运行中会移动
+  // 10b. 贪吃蛇能跑：开局静止，按方向键后才开始移动
   await page.getByTestId('run').click();
   await page.waitForTimeout(350);
   const snakeFrame = page.frames().find((item) => item.url().includes('player.html'));
   const headA = snakeFrame ? await snakeFrame.evaluate(() => window.__cobbleRuntime?.getSpriteState?.('sprite_snake_head')) : null;
-  await page.waitForTimeout(420);
+  await page.keyboard.press('ArrowUp');
+  await page.waitForTimeout(500);
   const headB = snakeFrame ? await snakeFrame.evaluate(() => window.__cobbleRuntime?.getSpriteState?.('sprite_snake_head')) : null;
   record('snake game runs', Boolean(headA && headB) && Math.abs((headB?.x ?? 0) - (headA?.x ?? 0)) + Math.abs((headB?.y ?? 0) - (headA?.y ?? 0)) > 0, `head ${headA?.x},${headA?.y} -> ${headB?.x},${headB?.y}`);
 

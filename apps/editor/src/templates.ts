@@ -167,6 +167,14 @@ function compare(ws: Blockly.Workspace, op: string, left: Expr, right: Expr): Ex
   return block;
 }
 
+/** 未开始时允许任意方向启动；开始后禁止 180° 反向 */
+function canTurnExpr(ws: Blockly.Workspace, started: string, dir: string, opposite: number): Expr {
+  const block = makeBlock(ws, 'operators_logic', { OP: 'or' });
+  attachValue(block, 'A', compare(ws, '=', vget(ws, started), num(ws, 0)));
+  attachValue(block, 'B', not(ws, compare(ws, '=', vget(ws, dir), num(ws, opposite))));
+  return block;
+}
+
 function and(ws: Blockly.Workspace, left: Expr, right: Expr): Expr {
   const block = makeBlock(ws, 'operators_logic', { OP: 'and' });
   attachValue(block, 'A', left);
@@ -347,6 +355,7 @@ function projectSnake(): ProjectDoc {
   const variables = [
     { id: 'var_snake_score', name: '分数', value: 0 },
     { id: 'var_snake_dir', name: '_方向', value: 0 },
+    { id: 'var_snake_started', name: '_已开始', value: 0 },
     { id: 'var_snake_len', name: '_长度', value: 3 },
     { id: 'var_snake_prevx', name: '_上次X', value: SNAKE_START_X },
     { id: 'var_snake_prevy', name: '_上次Y', value: SNAKE_START_Y },
@@ -379,10 +388,12 @@ function workspacesSnake(): Record<string, unknown> {
   const dir = 'var_snake_dir';
   const len = 'var_snake_len';
 
-  const turnRight = ifBlock(ws, not(ws, compare(ws, '=', vget(ws, dir), num(ws, 2))), [setVar(ws, dir, num(ws, 0))]);
-  const turnLeft = ifBlock(ws, not(ws, compare(ws, '=', vget(ws, dir), num(ws, 0))), [setVar(ws, dir, num(ws, 2))]);
-  const turnDown = ifBlock(ws, not(ws, compare(ws, '=', vget(ws, dir), num(ws, 3))), [setVar(ws, dir, num(ws, 1))]);
-  const turnUp = ifBlock(ws, not(ws, compare(ws, '=', vget(ws, dir), num(ws, 1))), [setVar(ws, dir, num(ws, 3))]);
+  const started = 'var_snake_started';
+  const startMove = (direction: number) => [setVar(ws, started, num(ws, 1)), setVar(ws, dir, num(ws, direction))];
+  const turnRight = ifBlock(ws, canTurnExpr(ws, started, dir, 2), startMove(0));
+  const turnLeft = ifBlock(ws, canTurnExpr(ws, started, dir, 0), startMove(2));
+  const turnDown = ifBlock(ws, canTurnExpr(ws, started, dir, 3), startMove(1));
+  const turnUp = ifBlock(ws, canTurnExpr(ws, started, dir, 1), startMove(3));
 
   const remember = [
     setVar(ws, 'var_snake_prevx', makeBlock(ws, 'motion_xpos')),
@@ -427,12 +438,14 @@ function workspacesSnake(): Record<string, unknown> {
       ifBlock(ws, inputActive(ws, 'left'), [turnLeft]),
       ifBlock(ws, inputActive(ws, 'down'), [turnDown]),
       ifBlock(ws, inputActive(ws, 'up'), [turnUp]),
-      ...remember,
-      ...moveByDirection,
-      ...shiftTrail,
-      ifBlock(ws, wallCond, [say(ws, '撞墙了，游戏结束！得分见左上角，点「运行」重新开始', 2), stopAll(ws)]),
-      ...hitSelf,
-      waitSecs(ws, 0.16),
+      ifBlock(ws, compare(ws, '=', vget(ws, started), num(ws, 1)), [
+        ...remember,
+        ...moveByDirection,
+        ...shiftTrail,
+        ifBlock(ws, wallCond, [say(ws, '撞墙了，游戏结束！得分见左上角，点「运行」重新开始', 2), stopAll(ws)]),
+        ...hitSelf,
+        waitSecs(ws, 0.16),
+      ]),
     ]),
   ]);
   result.sprite_snake_head = saveWorkspace(ws);

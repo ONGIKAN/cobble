@@ -203,6 +203,7 @@ export const zhCN = {
     resize: '尺寸',
     fullscreen: '全屏',
     exitFullscreen: '退出全屏',
+    editHint: '编辑模式：拖动角色可调整位置，点「运行」开始游戏',
   },
   sprites: {
     costumeCount: '{{count}} 个造型',

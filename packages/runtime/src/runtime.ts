@@ -59,6 +59,20 @@ function truthy(value: number | string): boolean {
  * - 循环每迭代让出一帧；等待/滑行按真实时间推进
  * - 同一帧内所有线程共享时间片
  */
+export function visualsFromProject(project: CompiledProject): SpriteVisual[] {
+  return project.sprites.map((sprite, index) => ({
+    id: sprite.id,
+    x: sprite.x,
+    y: sprite.y,
+    direction: sprite.rotation ?? 90,
+    size: sprite.size ?? 100,
+    visible: sprite.visible ?? true,
+    zIndex: sprite.zIndex ?? index,
+    rotationStyle: sprite.rotationStyle ?? 'all-around',
+    costumeIndex: 0,
+  }));
+}
+
 export class Runtime {
   private adapter: EngineAdapter;
   private project: CompiledProject;

@@ -124,13 +124,18 @@ export class PhaserAdapter implements EngineAdapter {
   async init(
     container: HTMLElement,
     project: CompiledProject,
-    options?: { mountTouch?: boolean; onDrag?: (spriteId: string, x: number, y: number) => void },
+    options?: {
+      mountTouch?: boolean;
+      allowDrag?: boolean;
+      onDrag?: (spriteId: string, x: number, y: number) => void;
+    },
   ): Promise<void> {
     this.destroy();
     this.project = project;
     this.container = container;
     this.onDrag = options?.onDrag ?? null;
-    this.dragEnabled = (project.input?.touchMode ?? 'pad') === 'direct';
+    this.dragEnabled =
+      options?.allowDrag ?? ((project.input?.touchMode ?? 'pad') === 'direct' && options?.mountTouch !== false);
     container.innerHTML = '';
     for (const asset of project.assets) {
       if (asset.kind !== 'image' || !asset.dataUrl) continue;
