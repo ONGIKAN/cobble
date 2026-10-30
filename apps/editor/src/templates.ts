@@ -567,6 +567,194 @@ function workspacesCatchApple(): Record<string, unknown> {
   return { [basketId]: basket, [appleId]: apple };
 }
 
+// ── 吃豆豆（v0.8.0 示例游戏）────────────────────────────────
+const PAC_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+  <circle cx="22" cy="22" r="20" fill="#ffd93b"/>
+  <path d="M22 22 L44 13 L44 31 Z" fill="#0e0b1a"/>
+  <circle cx="24" cy="13" r="3" fill="#3a2c00"/>
+</svg>`;
+
+const GHOST_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48">
+  <path d="M4 46 V20 a18 18 0 0 1 36 0 V46 l-6 -5 -6 5 -6 -5 -6 5 -6 -5 Z" fill="#b39cff"/>
+  <circle cx="16" cy="21" r="5" fill="#1b1330"/>
+  <circle cx="29" cy="21" r="5" fill="#1b1330"/>
+  <circle cx="17" cy="20" r="1.6" fill="#fff"/>
+  <circle cx="30" cy="20" r="1.6" fill="#fff"/>
+</svg>`;
+
+const DOT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+  <circle cx="9" cy="9" r="7" fill="#ffe27a"/>
+  <circle cx="9" cy="9" r="7" fill="none" stroke="#d9b23c" stroke-width="2"/>
+</svg>`;
+
+function wallSvg(width: number, height: number): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <rect width="${width}" height="${height}" fill="#43356f"/>
+  <rect width="${width}" height="4" fill="#7b63d1"/>
+  <rect y="${height - 4}" width="${width}" height="4" fill="#2c2350"/>
+</svg>`;
+}
+
+/** 多个目标里任意一个被碰到：or 串联 sensing_touching */
+function touchingAny(ws: Blockly.Workspace, targets: string[]): Blockly.Block {
+  const checks = targets.map((target) => makeBlock(ws, 'sensing_touching', { TARGET: target }));
+  let acc = checks[0];
+  for (const check of checks.slice(1)) {
+    const logic = makeBlock(ws, 'operators_logic', { OP: 'or' });
+    attachValue(logic, 'A', acc);
+    attachValue(logic, 'B', check);
+    acc = logic;
+  }
+  return acc;
+}
+
+function projectDotMaze(): ProjectDoc {
+  const dots: Array<[string, number, number]> = [
+    ['sprite_dot_a', -60, 170],
+    ['sprite_dot_b', 60, 170],
+    ['sprite_dot_c', -60, -170],
+    ['sprite_dot_d', 60, -170],
+    ['sprite_dot_e', -350, 0],
+    ['sprite_dot_f', 350, 0],
+  ];
+  const project: ProjectDoc = {
+    schemaVersion: 1,
+    meta: nowMeta('dot-maze', '吃豆豆'),
+    stage: { width: 960, height: 540, background: '#0e0b1a' },
+    assets: [
+      imageAsset('asset_pac', '吃豆人', PAC_SVG),
+      imageAsset('asset_ghost', '幽灵', GHOST_SVG),
+      imageAsset('asset_dot', '豆子', DOT_SVG),
+      imageAsset('asset_wall_h', '横墙', wallSvg(320, 20)),
+      imageAsset('asset_wall_v', '竖墙', wallSvg(20, 300)),
+      imageAsset('asset_border_h', '上边框', wallSvg(940, 20)),
+      imageAsset('asset_border_v', '侧边框', wallSvg(20, 500)),
+    ],
+    variables: [
+      { id: 'var_score', name: '分数', value: 0 },
+      { id: 'var_prev_x', name: '上次 X', value: 0 },
+      { id: 'var_prev_y', name: '上次 Y', value: 0 },
+    ],
+    sprites: [
+      sprite({ id: 'sprite_player', name: '吃豆人', x: -300, y: -60, zIndex: 3, costumes: [{ name: '吃豆人', assetId: 'asset_pac' }] }),
+      sprite({ id: 'sprite_ghost', name: '幽灵', x: 300, y: -60, zIndex: 2, costumes: [{ name: '幽灵', assetId: 'asset_ghost' }] }),
+      sprite({ id: 'sprite_border_top', name: '上边框', y: 256, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_border_h' }] }),
+      sprite({ id: 'sprite_border_bottom', name: '下边框', y: -256, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_border_h' }] }),
+      sprite({ id: 'sprite_border_left', name: '左边框', x: -462, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_border_v' }] }),
+      sprite({ id: 'sprite_border_right', name: '右边框', x: 462, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_border_v' }] }),
+      sprite({ id: 'sprite_wall_a', name: '横墙 A', x: -120, y: 40, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_wall_h' }] }),
+      sprite({ id: 'sprite_wall_b', name: '横墙 B', x: 140, y: -40, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_wall_h' }] }),
+      sprite({ id: 'sprite_wall_c', name: '竖墙 C', y: 120, zIndex: 1, size: 55, costumes: [{ name: '墙', assetId: 'asset_wall_v' }] }),
+      ...dots.map(([id, x, y]) =>
+        sprite({ id, name: id.replace('sprite_dot_', '豆子 '), x, y, zIndex: 2, costumes: [{ name: '豆子', assetId: 'asset_dot' }] }),
+      ),
+    ],
+    scripts: {},
+  };
+  return project;
+}
+
+function workspacesDotMaze(): Record<string, unknown> {
+  const score = 'var_score';
+  const prevX = 'var_prev_x';
+  const prevY = 'var_prev_y';
+  const wallIds = [
+    'sprite_border_top',
+    'sprite_border_bottom',
+    'sprite_border_left',
+    'sprite_border_right',
+    'sprite_wall_a',
+    'sprite_wall_b',
+    'sprite_wall_c',
+  ];
+  const player = serialize((ws) => {
+    const moveStep = (input: string, axis: 'x' | 'y', delta: number) => {
+      const tryMove = makeBlock(ws, 'control_if');
+      attachValue(tryMove, 'COND', makeBlock(ws, 'sensing_input', { INPUT: input }));
+      const rememberX = setVar(ws, prevX, makeBlock(ws, 'motion_xpos'));
+      const rememberY = setVar(ws, prevY, makeBlock(ws, 'motion_ypos'));
+      const move = makeBlock(ws, axis === 'x' ? 'motion_changex' : 'motion_changey');
+      attachValue(move, 'VALUE', num(ws, delta));
+      const blocked = makeBlock(ws, 'control_if');
+      attachValue(blocked, 'COND', touchingAny(ws, wallIds));
+      const back = makeBlock(ws, 'motion_gotoxy');
+      attachValue(back, 'X', varGet(ws, prevX));
+      attachValue(back, 'Y', varGet(ws, prevY));
+      attachStatement(blocked, 'DO', back);
+      attachStatement(tryMove, 'DO', seq(rememberX, rememberY, move, blocked));
+      return tryMove;
+    };
+    const right = moveStep('right', 'x', 6);
+    const left = moveStep('left', 'x', -6);
+    const up = moveStep('up', 'y', 6);
+    const down = moveStep('down', 'y', -6);
+    chain([right, left, up, down]);
+    flagForever(ws, right);
+
+    // 吃完所有豆子后由广播触发通关提示
+    const win = makeBlock(ws, 'looks_say', { TEXT: '🎉 豆子全部吃完，通关！' });
+    attachValue(win, 'SECS', num(ws, 5));
+    connectNext(makeBlock(ws, 'event_whenmessage', { MESSAGE: 'win' }), win);
+  });
+
+  const ghost = serialize((ws) => {
+    const dirs: Array<['x' | 'y', number]> = [
+      ['x', 6],
+      ['x', -6],
+      ['y', 6],
+      ['y', -6],
+    ];
+    const branches = dirs.map(([axis, delta], index) => {
+      const pick = makeBlock(ws, 'control_if');
+      attachValue(pick, 'COND', compareBlock(ws, '=', randomRange(ws, 1, 4), num(ws, index + 1)));
+      const rememberX = setVar(ws, prevX, makeBlock(ws, 'motion_xpos'));
+      const rememberY = setVar(ws, prevY, makeBlock(ws, 'motion_ypos'));
+      const move = makeBlock(ws, axis === 'x' ? 'motion_changex' : 'motion_changey');
+      attachValue(move, 'VALUE', num(ws, delta));
+      const blocked = makeBlock(ws, 'control_if');
+      attachValue(blocked, 'COND', touchingAny(ws, wallIds));
+      const back = makeBlock(ws, 'motion_gotoxy');
+      attachValue(back, 'X', varGet(ws, prevX));
+      attachValue(back, 'Y', varGet(ws, prevY));
+      attachStatement(blocked, 'DO', back);
+      attachStatement(pick, 'DO', seq(rememberX, rememberY, move, blocked));
+      return pick;
+    });
+    const caught = makeBlock(ws, 'control_if');
+    attachValue(caught, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_player' }));
+    const deduct = changeVar(ws, score, num(ws, -1));
+    const shout = makeBlock(ws, 'looks_say', { TEXT: '被抓到啦！' });
+    attachValue(shout, 'SECS', num(ws, 1));
+    attachStatement(caught, 'DO', seq(deduct, shout));
+    chain([...branches, caught, waitBlock(ws, 0.05)]);
+    flagForever(ws, branches[0]);
+  });
+
+  const pellet = (): Record<string, unknown> =>
+    serialize((ws) => {
+      const eat = makeBlock(ws, 'control_if');
+      attachValue(eat, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_player' }));
+      const hide = makeBlock(ws, 'looks_hide');
+      const add = changeVar(ws, score, num(ws, 1));
+      const allDone = makeBlock(ws, 'control_if');
+      attachValue(allDone, 'COND', compareBlock(ws, '=', varGet(ws, score), num(ws, 6)));
+      attachStatement(allDone, 'DO', makeBlock(ws, 'event_broadcast', { MESSAGE: 'win' }));
+      const stopThis = makeBlock(ws, 'control_stop', { MODE: 'this' });
+      attachStatement(eat, 'DO', seq(hide, add, allDone, stopThis));
+      chain([eat]);
+      flagForever(ws, eat);
+    });
+
+  const result: Record<string, unknown> = {
+    sprite_player: player,
+    sprite_ghost: ghost,
+  };
+  for (const id of ['sprite_dot_a', 'sprite_dot_b', 'sprite_dot_c', 'sprite_dot_d', 'sprite_dot_e', 'sprite_dot_f']) {
+    result[id] = pellet();
+  }
+  return result;
+}
+
 export const TEMPLATES: TemplateDefinition[] = [
   {
     id: 'blank',
@@ -612,6 +800,15 @@ export const TEMPLATES: TemplateDefinition[] = [
     project: projectPlatformer,
     workspaces: workspacesPlatformer,
     build: () => ({ project: projectPlatformer(), workspaces: workspacesPlatformer() }),
+  },
+  {
+    id: 'dot-maze',
+    nameKey: 'templates.dotMaze',
+    taglineKey: 'templates.dotMazeTagline',
+    scriptGroups: 8,
+    project: projectDotMaze,
+    workspaces: workspacesDotMaze,
+    build: () => ({ project: projectDotMaze(), workspaces: workspacesDotMaze() }),
   },
 ];
 

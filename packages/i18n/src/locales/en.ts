@@ -89,6 +89,8 @@ export const en: Messages = {
     catchAppleTagline: 'Move the basket left and right to catch falling apples',
     platformer: 'Platformer',
     platformerTagline: 'Side-scrolling jump, gravity and coin collecting',
+    dotMaze: 'Dot Muncher',
+    dotMazeTagline: 'Maze muncher: eat every dot and dodge the wandering ghost',
   },
   panels: {
     stage: 'Stage',

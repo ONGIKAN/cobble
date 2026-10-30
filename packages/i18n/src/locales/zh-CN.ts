@@ -87,6 +87,8 @@ export const zhCN = {
     catchAppleTagline: '左右移动篮子，接住掉落的苹果',
     platformer: '平台跳跃',
     platformerTagline: '重力、跳跃与金币收集的横版小游戏',
+    dotMaze: '吃豆豆',
+    dotMazeTagline: '迷宫吃豆：收集全部豆子，小心会走动的幽灵',
   },
   panels: {
     stage: '舞台',
