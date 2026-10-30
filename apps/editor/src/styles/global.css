@@ -2087,3 +2087,14 @@ button {
 .input-size-row .field-input {
   width: 92px;
 }
+
+.btn,
+.seg-btn,
+.icon-btn,
+.mini-btn {
+  white-space: nowrap;
+}
+
+.topbar-actions {
+  gap: 6px;
+}

@@ -14,7 +14,6 @@ export function ProjectFileButtons({ variant = 'bar' }: Props) {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const inline = variant === 'inline';
-  const label = (long: string, short: string): string => (inline ? short : long);
 
   const save = (): void => {
     const state = useEditorStore.getState();
@@ -45,35 +44,39 @@ export function ProjectFileButtons({ variant = 'bar' }: Props) {
         type="button"
         className="btn btn-ghost"
         data-testid={inline ? 'm-new-project' : 'new-project'}
+        title={t('toolbar.newProject')}
         onClick={() => openNewProjectDialog()}
       >
-        {label(t('toolbar.newProject'), t('toolbar.newProjectShort'))}
+        {t('toolbar.newProjectShort')}
       </button>
       <button
         type="button"
         className="btn btn-ghost"
         data-testid={inline ? 'm-save-project' : 'save-project'}
+        title={t('toolbar.save')}
         onClick={save}
       >
-        {label(t('toolbar.save'), t('toolbar.shortSave'))}
+        {t('toolbar.shortSave')}
       </button>
       <button
         type="button"
         className="btn btn-ghost"
         data-testid={inline ? 'm-open-project' : 'open-project'}
+        title={t('toolbar.open')}
         onClick={() => inputRef.current?.click()}
       >
-        {label(t('toolbar.open'), t('toolbar.shortOpen'))}
+        {t('toolbar.shortOpen')}
       </button>
       <button
         type="button"
         className="btn btn-ghost"
         data-testid={inline ? 'm-export-html5' : 'export-html5'}
+        title={t('toolbar.exportHtml')}
         onClick={() => {
           void exportHtml();
         }}
       >
-        {label(t('toolbar.exportHtml'), t('toolbar.shortExport'))}
+        {t('toolbar.shortExport')}
       </button>
       <input
         ref={inputRef}
