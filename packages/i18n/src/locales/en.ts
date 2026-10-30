@@ -107,6 +107,8 @@ export const en: Messages = {
     settings: 'Stage settings',
     background: 'Background',
     resize: 'Size',
+    fullscreen: 'Fullscreen',
+    exitFullscreen: 'Exit fullscreen',
   },
   sprites: {
     costumeCount: '{{count}} costume(s)',

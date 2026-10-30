@@ -79,6 +79,18 @@ function ensureStyle(doc: Document): void {
  * 只在触屏设备（pointer: coarse）或 URL 带 ?touch=1 时挂载，覆盖在舞台上，
  * 结果写入 active 集合，由适配器合并进 InputState。
  */
+/** 触屏按钮默认标签以 i18n key 存储，运行时按页面语言解析（引擎包不依赖 i18next） */
+const TOUCH_LABELS: Record<string, { zh: string; en: string }> = {
+  'inputs.jumpButton': { zh: '跳', en: 'Jump' },
+};
+
+function localizeLabel(label: string): string {
+  const entry = TOUCH_LABELS[label];
+  if (!entry) return label;
+  const english = (document.documentElement.lang || '').toLowerCase().startsWith('en');
+  return english ? entry.en : entry.zh;
+}
+
 export function mountTouchControls(container: HTMLElement, input: InputConfig): TouchControls | null {
   const coarse = typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches;
   const forced = typeof location !== 'undefined' && new URLSearchParams(location.search).has('touch');
@@ -111,7 +123,7 @@ export function mountTouchControls(container: HTMLElement, input: InputConfig): 
     const el = doc.createElement('div');
     el.className = 'cobble-touch-btn';
     el.dataset.testid = `touch-btn-${button.id}`;
-    el.textContent = button.label;
+    el.textContent = localizeLabel(button.label);
     el.style.bottom = `${16 + index * 92}px`;
     root.appendChild(el);
     buttons.push(mountButton(el, button.bindingId, active));

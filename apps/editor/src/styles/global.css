@@ -1820,3 +1820,62 @@ button {
     gap: 10px;
   }
 }
+
+/* 全屏运行：舞台铺满屏幕，横竖屏不匹配时用 CSS 旋转兜底 */
+.stage-body.is-fullscreen {
+  background: #05040a;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.stage-body.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.stage-body.is-fullscreen .stage-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 0px);
+  height: calc(100% - 0px);
+  max-width: none;
+  max-height: none;
+  aspect-ratio: auto;
+  border: 0;
+}
+
+.stage-body.is-fullscreen .stage-iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.stage-body.is-fullscreen.is-rotated .stage-frame {
+  width: 100vh;
+  height: 100vw;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.stage-body.is-fullscreen.is-rotated:nth-child(n) {
+  /* 旋转仅作用于舞台画面，方向键保持正向可点 */
+}
+
+.stage-body.is-fullscreen .dpad {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  margin: 0;
+  opacity: 0.92;
+}
+
+.stage-body.is-fullscreen .dpad-btn {
+  background: rgba(13, 15, 18, 0.72);
+  border-color: rgba(157, 123, 255, 0.4);
+}
+
+.stage-fullscreen-btn {
+  margin-left: 6px;
+}

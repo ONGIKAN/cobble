@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { compileProject } from '@cobble/blocks';
 import { sendRun, setPlayerFrame } from '../bridge';
@@ -12,6 +18,8 @@ const PLAYER_SRC = `${import.meta.env.BASE_URL}player.html`;
 
 const DPAD_KEYS = ['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'] as const;
 
+type Rotation = 0 | 90 | -90;
+
 interface Props {
   compact?: boolean;
 }
@@ -22,7 +30,10 @@ export function StageView({ compact = false }: Props) {
   const running = useEditorStore((state) => state.running);
   const setRunning = useEditorStore((state) => state.setRunning);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const stageBodyRef = useRef<HTMLDivElement | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [rotation, setRotation] = useState<Rotation>(0);
   const coarse = useCoarsePointer();
 
   const run = useCallback(() => {
@@ -50,6 +61,58 @@ export function StageView({ compact = false }: Props) {
       setPlayerFrame(null);
     };
   }, [run]);
+
+  /**
+   * 全屏时按游戏画幅（横屏/竖屏）适配设备方向：
+   * 优先尝试 screen.orientation.lock；锁不住（桌面、iOS）时用 CSS 旋转兜底。
+   */
+  const syncFullscreen = useCallback(() => {
+    const active = Boolean(document.fullscreenElement);
+    setFullscreen(active);
+    if (!active) {
+      setRotation(0);
+      const orientation = screen.orientation as ScreenOrientation & { unlock?: () => void };
+      try {
+        orientation.unlock?.();
+      } catch {
+        // 浏览器不支持时忽略
+      }
+      return;
+    }
+    const gameLandscape = project.stage.width >= project.stage.height;
+    const deviceLandscape = window.innerWidth > window.innerHeight;
+    const next: Rotation = gameLandscape === deviceLandscape ? 0 : gameLandscape ? 90 : -90;
+    setRotation(next);
+    try {
+      const orientation = screen.orientation as ScreenOrientation & { lock?: (value: string) => Promise<void> };
+      if (next !== 0) void orientation.lock?.(gameLandscape ? 'landscape' : 'portrait')?.catch?.(() => undefined);
+    } catch {
+      // 不支持方向锁时保留 CSS 旋转
+    }
+  }, [project.stage.width, project.stage.height]);
+
+  useEffect(() => {
+    document.addEventListener('fullscreenchange', syncFullscreen);
+    window.addEventListener('resize', syncFullscreen);
+    return () => {
+      document.removeEventListener('fullscreenchange', syncFullscreen);
+      window.removeEventListener('resize', syncFullscreen);
+    };
+  }, [syncFullscreen]);
+
+  const toggleFullscreen = useCallback(async () => {
+    const element = stageBodyRef.current;
+    if (!element) return;
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await element.requestFullscreen({ navigationUI: 'hide' });
+      }
+    } catch {
+      // 用户取消或浏览器拒绝时不改变状态
+    }
+  }, []);
 
   /** 触屏方向键：把按键事件直接派发进 iframe，与键盘输入走同一条适配路径 */
   const dispatchKey = (key: string, type: 'keydown' | 'keyup'): void => {
@@ -90,6 +153,14 @@ export function StageView({ compact = false }: Props) {
         <span className="panel-meta mono">
           {t('stage.size', { w: project.stage.width, h: project.stage.height })}
         </span>
+        <button
+          type="button"
+          className="mini-btn stage-fullscreen-btn"
+          data-testid="stage-fullscreen"
+          onClick={toggleFullscreen}
+        >
+          {fullscreen ? t('stage.exitFullscreen') : t('stage.fullscreen')}
+        </button>
         <StageSettings />
         {compact && <ProjectFileButtons variant="inline" />}
         {compact && (
@@ -103,7 +174,10 @@ export function StageView({ compact = false }: Props) {
           </button>
         )}
       </div>
-      <div className="stage-body">
+      <div
+        ref={stageBodyRef}
+        className={`stage-body${fullscreen ? ' is-fullscreen' : ''}${rotation !== 0 ? ' is-rotated' : ''}`}
+      >
         <div className="stage-frame">
           <iframe ref={iframeRef} className="stage-iframe" data-testid="stage-iframe" src={PLAYER_SRC} title={t('panels.stage')} />
           {!playerReady && <div className="stage-loading">{t('stage.loading')}</div>}

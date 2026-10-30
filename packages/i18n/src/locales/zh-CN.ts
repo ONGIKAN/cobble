@@ -105,6 +105,8 @@ export const zhCN = {
     settings: '舞台设置',
     background: '背景色',
     resize: '尺寸',
+    fullscreen: '全屏',
+    exitFullscreen: '退出全屏',
   },
   sprites: {
     costumeCount: '{{count}} 个造型',
