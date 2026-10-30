@@ -26,6 +26,14 @@ export const spriteSchema = z.object({
   sounds: z.array(soundSchema),
 });
 
+const inputSchema = z.object({
+  bindings: z.array(
+    z.object({ id: z.string().min(1), name: z.string(), keys: z.array(z.string()) }),
+  ),
+  joystick: z.boolean(),
+  buttons: z.array(z.object({ id: z.string().min(1), bindingId: z.string(), label: z.string() })),
+});
+
 export const projectSchema = z.object({
   schemaVersion: z.literal(1),
   meta: z.object({ id: z.string(), name: z.string(), updatedAt: z.string() }),
@@ -33,6 +41,7 @@ export const projectSchema = z.object({
   assets: z.array(assetSchema),
   variables: z.array(z.object({ id: z.string(), name: z.string(), value: z.union([z.number(), z.string()]) })),
   sprites: z.array(spriteSchema),
+  input: inputSchema.optional(),
   scripts: z.record(z.string(), z.unknown()),
 });
 

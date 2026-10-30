@@ -1,5 +1,6 @@
 import * as Blockly from 'blockly';
 import 'blockly/blocks';
+import { DEFAULT_INPUT } from '@cobble/project';
 import type {
   ArithOp,
   CompareOp,
@@ -60,6 +61,8 @@ function toExpr(b: Blockly.Block | null): IRExpr {
       return { kind: 'touching', target: touchingTarget(String(b.getFieldValue('TARGET') ?? 'edge')) };
     case 'sensing_keydown':
       return { kind: 'keydown', key: String(b.getFieldValue('KEY') ?? 'ArrowRight') };
+    case 'sensing_input':
+      return { kind: 'input', bindingId: String(b.getFieldValue('INPUT') ?? '') };
     case 'sensing_mousedown':
       return { kind: 'mousedown' };
     case 'sensing_timer':
@@ -189,6 +192,8 @@ function hatOf(b: Blockly.Block): Hat | null {
       return { kind: 'flag' };
     case 'event_whenkey':
       return { kind: 'key', key: String(b.getFieldValue('KEY') ?? 'ArrowRight') };
+    case 'event_wheninput':
+      return { kind: 'input', bindingId: String(b.getFieldValue('INPUT') ?? '') };
     case 'event_whenclick':
       return { kind: 'click' };
     case 'event_whenmessage':
@@ -222,6 +227,7 @@ export function compileProject(project: ProjectDoc, workspaceStates: Record<stri
     assets: project.assets,
     variables: project.variables,
     sprites: project.sprites,
+    input: project.input ?? DEFAULT_INPUT,
     scripts,
   };
 }

@@ -177,6 +177,21 @@ try {
   record('stage settings', stageBg === '#112233' && stageSize === '1280x720', `bg=${stageBg} size=${stageSize}`);
   await page.click('[data-testid="stage-settings-toggle"]');
 
+  // 输入事件 (v0.5.0)
+  await page.click('[data-testid="input-settings"]');
+  await page.waitForTimeout(300);
+  const bindingRows = await page.locator('[data-testid="binding-row"]').count();
+  const rightRow = page.locator('[data-testid="binding-row"]').nth(1);
+  const chipsBefore = await rightRow.locator('.key-chip').count();
+  await rightRow.locator('[data-testid^="add-key-"]').click();
+  await page.keyboard.press('f');
+  await page.waitForTimeout(250);
+  const chipsAfter = await rightRow.locator('.key-chip').count();
+  await page.screenshot({ path: `${shotDir}/05-input-settings.png` });
+  await page.click('[data-testid="input-settings-close"]');
+  await page.waitForTimeout(200);
+  record('input settings dialog', bindingRows === 6 && chipsAfter === chipsBefore + 1, `bindings=${bindingRows} keys ${chipsBefore}→${chipsAfter}`);
+
   page.once('dialog', (dialog) => dialog.accept());
   await page.click('[data-testid="delete-sprite"]');
   await page.waitForTimeout(500);

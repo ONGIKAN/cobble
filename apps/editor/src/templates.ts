@@ -106,7 +106,7 @@ function serialize(build: (ws: Blockly.Workspace) => void): Record<string, unkno
 
 function keyIf(ws: Blockly.Workspace, key: string, actionType: string, delta: number): Blockly.Block {
   const ifBlock = makeBlock(ws, 'control_if');
-  attachValue(ifBlock, 'COND', makeBlock(ws, 'sensing_keydown', { KEY: key }));
+  attachValue(ifBlock, 'COND', makeBlock(ws, 'sensing_input', { INPUT: key }));
   const action = makeBlock(ws, actionType);
   attachValue(action, 'VALUE', num(ws, delta));
   attachStatement(ifBlock, 'DO', action);
@@ -176,10 +176,10 @@ function buildCatCoin(): { project: ProjectDoc; workspaces: Record<string, unkno
   };
 
   const cat = serialize((ws) => {
-    const right = keyIf(ws, 'ArrowRight', 'motion_changex', 7);
-    const left = keyIf(ws, 'ArrowLeft', 'motion_changex', -7);
-    const up = keyIf(ws, 'ArrowUp', 'motion_changey', 7);
-    const down = keyIf(ws, 'ArrowDown', 'motion_changey', -7);
+    const right = keyIf(ws, 'right', 'motion_changex', 7);
+    const left = keyIf(ws, 'left', 'motion_changex', -7);
+    const up = keyIf(ws, 'up', 'motion_changey', 7);
+    const down = keyIf(ws, 'down', 'motion_changey', -7);
     const touch = makeBlock(ws, 'control_if');
     attachValue(touch, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: coinId }));
     const change = makeBlock(ws, 'var_change', { VAR: score });
@@ -286,8 +286,8 @@ function buildCatchApple(): { project: ProjectDoc; workspaces: Record<string, un
   };
 
   const basket = serialize((ws) => {
-    const right = keyIf(ws, 'ArrowRight', 'motion_changex', 12);
-    const left = keyIf(ws, 'ArrowLeft', 'motion_changex', -12);
+    const right = keyIf(ws, 'right', 'motion_changex', 12);
+    const left = keyIf(ws, 'left', 'motion_changex', -12);
     chain([right, left]);
     flagForever(ws, right);
   });

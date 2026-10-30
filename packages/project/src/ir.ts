@@ -1,5 +1,5 @@
 /** 积木编译器输出：IR（运行时唯一执行对象，编辑器预览与导出共用） */
-import type { AssetDef, SpriteDef, StageDef, VariableDef } from './types';
+import type { AssetDef, InputConfig, SpriteDef, StageDef, VariableDef } from './types';
 
 export type TouchingTarget =
   | { kind: 'sprite'; spriteId: string }
@@ -20,6 +20,7 @@ export type IRExpr =
   | { kind: 'round'; value: IRExpr }
   | { kind: 'touching'; target: TouchingTarget }
   | { kind: 'keydown'; key: string }
+  | { kind: 'input'; bindingId: string }
   | { kind: 'mousedown' }
   | { kind: 'timer' };
 
@@ -55,6 +56,7 @@ export type IRNode =
 export type Hat =
   | { kind: 'flag' }
   | { kind: 'key'; key: string }
+  | { kind: 'input'; bindingId: string }
   | { kind: 'click' }
   | { kind: 'message'; message: string };
 
@@ -69,5 +71,6 @@ export interface CompiledProject {
   assets: AssetDef[];
   variables: VariableDef[];
   sprites: SpriteDef[];
+  input?: InputConfig;
   scripts: CompiledScript[];
 }

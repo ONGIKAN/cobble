@@ -148,3 +148,7 @@ cobble/
 4. 账号与云端保存、作品社区（远期）
 
 技术方案与完整路线图见 [docs/技术方案-v1.md](docs/技术方案-v1.md)。
+
+## License
+
+Apache License 2.0，见 [LICENSE](./LICENSE)。

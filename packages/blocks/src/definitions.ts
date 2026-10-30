@@ -1,6 +1,6 @@
 import * as Blockly from 'blockly';
 import 'blockly/blocks';
-import type { ProjectDoc } from '@cobble/project';
+import { displayName, inputConfig, type ProjectDoc } from '@cobble/project';
 import type { TFunc } from '@cobble/i18n';
 
 export const BLOCK_KEYS: Array<[string, string]> = [
@@ -36,6 +36,13 @@ function spriteOptions(project: ProjectDoc): Array<[string, string]> {
   return project.sprites.map((s) => [s.name, s.id]);
 }
 
+/** 输入事件下拉：来自工程的 input.bindings（默认 左/右/上/下/跳跃/动作） */
+function inputOptions(project: ProjectDoc, t: TFunc): Array<[string, string]> {
+  const bindings = inputConfig(project).bindings;
+  if (bindings.length === 0) return [['—', '']];
+  return bindings.map((b) => [displayName(b.name, (key) => String(t(key))), b.id]);
+}
+
 /** 依赖工程内容（素材/变量列表）生成下拉选项的积木，新增素材后需要重新定义 */
 function assetBlockDefs({ t, project }: BlockContext): Array<Record<string, unknown>> {
   return [
@@ -61,6 +68,21 @@ function assetBlockDefs({ t, project }: BlockContext): Array<Record<string, unkn
           ],
         },
       ],
+      output: 'Boolean',
+      style: 'sensing',
+    },
+    {
+      type: 'event_wheninput',
+      message0: t('blocks.events.wheninput'),
+      args0: [{ type: 'field_dropdown', name: 'INPUT', options: inputOptions(project, t) }],
+      nextStatement: null,
+      hat: 'cap',
+      style: 'events',
+    },
+    {
+      type: 'sensing_input',
+      message0: t('blocks.sensing.input'),
+      args0: [{ type: 'field_dropdown', name: 'INPUT', options: inputOptions(project, t) }],
       output: 'Boolean',
       style: 'sensing',
     },
@@ -110,6 +132,10 @@ export function defineAssetBlocks(context: BlockContext): void {
 
 /** 定义全部自定义积木（POC 42 块），重复调用安全 */
 export function defineGameBlocks({ t, project }: BlockContext): void {
+  const assetDefs = assetBlockDefs({ t, project });
+  const pick = (type: string) => assetDefs.filter((def) => (def as { type: string }).type === type);
+  const pickPrefix = (prefix: string) =>
+    assetDefs.filter((def) => (def as { type: string }).type.startsWith(prefix));
   const ops: Array<Record<string, unknown>> = [
     // ── 事件 ───────────────────────────────────────────────
     {
@@ -143,6 +169,7 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
       hat: 'cap',
       style: 'events',
     },
+    ...pick('event_wheninput'),
     {
       type: 'event_broadcast',
       message0: t('blocks.events.broadcast'),
@@ -317,7 +344,7 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
       style: 'looks',
     },
     // ── 声音 ───────────────────────────────────────────────
-    ...assetBlockDefs({ t, project }).filter((def) => (def as { type: string }).type === 'sound_play'),
+    ...pick('sound_play'),
     {
       type: 'sound_stop',
       message0: t('blocks.sound.stop'),
@@ -406,7 +433,8 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
       style: 'control',
     },
     // ── 侦测 ───────────────────────────────────────────────
-    ...assetBlockDefs({ t, project }).filter((def) => (def as { type: string }).type === 'sensing_touching'),
+    ...pick('sensing_touching'),
+    ...pick('sensing_input'),
     {
       type: 'sensing_keydown',
       message0: t('blocks.sensing.keydown'),
@@ -515,7 +543,7 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
       style: 'operators',
     },
     // ── 变量 ───────────────────────────────────────────────
-    ...assetBlockDefs({ t, project }).filter((def) => (def as { type: string }).type.startsWith('var_')),
+    ...pickPrefix('var_'),
   ];
 
   Blockly.defineBlocksWithJsonArray(ops);

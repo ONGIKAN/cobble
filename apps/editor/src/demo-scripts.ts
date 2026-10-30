@@ -11,7 +11,7 @@ import {
 
 function keyIf(ws: Blockly.Workspace, key: string, actionType: string, delta: number): Blockly.Block {
   const ifBlock = makeBlock(ws, 'control_if');
-  const condition = makeBlock(ws, 'sensing_keydown', { KEY: key });
+  const condition = makeBlock(ws, 'sensing_input', { INPUT: key });
   attachValue(ifBlock, 'COND', condition);
   const action = makeBlock(ws, actionType);
   attachValue(action, 'VALUE', num(ws, delta));
@@ -22,10 +22,10 @@ function keyIf(ws: Blockly.Workspace, key: string, actionType: string, delta: nu
 function buildCatWorkspace(ws: Blockly.Workspace): void {
   const flag = makeBlock(ws, 'event_whenflag');
   const forever = makeBlock(ws, 'control_forever');
-  const ifRight = keyIf(ws, 'ArrowRight', 'motion_changex', 7);
-  const ifLeft = keyIf(ws, 'ArrowLeft', 'motion_changex', -7);
-  const ifUp = keyIf(ws, 'ArrowUp', 'motion_changey', 7);
-  const ifDown = keyIf(ws, 'ArrowDown', 'motion_changey', -7);
+  const ifRight = keyIf(ws, 'right', 'motion_changex', 7);
+  const ifLeft = keyIf(ws, 'left', 'motion_changex', -7);
+  const ifUp = keyIf(ws, 'up', 'motion_changey', 7);
+  const ifDown = keyIf(ws, 'down', 'motion_changey', -7);
   const ifCoin = makeBlock(ws, 'control_if');
   attachValue(ifCoin, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: DEMO_SPRITE_COIN }));
   const addScore = makeBlock(ws, 'var_change', { VAR: DEMO_VAR_SCORE });

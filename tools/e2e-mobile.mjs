@@ -69,6 +69,28 @@ async function runPhone() {
   const after = await runtimeState(page);
   check('dpad right moves cat', Boolean(after && before && after.cat.x > before.cat.x), `x ${before?.cat.x} → ${after?.cat.x}`);
 
+  // 触屏摇杆（v0.5.0）：在 iframe 里找到摇杆，按住往右拖，小猫 x 应增大
+  const playerFrame = page.frames().find((frame) => frame.url().includes('player.html'));
+  const joystick = playerFrame?.locator('[data-testid="joystick"]');
+  const joystickVisible = joystick ? await joystick.isVisible() : false;
+  check('phone joystick visible', joystickVisible);
+  if (joystickVisible && joystick) {
+    const box = await joystick.boundingBox();
+    if (box) {
+      const cx = box.x + box.width / 2;
+      const cy = box.y + box.height / 2;
+      const x0 = (await runtimeState(page))?.cat?.x ?? 0;
+      await page.mouse.move(cx, cy);
+      await page.mouse.down();
+      await page.mouse.move(cx + box.width * 0.45, cy, { steps: 6 });
+      await page.waitForTimeout(650);
+      await page.mouse.up();
+      await page.waitForTimeout(200);
+      const x1 = (await runtimeState(page))?.cat?.x ?? 0;
+      check('phone joystick moves cat', x1 > x0, `x ${x0} → ${x1}`);
+    }
+  }
+
   check('sprite strip visible', await page.locator('[data-testid="sprite-strip"]').isVisible());
   await page.screenshot({ path: 'tools/shots/m-phone-stage.png' });
 

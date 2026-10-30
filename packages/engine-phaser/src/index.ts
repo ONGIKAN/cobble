@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import type { CompiledProject } from '@cobble/project';
 import type { EngineAdapter, InputState, SpriteVisual } from '@cobble/runtime';
+import { mountTouchControls, type TouchControls } from './touch';
 
 const FALLBACK_GIF =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -53,6 +54,7 @@ export class PhaserAdapter implements EngineAdapter {
   private volume = 100;
   private frameCallback: ((dtMs: number) => void) | null = null;
   private inputBound = false;
+  private touch: TouchControls | null = null;
 
   private onKeyDown = (event: KeyboardEvent): void => {
     if (isTypingTarget(event.target)) return;
@@ -123,6 +125,9 @@ export class PhaserAdapter implements EngineAdapter {
     });
 
     this.bindInput();
+    this.touch = project.input
+      ? mountTouchControls(container, project.input)
+      : null;
   }
 
   private createScene(scene: Phaser.Scene): void {
@@ -242,6 +247,7 @@ export class PhaserAdapter implements EngineAdapter {
   getInput(): InputState {
     const state: InputState = {
       keysDown: new Set(this.keys),
+      touchBindings: new Set(this.touch?.active ?? []),
       mouseDown: this.mouseDown,
       mousePressed: this.mousePressed,
       mouseX: this.pointer.x,
@@ -263,6 +269,8 @@ export class PhaserAdapter implements EngineAdapter {
 
   destroy(): void {
     this.unbindInput();
+    this.touch?.destroy();
+    this.touch = null;
     this.frameCallback = null;
     for (const text of this.texts.values()) text.destroy();
     this.texts.clear();

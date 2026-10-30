@@ -52,6 +52,27 @@ export interface VariableDef {
   value: number | string;
 }
 
+export interface InputBinding {
+  id: string;
+  name: string;
+  /** KeyboardEvent.code 列表：同一个输入事件可以绑定多个按键 */
+  keys: string[];
+}
+
+export interface TouchButtonDef {
+  id: string;
+  /** 指向 InputBinding.id */
+  bindingId: string;
+  label: string;
+}
+
+export interface InputConfig {
+  bindings: InputBinding[];
+  /** 显示原生虚拟摇杆（绑定 left/right/up/down 四个输入事件） */
+  joystick: boolean;
+  buttons: TouchButtonDef[];
+}
+
 export interface ProjectMeta {
   id: string;
   name: string;
@@ -65,6 +86,8 @@ export interface ProjectDoc {
   assets: AssetDef[];
   variables: VariableDef[];
   sprites: SpriteDef[];
+  /** 输入事件与触屏控件（可省略，省略时用 DEFAULT_INPUT） */
+  input?: InputConfig;
   /** spriteId -> Blockly 序列化状态（Blockly.serialization.workspaces.save） */
   scripts: Record<string, unknown>;
 }

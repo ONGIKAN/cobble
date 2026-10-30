@@ -4,6 +4,7 @@ import { compileProject } from '@cobble/blocks';
 import { switchLocale, type Locale } from '@cobble/i18n';
 import { sendRun, sendStop } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
+import { openInputSettings } from '../input-settings';
 import { useEditorStore } from '../store';
 import { REPO_URL, SITE_URL } from '../links';
 
@@ -60,6 +61,15 @@ export function Topbar() {
         <div className="topbar-files">
           <ProjectFileButtons />
         </div>
+
+        <button
+          type="button"
+          className="btn ghost topbar-controls"
+          data-testid="input-settings"
+          onClick={openInputSettings}
+        >
+          {t('toolbar.controls')}
+        </button>
 
         <div className="segmented" role="group" aria-label={t('toolbar.language')}>
           <button

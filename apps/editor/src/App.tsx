@@ -10,7 +10,9 @@ import { Inspector } from './components/Inspector';
 import { StatusBar } from './components/StatusBar';
 import { MobileTabs } from './components/MobileTabs';
 import { NewProjectDialog } from './components/NewProjectDialog';
+import { InputSettingsDialog } from './components/InputSettingsDialog';
 import { onNewProjectDialog } from './new-project';
+import { onInputSettings } from './input-settings';
 import { useCompact, type MobileTab } from './useCompact';
 
 let bootstrapped = false;
@@ -60,8 +62,10 @@ export function App() {
   const [tab, setTab] = useState<MobileTab>('stage');
   const [ready, setReady] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [inputOpen, setInputOpen] = useState(false);
 
   useEffect(() => onNewProjectDialog(() => setDialogOpen(true)), []);
+  useEffect(() => onInputSettings(() => setInputOpen(true)), []);
 
   useEffect(() => {
     bootstrap();
@@ -140,6 +144,7 @@ export function App() {
       )}
       {compact && <MobileTabs value={tab} onChange={setTab} />}
       <NewProjectDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
+      <InputSettingsDialog open={inputOpen} onClose={() => setInputOpen(false)} />
       <StatusBar />
     </div>
   );

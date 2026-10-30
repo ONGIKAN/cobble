@@ -3,6 +3,8 @@ import type { CompiledProject } from '@cobble/project';
 /** 引擎无关的输入快照（坐标为 Scratch 坐标系） */
 export interface InputState {
   keysDown: Set<string>;
+  /** 触屏控件当前按下的输入事件 id（摇杆/按钮） */
+  touchBindings: Set<string>;
   mouseDown: boolean;
   /** 本帧内按下（边沿），由适配器在每次 getInput 后清除 */
   mousePressed: boolean;

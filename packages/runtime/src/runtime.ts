@@ -67,12 +67,16 @@ export class Runtime {
   private threads: Thread[] = [];
   private input: InputState = {
     keysDown: new Set<string>(),
+    touchBindings: new Set<string>(),
     mouseDown: false,
     mousePressed: false,
     mouseX: 0,
     mouseY: 0,
   };
   private prevKeys = new Set<string>();
+  /** 输入事件 id -> 绑定的按键 code 列表 */
+  private bindingKeys = new Map<string, string[]>();
+  private prevBindings = new Set<string>();
   private timeMs = 0;
   private dt = 16.7;
   private accumulator = 0;
@@ -83,6 +87,7 @@ export class Runtime {
     this.adapter = adapter;
     this.project = project;
     for (const v of project.variables) this.variables.set(v.id, v.value);
+    for (const binding of project.input?.bindings ?? []) this.bindingKeys.set(binding.id, binding.keys);
     for (const sprite of project.sprites) {
       this.sprites.set(sprite.id, {
         id: sprite.id,
@@ -154,6 +159,23 @@ export class Runtime {
     this.runThreads();
     this.render();
     this.prevKeys = new Set(input.keysDown);
+    this.prevBindings = new Set(this.bindingIdsDown());
+  }
+
+  private bindingIdsDown(): string[] {
+    const ids: string[] = [];
+    for (const id of this.bindingKeys.keys()) {
+      if (this.bindingActive(id)) ids.push(id);
+    }
+    return ids;
+  }
+
+  /** 输入事件是否被按下：任一绑定按键按下，或触屏控件触发 */
+  private bindingActive(id: string): boolean {
+    if (this.input.touchBindings?.has(id)) return true;
+    const keys = this.bindingKeys.get(id);
+    if (!keys || keys.length === 0) return this.input.keysDown.has(id);
+    return keys.some((code) => this.input.keysDown.has(code));
   }
 
   private handleHats(input: InputState): void {
@@ -161,6 +183,10 @@ export class Runtime {
       if (script.hat.kind === 'key') {
         const key = script.hat.key;
         if (input.keysDown.has(key) && !this.prevKeys.has(key)) this.startThread(script);
+      }
+      if (script.hat.kind === 'input') {
+        const id = script.hat.bindingId;
+        if (this.bindingActive(id) && !this.prevBindings.has(id)) this.startThread(script);
       }
     }
     if (input.mousePressed) {
@@ -479,6 +505,8 @@ export class Runtime {
         return this.touching(spriteId, expr.target) ? 1 : 0;
       case 'keydown':
         return this.input.keysDown.has(expr.key) ? 1 : 0;
+      case 'input':
+        return this.bindingActive(expr.bindingId) ? 1 : 0;
       case 'mousedown':
         return this.input.mouseDown ? 1 : 0;
       case 'timer':

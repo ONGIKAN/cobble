@@ -11,7 +11,14 @@ const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
   {
     key: 'events',
     colour: '#bd8f45',
-    types: ['event_whenflag', 'event_whenkey', 'event_whenclick', 'event_whenmessage', 'event_broadcast'],
+    types: [
+      'event_whenflag',
+      'event_whenkey',
+      'event_wheninput',
+      'event_whenclick',
+      'event_whenmessage',
+      'event_broadcast',
+    ],
   },
   {
     key: 'motion',
@@ -47,7 +54,7 @@ const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
   {
     key: 'sensing',
     colour: '#4a958b',
-    types: ['sensing_touching', 'sensing_keydown', 'sensing_mousedown', 'sensing_timer'],
+    types: ['sensing_touching', 'sensing_input', 'sensing_keydown', 'sensing_mousedown', 'sensing_timer'],
   },
   {
     key: 'operators',

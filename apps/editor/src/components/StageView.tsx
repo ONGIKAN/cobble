@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compileProject } from '@cobble/blocks';
 import { sendRun, setPlayerFrame } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
+import { openInputSettings } from '../input-settings';
 import { StageSettings } from './StageSettings';
 import { useEditorStore } from '../store';
 import { useCoarsePointer } from '../useCompact';
@@ -91,6 +92,16 @@ export function StageView({ compact = false }: Props) {
         </span>
         <StageSettings />
         {compact && <ProjectFileButtons variant="inline" />}
+        {compact && (
+          <button
+            type="button"
+            className="mini-btn stage-inputs-btn"
+            data-testid="m-input-settings"
+            onClick={openInputSettings}
+          >
+            {t('toolbar.controls')}
+          </button>
+        )}
       </div>
       <div className="stage-body">
         <div className="stage-frame">

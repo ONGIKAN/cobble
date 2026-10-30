@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import {
   createDemoProject,
   type AssetDef,
+  type InputConfig,
   type ProjectDoc,
   type SpriteDef,
   type StageDef,
@@ -85,6 +86,7 @@ interface EditorState {
   removeVariable: (variableId: string) => void;
   setVariableValue: (variableId: string, value: number) => void;
   updateStage: (patch: Partial<StageDef>) => void;
+  updateInput: (input: InputConfig) => void;
   setRunning: (running: boolean) => void;
   setTheme: (theme: ThemeMode) => void;
   markSaved: () => void;
@@ -261,6 +263,8 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
     set((current) => ({
       project: touched({ ...current.project, stage: { ...current.project.stage, ...patch } }),
     })),
+  updateInput: (input) =>
+    set((current) => ({ project: touched({ ...current.project, input }) })),
   setRunning: (running) => set({ running }),
   setTheme: (theme) => {
     localStorage.setItem(THEME_KEY, theme);
