@@ -10,7 +10,7 @@ export interface ToolboxCategory {
 const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
   {
     key: 'events',
-    colour: '#bd8f45',
+    colour: '#7a8cb8',
     types: [
       'event_whenflag',
       'event_whenkey',
@@ -22,7 +22,7 @@ const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
   },
   {
     key: 'motion',
-    colour: '#547fab',
+    colour: '#5c93b0',
     types: [
       'motion_move',
       'motion_turnright',
@@ -42,27 +42,27 @@ const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
   },
   {
     key: 'looks',
-    colour: '#8d79b7',
+    colour: '#8f7fb8',
     types: ['looks_say', 'looks_show', 'looks_hide', 'looks_nextcostume', 'looks_switchcostume', 'looks_setsize', 'looks_layer'],
   },
   {
     key: 'sound',
-    colour: '#b27a9f',
+    colour: '#b07fa6',
     types: ['sound_play', 'sound_stop', 'sound_volume'],
   },
   {
     key: 'control',
-    colour: '#b79537',
+    colour: '#b0965f',
     types: ['control_wait', 'control_waituntil', 'control_repeat', 'control_forever', 'control_if', 'control_ifelse', 'control_stop'],
   },
   {
     key: 'sensing',
-    colour: '#4a958b',
+    colour: '#5a9e93',
     types: ['sensing_touching', 'sensing_input', 'sensing_keydown', 'sensing_mousedown', 'sensing_timer'],
   },
   {
     key: 'operators',
-    colour: '#629668',
+    colour: '#7aa26f',
     types: [
       'operators_arithmetic',
       'operators_compare',
@@ -75,7 +75,7 @@ const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
   },
   {
     key: 'variables',
-    colour: '#ac7c50',
+    colour: '#b0855f',
     types: ['var_set', 'var_change', 'var_get'],
   },
 ];

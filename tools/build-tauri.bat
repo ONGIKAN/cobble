@@ -5,7 +5,7 @@ if errorlevel 1 (
   echo [build-tauri] VsDevCmd failed
   exit /b 1
 )
-cd /d "%~dp0..\apps\desktop-tauri\src-tauri"
+cd /d "%~dp0..\apps\desktop\src-tauri"
 echo [build-tauri] cargo %*
 cargo %*
 exit /b %errorlevel%

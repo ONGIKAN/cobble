@@ -2,12 +2,12 @@ node_modules/
 apps/editor/dist/
 apps/desktop/editor-dist/
 apps/desktop/release/
-apps/desktop-tauri/src-tauri/target/
-apps/desktop-tauri/editor-dist/
+apps/desktop/src-tauri/target/
+
 apps/mobile/android/
 apps/mobile/node_modules/
 pages-dist/
 tools/shots/
 *.log
-apps/desktop-tauri/src-tauri/gen/
+apps/desktop/src-tauri/gen/
 apps/editor/dist-standalone/

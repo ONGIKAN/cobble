@@ -12,14 +12,14 @@ interface StyleSpec {
  * 与编辑器整体的工具化中性色更协调。
  */
 const BLOCK_STYLES: Record<string, StyleSpec> = {
-  events: { colourPrimary: '#bd8f45', colourSecondary: '#9c7335', colourTertiary: '#7c5a26' },
-  motion: { colourPrimary: '#547fab', colourSecondary: '#42678c', colourTertiary: '#31506e' },
-  looks: { colourPrimary: '#8d79b7', colourSecondary: '#72619a', colourTertiary: '#584c79' },
-  sound: { colourPrimary: '#b27a9f', colourSecondary: '#926485', colourTertiary: '#734f6a' },
-  control: { colourPrimary: '#b79537', colourSecondary: '#967a2b', colourTertiary: '#765f21' },
-  sensing: { colourPrimary: '#4a958b', colourSecondary: '#3b7a72', colourTertiary: '#2d5f58' },
-  operators: { colourPrimary: '#629668', colourSecondary: '#4f7a54', colourTertiary: '#3d5f42' },
-  variables: { colourPrimary: '#ac7c50', colourSecondary: '#8e653f', colourTertiary: '#704e31' },
+  events: { colourPrimary: '#7a8cb8', colourSecondary: '#62719a', colourTertiary: '#4b577c' },
+  motion: { colourPrimary: '#5c93b0', colourSecondary: '#4a7690', colourTertiary: '#385a6f' },
+  looks: { colourPrimary: '#8f7fb8', colourSecondary: '#75669a', colourTertiary: '#5a4e7a' },
+  sound: { colourPrimary: '#b07fa6', colourSecondary: '#946a8c', colourTertiary: '#775670' },
+  control: { colourPrimary: '#b0965f', colourSecondary: '#957c4a', colourTertiary: '#786237' },
+  sensing: { colourPrimary: '#5a9e93', colourSecondary: '#488277', colourTertiary: '#37645c' },
+  operators: { colourPrimary: '#7aa26f', colourSecondary: '#628455', colourTertiary: '#4a663d' },
+  variables: { colourPrimary: '#b0855f', colourSecondary: '#946d4a', colourTertiary: '#775638' },
 };
 
 const DARK_COMPONENTS = {

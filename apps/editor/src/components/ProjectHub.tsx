@@ -5,15 +5,20 @@ import { downloadProject, readProjectFile } from '../project-file';
 import {
   createEntry,
   deleteEntry,
+  deleteNative,
   duplicateEntry,
   entryThumb,
+  findEntry,
   loadLibrary,
+  mirrorNative,
   relativeTime,
   renameEntry,
   type ProjectEntry,
 } from '../library';
+import { isDesktopApp, nativeProjectsLocation } from '../native';
 import { routeToEditor } from '../routes';
-import { REPO_URL, SITE_URL } from '../links';
+import { CHANGELOG_URL, REPO_URL, SITE_URL } from '../links';
+import { APP_VERSION, IS_BETA } from '../version';
 import { useEditorStore } from '../store';
 import type { TemplateDefinition } from '../templates';
 import { NewProjectDialog } from './NewProjectDialog';
@@ -29,7 +34,16 @@ export function ProjectHub() {
   const [query, setQuery] = useState('');
   const importRef = useRef<HTMLInputElement>(null);
 
+  const [storePath, setStorePath] = useState('');
+
   const refresh = (): void => setEntries(loadLibrary().projects);
+
+  useEffect(() => {
+    if (!isDesktopApp()) return;
+    void nativeProjectsLocation()
+      .then(setStorePath)
+      .catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     refresh();
@@ -41,6 +55,7 @@ export function ProjectHub() {
 
   const createFromTemplate = (template: TemplateDefinition): void => {
     const entry = createEntry(template.project(), {}, template.id);
+    void mirrorNative(entry);
     routeToEditor(entry.id);
   };
 
@@ -52,6 +67,7 @@ export function ProjectHub() {
       return;
     }
     const entry = createEntry(result.value.project, result.value.workspaces);
+    void mirrorNative(entry);
     routeToEditor(entry.id);
   };
 
@@ -116,7 +132,7 @@ export function ProjectHub() {
       <main className="hub-main">
         <div className="hub-head">
           <div>
-            <h1>{t('hub.title')}</h1>
+            <h1>{IS_BETA ? <span className="beta-badge">BETA</span> : null}{t('hub.title')}</h1>
             <p className="hub-sub">
               {t('hub.subtitle', { count: entries.length })}
             </p>
@@ -180,8 +196,16 @@ export function ProjectHub() {
         )}
 
         <footer className="hub-foot">
-          <span>{t('hub.footNote')}</span>
-          <span className="mono">build 0.6.0</span>
+          <span>
+            {t('hub.footNote')}
+            {storePath && <span className="hub-store mono">{storePath}</span>}
+          </span>
+          <span className="hub-version mono">
+            v{APP_VERSION} ·{' '}
+            <a className="status-link" href={CHANGELOG_URL} target="_blank" rel="noreferrer" data-testid="hub-changelog-link">
+              {t('toolbar.changelog')}
+            </a>
+          </span>
         </footer>
       </main>
 
@@ -208,17 +232,20 @@ function ProjectCard({
     const name = window.prompt(t('hub.rename'), entry.name);
     if (name === null) return;
     renameEntry(entry.id, name);
+    void mirrorNative(findEntry(entry.id));
     onChange();
   };
 
   const duplicate = (): void => {
-    duplicateEntry(entry.id);
+    const copy = duplicateEntry(entry.id);
+    void mirrorNative(copy);
     onChange();
   };
 
   const remove = (): void => {
     if (!window.confirm(t('hub.confirmDelete', { name: entry.name }))) return;
     deleteEntry(entry.id);
+    void deleteNative(entry.id);
     onChange();
   };
 

@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
@@ -5,10 +6,16 @@ import path from 'node:path';
 const ROOT = import.meta.dirname;
 const REPO = path.resolve(ROOT, '../..');
 const pkg = (name: string) => path.join(REPO, 'packages', name, 'src', 'index.ts');
+const rootPkg = JSON.parse(fs.readFileSync(path.join(REPO, 'package.json'), 'utf8')) as { version: string };
+const channel = process.env.VITE_CHANNEL === 'beta' ? 'beta' : 'stable';
 
 export default defineConfig({
   root: ROOT,
   base: './',
+  define: {
+    __COBBLE_VERSION__: JSON.stringify(rootPkg.version),
+    __COBBLE_CHANNEL__: JSON.stringify(channel),
+  },
   plugins: [react()],
   resolve: {
     alias: {

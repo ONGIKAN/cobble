@@ -1879,3 +1879,22 @@ button {
 .stage-fullscreen-btn {
   margin-left: 6px;
 }
+
+/* 桌面版在工程管理页底部显示工程文件目录 */
+.hub-store {
+  margin-left: 10px;
+  color: var(--text-dim);
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.beta-badge {
+  margin-left: 8px;
+  padding: 0 6px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 16px;
+}

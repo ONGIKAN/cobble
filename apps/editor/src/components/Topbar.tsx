@@ -7,6 +7,7 @@ import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';
 import { updateEntry } from '../library';
 import { routeToProjects } from '../routes';
+import { IS_BETA } from '../version';
 import { useEditorStore } from '../store';
 import { REPO_URL, SITE_URL } from '../links';
 
@@ -44,7 +45,7 @@ export function Topbar() {
   return (
     <header className="topbar">
       <div className="brand">
-        <img className="brand-logo" src={`${import.meta.env.BASE_URL}logo.svg`} alt="" />
+        <img className="brand-logo" src={`${import.meta.env.BASE_URL}logo.svg`} alt="" />{IS_BETA ? <span className="beta-badge">BETA</span> : null}
         <div className="brand-text">
           <strong>{t('app.name')}</strong>
           <span className="brand-sub">{t('app.tagline')}</span>

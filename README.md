@@ -4,7 +4,7 @@
 
 用积木拼逻辑，一键运行 2D 小游戏。当前是 **P0 的可运行原型（M0）**：积木编辑 → 编译 IR → iframe 内 Phaser 运行时跑起来的完整链路已经打通，支持深浅主题、中英双语界面，以及手机 / 平板的触屏布局；积木是低饱和、直角、方正的外观。
 
-**[官网](https://ongikan.github.io/cobble/)** · **[在线演示](https://ongikan.github.io/cobble/demo/)** · **[GitHub 仓库](https://github.com/ONGIKAN/cobble)**
+**[官网](https://ongikan.github.io/cobble/)** · **[在线演示（稳定版）](https://ongikan.github.io/cobble/demo/)** · **[测试版在线演示](https://ongikan.github.io/cobble/demo-beta/)** · **[GitHub 仓库](https://github.com/ONGIKAN/cobble)**
 
 ![编辑器（深色）](docs/screenshots/01-editor-dark.png)
 
@@ -34,7 +34,8 @@ npm run dev          # 打开 http://127.0.0.1:5183
 - 点右上角 **运行** 或直接按方向键，小猫会左右上下移动，碰到金币分数 +1，金币随机换位置
 - **停止** 结束运行；**中文 / EN** 切换界面语言（会整页重载）；**浅色 / 深色** 切换主题
 - 顶栏 **保存工程 / 打开工程**：下载 `.gproj`（工程 + 各角色积木数据）或载入之前保存的文件；手机上入口在舞台页头部
-- 所有修改自动保存到 localStorage（`cobble.autosave`），刷新页面不会丢
+- 所有修改自动保存到 localStorage；桌面版（Tauri）会同时写入 `<应用数据目录>/projects/<id>.gproj`，可直接备份或拷走
+- 底栏显示当前版本号，点击版本号打开官网更新日志
 
 其他命令：
 
@@ -48,6 +49,21 @@ npm run smoke:mobile # 手机（390×844）/ 平板（820×1180）触屏冒烟�
 
 冒烟测试用 `playwright-core` 驱动本机 Microsoft Edge（`C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`），会验证：编辑器加载、角色列表、积木渲染、iframe 运行、方向键移动、金币碰撞加分、停止清理、保存/打开 `.gproj`、主题切换、中英切换、控制台无报错，并把截图写到 `tools/shots/`；`smoke:mobile` 额外验证紧凑布局、底部标签页、屏幕方向键、角色快捷条、手机端工程文件入口与触屏交互。
 
+## 桌面版（Tauri）
+
+桌面端只用 **Tauri 2**（已移除 Electron 方案）：
+
+```bash
+npm run build                      # 先构建编辑器
+./tools/build-tauri.bat build --release
+# 产物：apps/desktop/src-tauri/target/release/cobble-studio.exe
+```
+
+- 前端通过自定义 `app://` 协议加载构建产物，避免 `file://` 下 ES module 被 CORS 拦
+- Rust 侧提供 `list_projects` / `read_project` / `write_project` / `delete_project` / `projects_location` 命令，工程文件落在应用数据目录的 `projects/` 下（Windows 一般是 `%APPDATA%/studio.cobble.app/projects`）
+- 桌面版启动时会把 localStorage 工程库与磁盘上的 `.gproj` 对齐；编辑器里每次自动保存也会同步写盘，工程管理页底部会显示该目录
+- 需要 MSVC（Visual Studio Build Tools / Community）与 Rust 工具链；`tools/build-tauri.bat` 会自动 `call VsDevCmd`
+
 ## 发布官网与演示
 
 站点分三块，互相链接：
@@ -55,8 +71,11 @@ npm run smoke:mobile # 手机（390×844）/ 平板（820×1180）触屏冒烟�
 | 页面 | 地址 | 来源 |
 | --- | --- | --- |
 | 官网 | `https://ongikan.github.io/cobble/` | `site/` |
-| 在线演示 | `https://ongikan.github.io/cobble/demo/` | `apps/editor/dist` 构建产物 |
+| 在线演示（稳定版） | `https://ongikan.github.io/cobble/demo/` | `apps/editor/dist`（`VITE_CHANNEL=stable`） |
+| 测试版演示 | `https://ongikan.github.io/cobble/demo-beta/` | `apps/editor/dist`（`VITE_CHANNEL=beta`，界面带 BETA 标记） |
 | 源码 | `https://github.com/ONGIKAN/cobble` | 本仓库 `main` 分支 |
+
+发布通道约定：常规小更新先发到 `/demo-beta/`（只有在线体验，不打包桌面版与安卓版），确认无误后再把稳定版发到 `/demo/`。`publish-pages.mjs` 会连续构建两个通道并分别放到 `pages-dist/demo` 与 `pages-dist/demo-beta`。
 
 ```bash
 node tools/publish-pages.mjs                    # 构建 + 组装 pages-dist，本地可先验证
@@ -74,10 +93,11 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 | --- | --- |
 | `packages/project` | 工程数据模型（ProjectDoc）、IR 类型、zod 校验、示例工程「小猫吃金币」 |
 | `packages/i18n` | i18next 初始化、中英文资源包、语言检测/持久化、整页切换 |
-| `packages/blocks` | 43 种自定义积木（事件 5 / 运动 10 / 外观 6 / 声音 3 / 控制 6 / 侦测 4 / 运算 6 / 变量 3）、8 分类工具箱、Blockly → IR 编译器 |
+| `packages/blocks` | 51 种自定义积木（含输入事件、换成指定造型、x/y/方向 reporter、等待直到、移到角色等能力块）、8 分类工具箱、Blockly → IR 编译器 |
 | `packages/runtime` | 引擎无关的积木解释器：每帧指令预算、固定 60Hz 逻辑帧、hat 事件、广播、碰撞、变量表 |
 | `packages/engine-phaser` | Phaser 4 适配器：纹理预加载、Scratch 坐标系换算、朝向/翻转、说话气泡、键鼠输入 |
-| `apps/editor` | 三栏编辑器：角色/变量栏、舞台（iframe 预览）、Blockly 工作区、属性检查器；深浅主题；自动保存；运行/停止 |
+| `apps/editor` | 三栏编辑器：角色/变量栏、舞台（iframe 预览）、Blockly 工作区、属性检查器；工程管理页、模板、输入设置、全屏运行；深浅主题；自动保存 |
+| `apps/desktop` | Tauri 2 桌面壳（不再使用 Electron）：内置构建产物，工程文件以 `.gproj` 保存在系统应用数据目录，自动保存并可直接备份 |
 | 工程文件 | 顶栏「保存工程 / 打开工程」：`.gproj`（JSON，含工程与各角色 Blockly 工作区，素材内联为 data URL），打开后整页重载；手机入口在舞台页头部 |
 | 单文件导出 | 顶栏「导出 HTML5」：把工程编译成运行时指令，连同 Phaser 播放器、素材一起内联成一个 `.html`，双击即玩、离线可用；打开后显示变量 HUD 与官网链接 |
 | 素材与角色 | 新建/删除角色、上传图片造型（PNG/JPEG/WebP/GIF/SVG ≤2MB，可改名/排序/删除）、上传音效（MP3/WAV/OGG/WebM ≤5MB，可试听/改名/删除）、变量增删改名改值、舞台背景色与尺寸预设（960×540 / 1280×720 / 640×360） |

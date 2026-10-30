@@ -40,9 +40,16 @@ const run = (command, args, options = {}) => {
 };
 
 // 1) 构建编辑器（官网是纯静态，无需构建）
-console.log('== build editor ==');
-execSync('npm run build', { stdio: 'inherit', cwd: root });
+//    稳定版 -> pages-dist/demo，测试版 -> pages-dist/demo-beta（VITE_CHANNEL=beta）
+console.log('== build standalone player ==');
+execSync('npm run build:standalone', { stdio: 'inherit', cwd: root });
 
+console.log('== build editor (stable) ==');
+execSync('npm --workspace @cobble/editor run build', {
+  stdio: 'inherit',
+  cwd: root,
+  env: { ...process.env, VITE_CHANNEL: 'stable' },
+});
 if (!existsSync(dist)) {
   throw new Error(`missing build output: ${dist}`);
 }
@@ -55,6 +62,15 @@ cpSync(site, staging, { recursive: true });
 cpSync(dist, join(staging, 'demo'), { recursive: true });
 writeFileSync(join(staging, '.nojekyll'), '');
 writeFileSync(join(staging, 'demo', '.nojekyll'), '');
+
+console.log('== build editor (beta) ==');
+execSync('npm --workspace @cobble/editor run build', {
+  stdio: 'inherit',
+  cwd: root,
+  env: { ...process.env, VITE_CHANNEL: 'beta' },
+});
+cpSync(dist, join(staging, 'demo-beta'), { recursive: true });
+writeFileSync(join(staging, 'demo-beta', '.nojekyll'), '');
 
 const walk = (dir) => {
   const entries = [];

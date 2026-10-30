@@ -6,6 +6,7 @@ import { chromium } from 'playwright-core';
 const BASE = process.env.PAGES_BASE ?? 'http://127.0.0.1:8133';
 const SITE = `${BASE}/`;
 const DEMO = `${BASE}/demo/`;
+const DEMO_BETA = `${BASE}/demo-beta/`;
 const REPO = 'https://github.com/ONGIKAN/cobble';
 const SHOTS = 'tools/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -44,6 +45,25 @@ check('site: screenshots loaded', imgOk);
 const demoHref = await sitePage.locator('a[href="./demo/"]').first().getAttribute('href');
 check('site: links to demo', demoHref === './demo/', String(demoHref));
 check('site: links to repo', (await sitePage.locator(`a[href="${REPO}"]`).count()) > 0);
+check('site: beta demo link', (await sitePage.locator('a[href="./demo-beta/"]').count()) >= 2);
+
+{
+  const betaPage = await site.newPage();
+  watch(betaPage, 'beta');
+  await betaPage.goto(DEMO_BETA, { waitUntil: 'networkidle' });
+  await betaPage.waitForTimeout(1200);
+  check('beta: hub visible', (await betaPage.locator('[data-testid^="project-card-"]').count()) >= 1);
+  check('beta: badge visible', (await betaPage.locator('.beta-badge').count()) >= 1);
+  const card = betaPage.locator('[data-testid^="project-open-"]').first();
+  await card.click();
+  await betaPage.waitForTimeout(1800);
+  const frame = betaPage.frames().find((f) => f.url().includes('player.html'));
+  check('beta: runtime running', Boolean(frame), betaPage.url());
+  const status = await betaPage.locator('[data-testid="status-changelog-link"]').innerText();
+  check('beta: status shows beta', status.includes('beta'), status);
+  await betaPage.screenshot({ path: `${SHOTS}/pages-beta.png` });
+  await betaPage.close();
+}
 await sitePage.screenshot({ path: `${SHOTS}/site-zh.png` });
 
 await sitePage.locator('#lang-toggle').click();

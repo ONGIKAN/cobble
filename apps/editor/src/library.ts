@@ -1,4 +1,12 @@
 import { createDemoProject, type ProjectDoc } from '@cobble/project';
+import { parseProjectFile } from './project-file';
+import {
+  deleteNativeProject,
+  isDesktopApp,
+  listNativeProjectIds,
+  readNativeProject,
+  writeNativeProject,
+} from './native';
 
 export const LIBRARY_KEY = 'cobble.library';
 export const AUTOSAVE_KEY = 'cobble.autosave';
@@ -99,7 +107,7 @@ export function createEntry(
   const now = new Date().toISOString();
   const entry: ProjectEntry = {
     id: newProjectId(),
-    name: name ?? project.meta.name,
+    name: project.meta.name,
     createdAt: now,
     updatedAt: now,
     project,
@@ -189,4 +197,86 @@ export function relativeTime(iso: string, locale: string): string {
   const days = Math.round(hours / 24);
   if (days < 30) return formatter.format(-days, 'day');
   return new Date(iso).toLocaleDateString(locale);
+}
+
+/** 工程的可持久化快照（磁盘 .gproj 与导出的 .gproj 同格式） */
+export function entrySnapshot(entry: ProjectEntry): string {
+  return JSON.stringify(
+    { format: 'cobble-studio', version: 1, project: entry.project, workspaces: entry.workspaces },
+    null,
+    2,
+  );
+}
+
+/**
+ * 桌面版启动时把工程库与磁盘上的 .gproj 对齐：
+ * 磁盘有而本地没有的导入，本地有而磁盘没有的补写，两边都有的取较新的版本。
+ */
+export async function syncDesktopLibrary(): Promise<boolean> {
+  if (!isDesktopApp()) return false;
+  let changed = false;
+  try {
+    const ids = new Set(await listNativeProjectIds());
+    const library = loadLibrary();
+    for (const id of ids) {
+      try {
+        const parsed = parseProjectFile(await readNativeProject(id));
+        if (!parsed.ok) continue;
+        const { project, workspaces } = parsed.value;
+        const existing = library.projects.find((entry) => entry.id === id);
+        if (!existing) {
+          library.projects.push({
+            id,
+            name: project.meta.name,
+            createdAt: project.meta.updatedAt,
+            updatedAt: project.meta.updatedAt,
+            project,
+            workspaces,
+          });
+          changed = true;
+        } else if (project.meta.updatedAt > existing.updatedAt) {
+          existing.name = project.meta.name || existing.name;
+          existing.updatedAt = project.meta.updatedAt;
+          existing.project = project;
+          existing.workspaces = workspaces;
+          changed = true;
+        }
+      } catch {
+        // 单个文件读失败不影响其它工程
+      }
+    }
+    if (changed) saveLibrary(library);
+    for (const entry of library.projects) {
+      if (!ids.has(entry.id)) {
+        try {
+          await writeNativeProject(entry.id, entrySnapshot(entry));
+        } catch {
+          // 首次补写失败时下次启动再试
+        }
+      }
+    }
+  } catch {
+    return false;
+  }
+  return changed;
+}
+
+/** 桌面版：把一条工程写回磁盘（自动保存与手动操作共用） */
+export async function mirrorNative(entry: ProjectEntry | null): Promise<void> {
+  if (!entry || !isDesktopApp()) return;
+  try {
+    await writeNativeProject(entry.id, entrySnapshot(entry));
+  } catch {
+    // 磁盘写入失败不影响编辑，localStorage 里仍有副本
+  }
+}
+
+/** 桌面版：删除磁盘上的工程文件 */
+export async function deleteNative(projectId: string): Promise<void> {
+  if (!isDesktopApp()) return;
+  try {
+    await deleteNativeProject(projectId);
+  } catch {
+    // 文件不存在或权限不足时忽略
+  }
 }

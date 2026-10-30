@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEditorStore } from './store';
-import { findEntry, updateEntry } from './library';
+import { findEntry, mirrorNative, updateEntry } from './library';
 import { routeToProjects } from './routes';
 import { bootstrapBlocks, refreshAssetBlocks } from './block-defs';
 import { TEMPLATES } from './templates';
@@ -98,6 +98,7 @@ export function App({ projectId }: { projectId: string }) {
       timer = window.setTimeout(() => {
         try {
           updateEntry(projectId, state.project, state.workspaces);
+          void mirrorNative(findEntry(projectId));
           useEditorStore.getState().markSaved();
         } catch {
           // 存储配额不足时静默失败，不影响编辑

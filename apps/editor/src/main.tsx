@@ -5,6 +5,7 @@ import { App } from './App';
 import { ProjectHub } from './components/ProjectHub';
 import { parseRoute, routeToProjects, type Route } from './routes';
 import { THEME_KEY } from './store';
+import { syncDesktopLibrary } from './library';
 import './styles/global.css';
 
 const locale = detectLocale();
@@ -16,6 +17,13 @@ document.documentElement.dataset.theme = storedTheme === 'light' ? 'light' : 'da
 
 function Root() {
   const [route, setRoute] = useState<Route>(() => parseRoute());
+  const [libraryRevision, setLibraryRevision] = useState(0);
+
+  useEffect(() => {
+    void syncDesktopLibrary().then((changed) => {
+      if (changed) setLibraryRevision((value) => value + 1);
+    });
+  }, []);
 
   useEffect(() => {
     if (!location.hash) routeToProjects();
@@ -25,7 +33,7 @@ function Root() {
   }, []);
 
   if (route.view === 'editor') return <App projectId={route.projectId} />;
-  return <ProjectHub />;
+  return <ProjectHub key={libraryRevision} />;
 }
 
 const rootElement = document.getElementById('root');

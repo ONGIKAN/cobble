@@ -591,3 +591,88 @@ h3 {
     scroll-behavior: auto;
   }
 }
+
+.brand-ver {
+  margin-left: 8px;
+  padding: 2px 6px;
+  border: 1px solid var(--line-strong);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.release-list {
+  list-style: none;
+  display: grid;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.release {
+  border: 1px solid var(--line);
+  padding: 18px 20px;
+  background: var(--panel);
+}
+
+.release.is-current {
+  border-color: var(--accent);
+}
+
+.release-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.release-ver {
+  font-family: var(--mono);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.release-date {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.release-tag {
+  font-size: 11px;
+  padding: 1px 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.release-tagline {
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.release ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.release li {
+  list-style: square;
+}
+
+.hub-version a {
+  color: var(--accent);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+}
