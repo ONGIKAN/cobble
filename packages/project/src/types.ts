@@ -59,11 +59,22 @@ export interface InputBinding {
   keys: string[];
 }
 
+/** 触屏控件在屏幕的哪一侧 */
+export type PadSide = 'left' | 'right';
+
 export interface TouchButtonDef {
   id: string;
   /** 指向 InputBinding.id */
   bindingId: string;
   label: string;
+  /** 图标（emoji 或 1–2 个字符）；设置了图标时按钮内显示图标 + 小字标签 */
+  icon?: string;
+  /** 按钮尺寸覆盖（默认跟随工程 buttonSize） */
+  size?: PadSize;
+  /** 按钮在屏幕左侧还是右侧（默认 right） */
+  side?: PadSide;
+  /** 背景不透明度 10–100（默认 62） */
+  opacity?: number;
 }
 
 export type PadSize = 'sm' | 'md' | 'lg';
@@ -81,6 +92,10 @@ export interface InputConfig {
   buttonSize?: PadSize;
   /** 触屏互动模式（默认 pad） */
   touchMode?: TouchMode;
+  /** 摇杆在屏幕左侧还是右侧（默认 left） */
+  joystickSide?: PadSide;
+  /** 摇杆不透明度 10–100（默认 55） */
+  joystickOpacity?: number;
   buttons: TouchButtonDef[];
 }
 

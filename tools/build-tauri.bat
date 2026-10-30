@@ -11,6 +11,12 @@ if /i "%~1"=="tauri" (
   npx tauri build --bundles nsis
   exit /b %errorlevel%
 )
+if /i "%~1"=="player" (
+  cd /d "%~dp0..\apps\game-player"
+  echo [build-tauri] npx tauri build --no-bundle
+  npx tauri build --no-bundle
+  exit /b %errorlevel%
+)
 cd /d "%~dp0..\apps\desktop\src-tauri"
 echo [build-tauri] cargo %*
 cargo %*

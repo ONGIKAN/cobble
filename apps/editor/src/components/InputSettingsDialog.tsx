@@ -3,13 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { displayName, inputConfig, keyLabel, type InputConfig } from '@cobble/project';
 import { refreshAssetBlocks } from '../block-defs';
 import { useEditorStore } from '../store';
+import { TouchControlsPanel } from './TouchControlsPanel';
 
 interface Props {
   open: boolean;
   onClose: () => void;
 }
 
-/** 输入设置：把操作抽象成输入事件（可绑定多个按键），并配置触屏摇杆/按钮 */
+type Tab = 'bindings' | 'touch';
+
+/** 输入设置：左侧把操作抽象成输入事件（可绑定多个按键），右侧是触屏控件面板 */
 export function InputSettingsDialog({ open, onClose }: Props) {
   if (!open) return null;
   return <DialogBody onClose={onClose} />;
@@ -22,6 +25,7 @@ function DialogBody({ onClose }: { onClose: () => void }) {
   const initial = useMemo(() => cloneInput(inputConfig(project)), [project]);
   const [config, setConfig] = useState<InputConfig>(initial);
   const [capturing, setCapturing] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>('bindings');
 
   useEffect(() => {
     if (!capturing) return;
@@ -76,21 +80,6 @@ function DialogBody({ onClose }: { onClose: () => void }) {
     }));
   };
 
-  const addButton = (): void => {
-    const id = `btn_${Date.now().toString(36)}`;
-    setConfig((current) => ({
-      ...current,
-      buttons: [
-        ...current.buttons,
-        {
-          id,
-          label: t('inputs.defaultName', { index: current.buttons.length + 1 }),
-          bindingId: current.bindings[0]?.id ?? '',
-        },
-      ],
-    }));
-  };
-
   return (
     <div className="modal-overlay" onPointerDown={(event) => event.target === event.currentTarget && onClose()}>
       <div className="modal modal-inputs" role="dialog" aria-modal="true" data-testid="input-settings-dialog">
@@ -104,204 +93,105 @@ function DialogBody({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
+        <div className="modal-tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'bindings'}
+            className={`modal-tab${tab === 'bindings' ? ' is-active' : ''}`}
+            data-testid="input-tab-bindings"
+            onClick={() => setTab('bindings')}
+          >
+            {t('inputs.tabBindings')}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'touch'}
+            className={`modal-tab${tab === 'touch' ? ' is-active' : ''}`}
+            data-testid="input-tab-touch"
+            onClick={() => setTab('touch')}
+          >
+            {t('inputs.tabTouch')}
+          </button>
+        </div>
+
         <div className="modal-body">
-          <section className="input-section">
-            <div className="input-section-head">
-              <h3>{t('inputs.bindings')}</h3>
-              <button type="button" className="mini-btn" data-testid="add-input-binding" onClick={addBinding}>
-                ＋
-              </button>
-            </div>
-            <ul className="binding-list">
-              {config.bindings.map((binding) => (
-                <li key={binding.id} className="binding-row" data-testid="binding-row">
-                  <input
-                    className="field-input binding-name"
-                    value={displayName(binding.name, (key) => String(t(key)))}
-                    data-testid={`binding-name-${binding.id}`}
-                    onChange={(event) =>
-                      setConfig((current) => ({
-                        ...current,
-                        bindings: current.bindings.map((item) =>
-                          item.id === binding.id ? { ...item, name: event.target.value } : item,
-                        ),
-                      }))
-                    }
-                  />
-                  <div className="binding-keys">
-                    {binding.keys.map((code) => (
-                      <span key={code} className="key-chip">
-                        {keyLabel(code)}
-                        <button
-                          type="button"
-                          className="key-chip-remove"
-                          data-testid={`binding-key-${binding.id}-${code}`}
-                          onClick={() =>
-                            setConfig((current) => ({
-                              ...current,
-                              bindings: current.bindings.map((item) =>
-                                item.id === binding.id
-                                  ? { ...item, keys: item.keys.filter((key) => key !== code) }
-                                  : item,
-                              ),
-                            }))
-                          }
-                        >
-                          ✕
-                        </button>
-                      </span>
-                    ))}
+          {tab === 'bindings' && (
+            <section className="input-section">
+              <div className="input-section-head">
+                <div>
+                  <h3>{t('inputs.bindings')}</h3>
+                  <p className="touch-hint">{t('inputs.bindingsHint')}</p>
+                </div>
+                <button type="button" className="mini-btn" data-testid="add-input-binding" onClick={addBinding}>
+                  ＋
+                </button>
+              </div>
+              <ul className="binding-list">
+                {config.bindings.map((binding) => (
+                  <li key={binding.id} className="binding-row" data-testid="binding-row">
+                    <input
+                      className="field-input binding-name"
+                      value={displayName(binding.name, (key) => String(t(key)))}
+                      data-testid={`binding-name-${binding.id}`}
+                      onChange={(event) =>
+                        setConfig((current) => ({
+                          ...current,
+                          bindings: current.bindings.map((item) =>
+                            item.id === binding.id ? { ...item, name: event.target.value } : item,
+                          ),
+                        }))
+                      }
+                    />
+                    <div className="binding-keys">
+                      {binding.keys.map((code) => (
+                        <span key={code} className="key-chip">
+                          {keyLabel(code)}
+                          <button
+                            type="button"
+                            className="key-chip-remove"
+                            data-testid={`binding-key-${binding.id}-${code}`}
+                            onClick={() =>
+                              setConfig((current) => ({
+                                ...current,
+                                bindings: current.bindings.map((item) =>
+                                  item.id === binding.id
+                                    ? { ...item, keys: item.keys.filter((key) => key !== code) }
+                                    : item,
+                                ),
+                              }))
+                            }
+                          >
+                            ✕
+                          </button>
+                        </span>
+                      ))}
+                      <button
+                        type="button"
+                        className={`mini-btn${capturing === binding.id ? ' is-capturing' : ''}`}
+                        data-testid={`add-key-${binding.id}`}
+                        onClick={() => setCapturing(binding.id)}
+                      >
+                        {capturing === binding.id ? t('inputs.pressKey') : t('inputs.addKey')}
+                      </button>
+                    </div>
                     <button
                       type="button"
-                      className={`mini-btn${capturing === binding.id ? ' is-capturing' : ''}`}
-                      data-testid={`add-key-${binding.id}`}
-                      onClick={() => setCapturing(binding.id)}
+                      className="icon-btn icon-danger"
+                      data-testid={`remove-binding-${binding.id}`}
+                      title={t('inputs.removeBinding')}
+                      onClick={() => removeBinding(binding.id)}
                     >
-                      {capturing === binding.id ? t('inputs.pressKey') : t('inputs.addKey')}
+                      ✕
                     </button>
-                  </div>
-                  <button
-                    type="button"
-                    className="icon-btn icon-danger"
-                    data-testid={`remove-binding-${binding.id}`}
-                    title={t('inputs.removeBinding')}
-                    onClick={() => removeBinding(binding.id)}
-                  >
-                    ✕
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-          <section className="input-section">
-            <h3>{t('inputs.touch')}</h3>
-            <div className="input-section-head">
-              <h4>{t('inputs.touchMode')}</h4>
-            </div>
-            <div className="input-mode-row" data-testid="input-touch-mode">
-              <button
-                type="button"
-                className={`seg-btn${(config.touchMode ?? 'pad') === 'pad' ? ' is-active' : ''}`}
-                data-testid="touch-mode-pad"
-                onClick={() => setConfig((current) => ({ ...current, touchMode: 'pad' }))}
-              >
-                {t('inputs.modePad')}
-              </button>
-              <button
-                type="button"
-                className={`seg-btn${(config.touchMode ?? 'pad') === 'direct' ? ' is-active' : ''}`}
-                data-testid="touch-mode-direct"
-                onClick={() => setConfig((current) => ({ ...current, touchMode: 'direct' }))}
-              >
-                {t('inputs.modeDirect')}
-              </button>
-            </div>
-
-            <div className="input-size-row">
-              <label className="check-row">
-                <span>{t('inputs.sizes')}</span>
-              </label>
-              <select
-                className="field-input"
-                data-testid="input-joystick-size"
-                value={config.joystickSize ?? 'md'}
-                onChange={(event) =>
-                  setConfig((current) => ({ ...current, joystickSize: event.target.value as InputConfig['joystickSize'] }))
-                }
-              >
-                <option value="sm">{t('inputs.sizeSm')}</option>
-                <option value="md">{t('inputs.sizeMd')}</option>
-                <option value="lg">{t('inputs.sizeLg')}</option>
-              </select>
-              <select
-                className="field-input"
-                data-testid="input-button-size"
-                value={config.buttonSize ?? 'md'}
-                onChange={(event) =>
-                  setConfig((current) => ({ ...current, buttonSize: event.target.value as InputConfig['buttonSize'] }))
-                }
-              >
-                <option value="sm">{t('inputs.sizeSm')}</option>
-                <option value="md">{t('inputs.sizeMd')}</option>
-                <option value="lg">{t('inputs.sizeLg')}</option>
-              </select>
-            </div>
-
-            {(config.touchMode ?? 'pad') === 'pad' && (
-              <label className="check-row">
-                <input
-                  type="checkbox"
-                  data-testid="input-joystick"
-                  checked={config.joystick}
-                  onChange={(event) => setConfig((current) => ({ ...current, joystick: event.target.checked }))}
-                />
-                <span>{t('inputs.joystick')}</span>
-              </label>
-            )}
-
-            {(config.touchMode ?? 'pad') === 'pad' && (
-              <>
-                <div className="input-section-head">
-                  <h4>{t('inputs.buttons')}</h4>
-                  <button type="button" className="mini-btn" data-testid="add-touch-button" onClick={addButton}>
-                    ＋
-                  </button>
-                </div>
-                <ul className="binding-list">
-              {config.buttons.map((button) => (
-                <li key={button.id} className="binding-row touch-row" data-testid="touch-button-row">
-                  <input
-                    className="field-input"
-                    value={displayName(button.label, (key) => String(t(key)))}
-                    data-testid={`touch-button-label-${button.id}`}
-                    onChange={(event) =>
-                      setConfig((current) => ({
-                        ...current,
-                        buttons: current.buttons.map((item) =>
-                          item.id === button.id ? { ...item, label: event.target.value } : item,
-                        ),
-                      }))
-                    }
-                  />
-                  <select
-                    className="field-input"
-                    value={button.bindingId}
-                    data-testid={`touch-button-binding-${button.id}`}
-                    onChange={(event) =>
-                      setConfig((current) => ({
-                        ...current,
-                        buttons: current.buttons.map((item) =>
-                          item.id === button.id ? { ...item, bindingId: event.target.value } : item,
-                        ),
-                      }))
-                    }
-                  >
-                    {config.bindings.map((binding) => (
-                      <option key={binding.id} value={binding.id}>
-                        {displayName(binding.name, (key) => String(t(key)))}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    className="icon-btn icon-danger"
-                    data-testid={`remove-touch-button-${button.id}`}
-                    onClick={() =>
-                      setConfig((current) => ({
-                        ...current,
-                        buttons: current.buttons.filter((item) => item.id !== button.id),
-                      }))
-                    }
-                  >
-                    ✕
-                  </button>
-                </li>
-              ))}
-            </ul>
-              </>
-            )}
-          </section>
+          {tab === 'touch' && <TouchControlsPanel config={config} onChange={setConfig} />}
         </div>
 
         <div className="modal-foot">
@@ -321,6 +211,8 @@ function cloneInput(input: InputConfig): InputConfig {
   return {
     joystick: input.joystick,
     joystickSize: input.joystickSize ?? 'md',
+    joystickSide: input.joystickSide ?? 'left',
+    joystickOpacity: input.joystickOpacity ?? 55,
     buttonSize: input.buttonSize ?? 'md',
     touchMode: input.touchMode ?? 'pad',
     bindings: input.bindings.map((binding) => ({ ...binding, keys: [...binding.keys] })),

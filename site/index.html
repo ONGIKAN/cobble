@@ -28,7 +28,7 @@
       <a class="brand" href="./">
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <span class="brand-name">Cobble Studio</span>
-        <span class="brand-ver" title="当前版本">v0.12.4</span>
+        <span class="brand-ver" title="当前版本">v0.13.0</span>
       </a>
       <nav class="site-nav">
         <a href="#features"><span class="zh">功能</span><span class="en">Features</span></a>
@@ -167,8 +167,8 @@
             <figcaption><span class="zh">工程管理页 · 我的工程</span><span class="en">Project hub · my projects</span></figcaption>
           </figure>
           <figure class="shot">
-            <img src="./assets/fighting.png" alt="横版格斗示例游戏" loading="lazy" />
-            <figcaption><span class="zh">示例游戏 · 横版格斗（命中对手 HP -1）</span><span class="en">Demo game · brawler (hit lands, rival HP -1)</span></figcaption>
+            <img src="./assets/snake.png" alt="贪吃蛇示例游戏" loading="lazy" />
+            <figcaption><span class="zh">示例游戏 · 贪吃蛇（方向转向 / 吃苹果变长 / 撞墙结束）</span><span class="en">Demo game · Snake (steer, grow on apples, game over on walls)</span></figcaption>
           </figure>
           <figure class="shot">
             <img src="./assets/templates.png" alt="新建工程模板选择" loading="lazy" />
@@ -177,18 +177,6 @@
           <figure class="shot">
             <img src="./assets/02-editor-light.png" alt="浅色主题" loading="lazy" />
             <figcaption><span class="zh">桌面 · 浅色主题</span><span class="en">Desktop · light theme</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <img src="./assets/dot-maze.png" alt="吃豆豆示例游戏" loading="lazy" />
-            <figcaption><span class="zh">示例游戏 · 吃豆豆（迷宫 / 豆子 / 幽灵）</span><span class="en">Demo game · dot muncher (maze, pellets, ghost)</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <img src="./assets/platformer.png" alt="平台跳跃 v2 示例游戏" loading="lazy" />
-            <figcaption><span class="zh">示例游戏 · 平台跳跃 v2（移动平台 / 史莱姆 / HP）</span><span class="en">Demo game · platformer v2 (moving platforms, slimes, HP)</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <img src="./assets/rpg.png" alt="勇者小镇 RPG 示例游戏" loading="lazy" />
-            <figcaption><span class="zh">示例游戏 · 勇者小镇（NPC 对话 / 星星 / 史莱姆战斗）</span><span class="en">Demo game · Knight Town (NPCs, stars, slime battles)</span></figcaption>
           </figure>
           <figure class="shot">
             <img src="./assets/export-playing.png" alt="导出的单文件 HTML5 在浏览器里运行" loading="lazy" />
@@ -204,6 +192,10 @@
             <img src="./assets/m-phone-blocks.png" alt="手机积木页" loading="lazy" />
             <figcaption><span class="zh">手机 · 积木页</span><span class="en">Phone · blocks</span></figcaption>
           </figure>
+          <figure class="shot is-phone">
+            <img src="./assets/m-phone-blocks-sheet.png" alt="手机底部积木抽屉" loading="lazy" />
+            <figcaption><span class="zh">手机 · 底部积木抽屉</span><span class="en">Phone · blocks bottom sheet</span></figcaption>
+          </figure>
           <div class="phone-note">
             <h3><span class="zh">触屏优先</span><span class="en">Touch first</span></h3>
             <p>
@@ -218,14 +210,14 @@
         <p class="eyebrow">Download</p>
         <h2><span class="zh">下载安装包</span><span class="en">Get the apps</span></h2>
         <p class="section-sub">
-          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.12.4 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
-          <span class="en">Windows and Android builds ship through GitHub Releases, both from the v0.11.0 stable build. Projects live on your machine and desktop installs store them as .gproj files — fully offline.</span>
+          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.13.0 稳定版构建；桌面版可直接导出可双击运行的 Windows 游戏 EXE，作品保存在本机，工程以 .gproj 落盘，离线也能玩。</span>
+          <span class="en">Windows and Android builds ship through GitHub Releases, both from the v0.13.0 stable build. The desktop app can export a standalone Windows game EXE. Projects live on your machine as .gproj files — fully offline.</span>
         </p>
         <div class="download-grid">
           <article class="download-card">
             <p class="download-os">Windows</p>
             <h3><span class="zh">安装版</span><span class="en">Installer</span></h3>
-            <p class="download-meta">Tauri · NSIS · x64 · ~2.0 MB</p>
+            <p class="download-meta">Tauri · NSIS · x64 · ~3.3 MB</p>
             <p class="download-desc">
               <span class="zh">装到当前用户目录，开始菜单出现「Cobble Studio」；工程自动保存到应用数据目录。</span>
               <span class="en">Installs to your user profile and adds Cobble Studio to the Start menu. Projects autosave into the app data folder.</span>
@@ -238,7 +230,7 @@
           <article class="download-card">
             <p class="download-os">Windows</p>
             <h3><span class="zh">便携版</span><span class="en">Portable</span></h3>
-            <p class="download-meta">Tauri · 免安装 · x64 · ~3.9 MB</p>
+            <p class="download-meta">Tauri · 免安装 · x64 · ~8.8 MB</p>
             <p class="download-desc">
               <span class="zh">单文件绿色版，双击即用；请放在纯英文路径下（中文路径会导致 WebView2 无法创建窗口）。</span>
               <span class="en">Single-file, no install. Keep it on an ASCII-only path — WebView2 cannot create the window from a non-ASCII folder.</span>
@@ -251,7 +243,7 @@
           <article class="download-card">
             <p class="download-os">Android</p>
             <h3><span class="zh">APK</span><span class="en">APK</span></h3>
-            <p class="download-meta">Capacitor · debug 签名 · minSdk 23 · ~5.3 MB</p>
+            <p class="download-meta">Capacitor · debug 签名 · minSdk 23 · ~5.8 MB</p>
             <p class="download-desc">
               <span class="zh">适用于 Android 6.0 及以上；因为是调试签名，安装时需要允许「未知来源」，正式上架版本会换成发布签名。</span>
               <span class="en">Android 6.0+. It is debug-signed, so allow installs from unknown sources; a release-signed build will follow when it hits the store.</span>
@@ -273,8 +265,8 @@
           <p class="eyebrow">Roadmap</p>
           <h2><span class="zh">现在到哪了</span><span class="en">Where it stands</span></h2>
           <p class="section-sub">
-            <span class="zh">积木编辑 → 编译 → 运行 → 保存工程 → 素材与角色管理 → 模板与新建工程 → 工程管理页 → 单文件导出 → 4 款完整示例游戏 → 桌面安装包 / 安卓 APK 全部打通，稳定版 v1.0 收尾中。</span>
-            <span class="en">Edit → compile → run → save → asset editing → templates → project hub → single-file export → four full demo games → desktop installer / Android APK all work; v1.0 polish is underway.</span>
+            <span class="zh">积木编辑 → 编译 → 运行 → 保存工程 → 素材与角色管理 → 模板与新建工程 → 工程管理页 → 单文件导出 → 导出 Windows 游戏 EXE → 桌面安装包 / 安卓 APK 全部打通，稳定版 v1.0 收尾中。</span>
+            <span class="en">Edit → compile → run → save → asset editing → templates → project hub → single-file export → Windows game EXE export → desktop installer / Android APK all work; v1.0 polish is underway.</span>
           </p>
         </div>
         <ol class="roadmap">
@@ -324,7 +316,7 @@
               <h3><span class="zh">模板与新建工程</span><span class="en">Templates &amp; new project</span></h3>
               <p>
                 <span class="zh">新建工程弹层：空白工程，加上小猫吃金币、打地鼠、接苹果、平台跳跃、吃豆豆、勇者小镇、横版格斗七个可玩模板，选完直接进入编辑。</span>
-                <span class="en">New-project dialog with a blank project plus seven playable templates (cat &amp; coins, whack-a-mole, catch apples, platformer, dot muncher, knight town, side-scroller brawl) — pick one and start editing.</span>
+                <span class="en">New-project dialog with a blank project or the finished Snake demo — pick one and start editing.</span>
               </p>
             </div>
           </li>
@@ -351,10 +343,10 @@
           <li class="is-done">
             <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
             <div>
-              <h3><span class="zh">四款完整示例游戏 + 触屏手柄</span><span class="en">Four full demo games &amp; touch pad</span></h3>
+              <h3><span class="zh">贪吃蛇示例 + 导出 Windows EXE</span><span class="en">Snake demo &amp; Windows EXE export</span></h3>
               <p>
-                <span class="zh">平台跳跃 v2、吃豆豆、勇者小镇 RPG、横版格斗都能直接玩；手机端换成舞台下方的摇杆 + 自定义按钮手柄，全屏按游戏横竖屏自动旋转。</span>
-                <span class="en">Platformer v2, dot muncher, Knight Town RPG and a side-scroller brawler are all playable; phones get a docked joystick + custom-button pad, and fullscreen auto-rotates to the game orientation.</span>
+                <span class="zh">示例精简为「空白 + 贪吃蛇」：方向转向、吃苹果变长、撞墙/咬尾结束并提示重开；桌面版新增「导出 EXE」，一键生成可双击运行的独立游戏，安卓导出内测中。</span>
+                <span class="en">Demos are now just Blank + Snake: steering, apples, wall/self collision with restart hint. The desktop app can export a standalone Windows game EXE in one click; Android export is in beta.</span>
               </p>
             </div>
           </li>
@@ -434,11 +426,23 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <p class="eyebrow">Release log</p>
         <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
         <p class="section-sub">
-          <span class="zh">当前稳定版 <strong>v0.12.4</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
-          <span class="en">Current stable release <strong>v0.12.4</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
+          <span class="zh">当前稳定版 <strong>v0.13.0</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
+          <span class="en">Current stable release <strong>v0.13.0</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
         </p>
         <ol class="release-list">
           <li class="release is-current">
+            <div class="release-head"><span class="release-ver">v0.13.0</span><span class="release-date"><span class="zh">最近 3 天</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">贪吃蛇示例 + 导出 Windows EXE</span><span class="en">Snake demo + Windows game EXE export</span></div>
+            <ul>
+              <li><span class="zh">示例模板精简为「空白 + 贪吃蛇」：贪吃蛇支持方向转向、吃苹果变长、撞墙/咬到自己结束并提示重开；旧平台跳跃、吃豆豆、RPG、格斗等模板已移除。</span><span class="en">Templates are now just Blank + Snake: steering, growing on apples, wall/self collision with a restart hint; the old platformer, dot-muncher, RPG and brawler demos were removed.</span></li>
+              <li><span class="zh">新增「设置」面板：语言与主题、自动保存与间隔、积木网格吸附、删除角色确认、导出全部工程备份、清空本地数据、检查更新与快捷键说明。</span><span class="en">New Settings panel: language &amp; theme, autosave with interval, grid snapping, delete confirmation, export all projects, clear local data, update check and shortcuts.</span></li>
+              <li><span class="zh">输入设置升级为双标签：输入事件绑定 + 触屏控件面板，可分别设置摇杆左右位置/尺寸/透明度，以及每个按钮的图标、绑定、尺寸、左右位置、透明度并实时预览。</span><span class="en">Input settings now have two tabs: event bindings and a touch-control panel where joystick side/size/opacity and each button's icon, binding, size, side and opacity can be set with a live preview.</span></li>
+              <li><span class="zh">桌面版新增「导出 EXE」：一键生成可双击运行的独立 Windows 游戏（内置播放器 + 内嵌工程）；安卓导出仍在内测中，点击会显示提示。</span><span class="en">Desktop app gains “Export EXE”: one click builds a standalone, double-clickable Windows game (embedded player + project payload); Android export is still in beta and shows a notice.</span></li>
+              <li><span class="zh">全屏运行时画面、HUD、手柄与「退出全屏」按钮整体旋转；安卓端按安全区留出顶部/底部边距，圆角屏不再遮挡按钮。</span><span class="en">Fullscreen now rotates the game, HUD, touch pad and exit button together; Android leaves safe-area margins at the top/bottom so rounded corners no longer clip controls.</span></li>
+              <li><span class="zh">桌面冒烟 39/39、手机/平板 39/39，Pages 检查 30/30。</span><span class="en">Desktop smoke 39/39, mobile 39/39, pages checks 30/30.</span></li>
+            </ul>
+          </li>
+          <li class="release">
             <div class="release-head"><span class="release-ver">v0.12.4</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <div class="release-tagline"><span class="zh">资源库 + 可拖动分栏</span><span class="en">Asset library + resizable panes</span></div>
             <ul>
@@ -602,7 +606,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <div>
           <strong>Cobble Studio</strong>
-          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.12.4</span><span class="en">A lightweight 2D block game maker · v0.12.4</span></p>
+          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.13.0</span><span class="en">A lightweight 2D block game maker · v0.13.0</span></p>
         </div>
       </div>
       <nav class="foot-links">

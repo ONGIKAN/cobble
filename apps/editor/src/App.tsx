@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEditorStore } from './store';
+import { readSettings } from './settings';
 import { findEntry, mirrorNative, updateEntry } from './library';
 import { routeToProjects } from './routes';
 import { bootstrapBlocks, refreshAssetBlocks } from './block-defs';
@@ -185,6 +186,8 @@ export function App({ projectId }: { projectId: string }) {
     const unsubscribe = useEditorStore.subscribe((state, previous) => {
       if (state.project === previous.project && state.workspaces === previous.workspaces) return;
       window.clearTimeout(timer);
+      const settings = readSettings();
+      if (!settings.autosave) return;
       timer = window.setTimeout(() => {
         try {
           updateEntry(projectId, state.project, state.workspaces);
@@ -193,7 +196,7 @@ export function App({ projectId }: { projectId: string }) {
         } catch {
           // 存储配额不足时静默失败，不影响编辑
         }
-      }, 350);
+      }, settings.autosaveDelay);
     });
     return () => {
       unsubscribe();

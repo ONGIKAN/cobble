@@ -34,7 +34,19 @@ const inputSchema = z.object({
   joystickSize: z.enum(['sm', 'md', 'lg']).optional(),
   buttonSize: z.enum(['sm', 'md', 'lg']).optional(),
   touchMode: z.enum(['pad', 'direct']).optional(),
-  buttons: z.array(z.object({ id: z.string().min(1), bindingId: z.string(), label: z.string() })),
+  joystickSide: z.enum(['left', 'right']).optional(),
+  joystickOpacity: z.number().int().min(10).max(100).optional(),
+  buttons: z.array(
+    z.object({
+      id: z.string().min(1),
+      bindingId: z.string(),
+      label: z.string(),
+      icon: z.string().max(4).optional(),
+      size: z.enum(['sm', 'md', 'lg']).optional(),
+      side: z.enum(['left', 'right']).optional(),
+      opacity: z.number().int().min(10).max(100).optional(),
+    }),
+  ),
 });
 
 export const projectSchema = z.object({

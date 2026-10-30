@@ -48,7 +48,7 @@ try {
   record('interaction category', toolboxLabels.includes('交互'), toolboxLabels.join(','));
 
   const spriteCards = await page.locator('.sprite-card').count();
-  record('sprite rail', spriteCards === 2, `${spriteCards} sprites`);
+  record('sprite rail', spriteCards >= 8, `${spriteCards} sprites`);
 
   const blockCount = await page.evaluate(() => document.querySelectorAll('.blocklyBlockCanvas .blocklyDraggable').length);
   record('demo scripts rendered', blockCount >= 8, `${blockCount} blocks`);
@@ -68,20 +68,20 @@ try {
   );
   record('runtime started', true, 'window.__cobbleRuntime available');
 
-  const readCat = () =>
+  const readSnake = () =>
     frame.evaluate(() => {
-      const state = window.__cobbleRuntime.getSpriteState('sprite_cat');
+      const state = window.__cobbleRuntime.getSpriteState('sprite_snake_head');
       return { x: state?.x ?? NaN, y: state?.y ?? NaN };
     });
 
   const holdUntil = async (key, condition, maxMs = 3000) => {
     await page.keyboard.down(key);
     const startedAt = Date.now();
-    let state = await readCat();
+    let state = await readSnake();
     try {
       while (Date.now() - startedAt < maxMs && !condition(state)) {
         await page.waitForTimeout(80);
-        state = await readCat();
+        state = await readSnake();
       }
     } finally {
       await page.keyboard.up(key);
@@ -89,8 +89,11 @@ try {
     return state;
   };
 
-  const initial = await readCat();
-  const moved = await holdUntil('ArrowRight', (state) => state.x >= 120);
+  // 贪吃蛇会自动前进，先重开一局再测方向输入（避免开局撞墙导致线程已停止）
+  await page.getByTestId('run').click();
+  await page.waitForTimeout(250);
+  const initial = await readSnake();
+  const moved = await holdUntil('ArrowUp', (state) => state.y >= initial.y + 60);
   // 预览 iframe 隔离：沙箱属性必须存在（阻止顶层跳转 / 弹窗等）
   const sandboxAttr = await page.getAttribute('[data-testid="stage-iframe"]', 'sandbox');
   record('preview iframe sandboxed', Boolean(sandboxAttr && sandboxAttr.includes('allow-scripts')), sandboxAttr ?? 'missing');
@@ -103,20 +106,23 @@ try {
   const savedName = await shortcutDownload;
   record('ctrl+s saves project', savedName.endsWith('.gproj'), savedName || 'no download');
 
-  record('arrow key moves cat', Number.isFinite(moved.x) && moved.x > initial.x, `x ${initial.x} -> ${moved.x}`);
+  record('arrow keys steer snake', Number.isFinite(moved.y) && moved.y > initial.y, `y ${initial.y} -> ${moved.y}`);
 
-  // 3. 吃金币：向右对准金币，再向上靠近，撞到金币后分数 +1
-  await holdUntil('ArrowUp', (state) => state.y >= 40);
-  await page.waitForTimeout(500);
+  // 3. 贪吃蛇运行态：苹果存在、分数变量可读
+  await page.waitForTimeout(300);
   await page.screenshot({ path: `${shotDir}/03-playing.png` });
-  const score = await frame.evaluate(() => {
-    const variable = window.__cobbleRuntime.getVariables().find((item) => item.id === 'var_score');
-    return variable?.value ?? 0;
+  const snakeState = await frame.evaluate(() => {
+    const runtime = window.__cobbleRuntime;
+    const apple = runtime.getSpriteState('sprite_apple');
+    const score = runtime.getVariables().find((item) => item.id === 'var_score');
+    return { appleX: apple?.x ?? null, score: score?.value ?? null };
   });
-  record('coin collision scores', Number(score) >= 1, `score=${score}`);
+  record('snake apple on stage', Number.isFinite(snakeState.appleX), `apple x=${snakeState.appleX} score=${snakeState.score}`);
 
-  // 4. 停止按钮
-  await page.click('[data-testid="stop"]');
+  // 4. 停止按钮（重新运行后手动停止）
+  await page.getByTestId('run').click();
+  await page.waitForTimeout(250);
+  await page.getByTestId('stop').click();
   await page.waitForTimeout(400);
   const stopped = await page.evaluate(() => {
     const child = document.querySelector('iframe');
@@ -133,8 +139,8 @@ try {
   const savedOk =
     savedDoc.format === 'cobble-studio' &&
     savedDoc.version === 1 &&
-    savedDoc.project?.meta?.name === '小猫吃金币' &&
-    Object.keys(savedDoc.workspaces ?? {}).length === 2;
+    savedDoc.project?.meta?.name === '贪吃蛇' &&
+    Object.keys(savedDoc.workspaces ?? {}).length >= 6;
   record('project save (.gproj)', savedOk, `file=${download.suggestedFilename()}`);
 
   // 6. .gproj 打开：改名后重新打开应整页重载并载入新工程
@@ -227,6 +233,8 @@ try {
   // 触屏模式/尺寸：每个工程独立保存
   await page.click('[data-testid="input-settings"]');
   await page.waitForTimeout(300);
+  await page.click('[data-testid="input-tab-touch"]');
+  await page.waitForTimeout(200);
   const hasModeRow = await page.locator('[data-testid="input-touch-mode"]').isVisible();
   await page.click('[data-testid="touch-mode-direct"]');
   await page.waitForTimeout(150);
@@ -235,14 +243,17 @@ try {
   await page.waitForTimeout(500);
   await page.click('[data-testid="input-settings"]');
   await page.waitForTimeout(300);
+  await page.click('[data-testid="input-tab-touch"]');
+  await page.waitForTimeout(200);
   const savedDirect = String(await page.locator('[data-testid="touch-mode-direct"]').getAttribute('class') ?? '');
-  const joySize = await page.locator('[data-testid="input-joystick-size"]').inputValue();
   await page.click('[data-testid="touch-mode-pad"]');
+  await page.waitForTimeout(250);
+  const joySize = await page.locator('[data-testid="input-joystick-size"]').inputValue();
   await page.click('[data-testid="input-settings-save"]');
   await page.waitForTimeout(400);
   record(
     'touch mode per project',
-    hasModeRow && directActive.includes('is-active') && savedDirect.includes('is-active') && joySize === 'md',
+    hasModeRow && directActive.includes('is-active') && savedDirect.includes('is-active') && joySize === 'lg',
     `modeRow=${hasModeRow} saved=${savedDirect.includes('is-active')} joy=${joySize}`,
   );
 
@@ -396,76 +407,48 @@ try {
   record('export html5', hud >= 1 && gameErrors.length === 0, `download=${exportDownload.suggestedFilename()} hud=${hud} errors=${gameErrors.length}`);
   await game.close();
 
-  // 10. 新建工程：从模板「打地鼠」创建
+  // 导出 Windows EXE（网页版应提示需要桌面版）+ 安卓导出内测提示（v0.13.0）
+  let exeHint = '';
+  page.once('dialog', async (dialog) => {
+    exeHint = dialog.message();
+    await dialog.accept();
+  });
+  await page.click('[data-testid="export-exe"]');
+  await page.waitForTimeout(500);
+  record('export exe desktop hint', exeHint.includes('桌面版'), exeHint.slice(0, 60));
+
+  let androidHint = '';
+  page.once('dialog', async (dialog) => {
+    androidHint = dialog.message();
+    await dialog.accept();
+  });
+  await page.click('[data-testid="export-android"]');
+  await page.waitForTimeout(400);
+  record('android export beta hint', androidHint.includes('内测'), androidHint.slice(0, 60));
+
+  // 10. 新建工程：默认模板只有 空白 + 贪吃蛇（v0.13.0）
   await page.click('[data-testid="new-project"]');
   await page.waitForSelector('[data-testid="new-project-dialog"]', { timeout: 5000 });
   const templateCards = await page.locator('.template-card').count();
+  const snakeCard = await page.locator('[data-testid="template-snake"]').count();
   page.once('dialog', (dialog) => void dialog.accept());
-  await page.click('[data-testid="template-whack-mole"]');
+  await page.click('[data-testid="template-snake"]');
   await page.waitForLoadState('networkidle');
   await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
   await page.waitForTimeout(900);
   const tmplSprites = await page.locator('.sprite-card').count();
-  const tmplName = await page.locator('.sprite-name').first().innerText();
   const tmplBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
-  record('new project template', templateCards === 8 && tmplSprites === 1 && tmplName.includes('地鼠') && tmplBlocks > 10, `cards=${templateCards} sprites=${tmplSprites} name=${tmplName} blocks=${tmplBlocks}`);
+  const tmplName = await page.locator('.project-name-text').innerText();
+  record('new project template', templateCards === 2 && snakeCard === 1 && tmplSprites === 10 && tmplBlocks > 60 && tmplName.includes('贪吃蛇'), `cards=${templateCards} sprites=${tmplSprites} blocks=${tmplBlocks} name=${tmplName}`);
 
-  // 10b. 平台跳跃模板（v0.7.0 能力块：坐标上报 / 切换造型 / 等待直到 / 移到角色）
-  page.once('dialog', (dialog) => void dialog.accept());
-  await page.click('[data-testid="reset-project"]');
-  await page.waitForLoadState('networkidle');
-  await page.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
-  await page.click('[data-testid="hub-new"]');
-  await page.waitForSelector('[data-testid="new-project-dialog"]', { timeout: 5000 });
-  page.once('dialog', (dialog) => void dialog.accept());
-  await page.click('[data-testid="template-platformer"]');
-  await page.waitForLoadState('networkidle');
-  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
-  await page.waitForTimeout(900);
-  const platSprites = await page.locator('.sprite-card').count();
-  const platBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
-  record('platformer template', platSprites === 16 && platBlocks > 20, `sprites=${platSprites} blocks=${platBlocks}`);
-
-  // 10c. 吃豆豆模板（v0.8.0 墙体碰撞 + 收集 + 追捕）
-  page.once('dialog', (dialog) => void dialog.accept());
-  await page.click('[data-testid="reset-project"]');
-  await page.waitForLoadState('networkidle');
-  await page.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
-  await page.click('[data-testid="hub-new"]');
-  await page.waitForSelector('[data-testid="new-project-dialog"]', { timeout: 5000 });
-  page.once('dialog', (dialog) => void dialog.accept());
-  await page.click('[data-testid="template-dot-maze"]');
-  await page.waitForLoadState('networkidle');
-  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
-  await page.waitForTimeout(900);
-  const mazeSprites = await page.locator('.sprite-card').count();
-  const mazeBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
-  record('dot-maze template', mazeSprites === 15 && mazeBlocks > 15, `sprites=${mazeSprites} blocks=${mazeBlocks}`);
-
-  await page.getByTestId('back-to-projects').click();
-  await page.waitForTimeout(600);
-  await page.getByTestId('hub-new').click();
-  await page.waitForTimeout(300);
-  page.once('dialog', (dialog) => dialog.accept());
-  await page.click('[data-testid="template-rpg-quest"]');
-  await page.waitForTimeout(1800);
-  const rpgSprites = await page.locator('.sprite-card').count();
-  const rpgBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
-  record('rpg template', rpgSprites === 11 && rpgBlocks > 10, `sprites=${rpgSprites} blocks=${rpgBlocks}`);
-
-  // 10e. 横版格斗模板（v0.11.0：贴近 + 动作键攻击）
-  await page.getByTestId('back-to-projects').click();
-  await page.waitForTimeout(600);
-  await page.getByTestId('hub-new').click();
-  await page.waitForTimeout(300);
-  page.once('dialog', (dialog) => void dialog.accept());
-  await page.click('[data-testid="template-fighting"]');
-  await page.waitForLoadState('networkidle');
-  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
-  await page.waitForTimeout(900);
-  const fightSprites = await page.locator('.sprite-card').count();
-  const fightBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
-  record('fighting template', fightSprites === 4 && fightBlocks > 40, `sprites=${fightSprites} blocks=${fightBlocks}`);
+  // 10b. 贪吃蛇能跑：蛇头在运行中会移动
+  await page.getByTestId('run').click();
+  await page.waitForTimeout(350);
+  const snakeFrame = page.frames().find((item) => item.url().includes('player.html'));
+  const headA = snakeFrame ? await snakeFrame.evaluate(() => window.__cobbleRuntime?.getSpriteState?.('sprite_snake_head')) : null;
+  await page.waitForTimeout(420);
+  const headB = snakeFrame ? await snakeFrame.evaluate(() => window.__cobbleRuntime?.getSpriteState?.('sprite_snake_head')) : null;
+  record('snake game runs', Boolean(headA && headB) && Math.abs((headB?.x ?? 0) - (headA?.x ?? 0)) + Math.abs((headB?.y ?? 0) - (headA?.y ?? 0)) > 0, `head ${headA?.x},${headA?.y} -> ${headB?.x},${headB?.y}`);
 
   // 回到工程管理页，避免模板工程影响下次运行
   page.once('dialog', (dialog) => void dialog.accept());

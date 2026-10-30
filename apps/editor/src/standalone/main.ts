@@ -13,8 +13,10 @@ const stage: HTMLElement = stageNode;
 const hud: HTMLElement = hudNode;
 
 function renderHud(runtime: Runtime): void {
+  // 以下划线开头的变量是模板内部辅助变量（例如贪吃蛇的尾部历史），不显示在 HUD
+  const variables = runtime.getVariables().filter((variable) => !variable.name.startsWith('_'));
   hud.replaceChildren(
-    ...runtime.getVariables().map((variable) => {
+    ...variables.map((variable) => {
       const item = document.createElement('span');
       item.className = 'hud-var';
       const name = document.createElement('span');

@@ -6,6 +6,7 @@ import { sendRun, sendStop } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';
 import { openAssetLibrary } from './AssetLibrary';
+import { openSettings } from '../settings-dialog';
 import { updateEntry } from '../library';
 import { routeToProjects } from '../routes';
 import { IS_BETA } from '../version';
@@ -97,6 +98,15 @@ export function Topbar() {
           onClick={openAssetLibrary}
         >
           {t('toolbar.assets')}
+        </button>
+
+        <button
+          type="button"
+          className="btn ghost topbar-settings"
+          data-testid="app-settings"
+          onClick={openSettings}
+        >
+          {t('toolbar.settings')}
         </button>
 
         <div className="segmented" role="group" aria-label={t('toolbar.language')}>

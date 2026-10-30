@@ -15,3 +15,6 @@ dist-release/
 .keys/
 .pages-demo-backup/
 .pages-demo-beta-backup/
+apps/game-player/src-tauri/target/
+apps/game-player/src-tauri/gen/
+apps/game-player/dist/

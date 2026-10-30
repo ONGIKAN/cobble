@@ -22,6 +22,7 @@ import { APP_VERSION, IS_BETA } from '../version';
 import { useEditorStore } from '../store';
 import type { TemplateDefinition } from '../templates';
 import { NewProjectDialog } from './NewProjectDialog';
+import { openSettings } from '../settings-dialog';
 
 /** 工程管理页：软件启动后的首页，管理浏览器里保存的所有工程 */
 export function ProjectHub() {
@@ -163,6 +164,9 @@ export function ProjectHub() {
                 event.target.value = '';
               }}
             />
+            <button type="button" className="btn" data-testid="hub-settings" onClick={openSettings}>
+              {t('toolbar.settings')}
+            </button>
             <button
               type="button"
               className="btn primary"

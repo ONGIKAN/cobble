@@ -62,6 +62,32 @@ fn projects_location(app: tauri::AppHandle) -> Result<String, String> {
     Ok(projects_dir(&app)?.display().to_string())
 }
 
+fn safe_file_name(title: &str) -> String {
+    let cleaned: String = title
+        .chars()
+        .map(|ch| if ch.is_alphanumeric() || ch == ' ' || ch == '-' || ch == '_' { ch } else { '_' })
+        .collect();
+    let trimmed = cleaned.trim();
+    if trimmed.is_empty() { "CobbleGame".to_string() } else { trimmed.to_string() }
+}
+
+/// 独立游戏播放器模板：构建时直接嵌入主程序，便携版也能导出 EXE
+static PLAYER_TEMPLATE: &[u8] = include_bytes!("../resources/cobble-game-player.exe");
+
+#[tauri::command]
+fn export_game_exe(app: tauri::AppHandle, title: String, payload: String) -> Result<String, String> {
+    let mut bytes = PLAYER_TEMPLATE.to_vec();
+    bytes.extend_from_slice(b"
+--COBBLE-PAYLOAD--
+");
+    bytes.extend_from_slice(payload.as_bytes());
+    let dir = app.path().download_dir().map_err(|error| error.to_string())?;
+    fs::create_dir_all(&dir).map_err(|error| error.to_string())?;
+    let file = dir.join(format!("{}.exe", safe_file_name(&title)));
+    fs::write(&file, bytes).map_err(|error| error.to_string())?;
+    Ok(file.display().to_string())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
@@ -71,7 +97,8 @@ fn main() {
             read_project,
             write_project,
             delete_project,
-            projects_location
+            projects_location,
+            export_game_exe
         ])
         .run(tauri::generate_context!())
         .expect("error while running Cobble Studio");

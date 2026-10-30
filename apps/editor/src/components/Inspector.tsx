@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AssetDef } from '@cobble/project';
 import { useEditorStore } from '../store';
+import { readSettings } from '../settings';
 import { NumberInput } from './NumberInput';
 import { uploadToAsset, type UploadAsset } from '../uploads';
 
@@ -258,7 +259,8 @@ export function Inspector() {
           data-testid="delete-sprite"
           disabled={project.sprites.length <= 1}
           onClick={() => {
-            if (window.confirm(t('sprites.confirmDelete'))) removeSprite(sprite.id);
+            const settings = readSettings();
+            if (!settings.confirmDelete || window.confirm(t('sprites.confirmDelete'))) removeSprite(sprite.id);
           }}
         >
           {t('sprites.delete')}

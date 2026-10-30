@@ -52,11 +52,29 @@ const CSS = `
   width: 76px;
   height: 76px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   color: #fff;
   font: 600 15px/1 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   touch-action: none;
+}
+
+.cobble-touch-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.cobble-touch-btn.is-icon .cobble-touch-icon {
+  font-size: 26px;
+}
+
+.cobble-touch-label {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  opacity: 0.92;
 }
 .cobble-touch-joy-sm .cobble-touch-joystick {
   width: 72px;
@@ -134,8 +152,14 @@ export function mountTouchControls(container: HTMLElement, input: InputConfig): 
   let destroyJoystick: (() => void) | null = null;
   if (input.joystick) {
     const base = doc.createElement('div');
+    const joySide = input.joystickSide ?? 'left';
     base.className = 'cobble-touch-joystick';
     base.dataset.testid = 'joystick';
+    base.dataset.side = joySide;
+    base.style.left = joySide === 'left' ? '16px' : 'auto';
+    base.style.right = joySide === 'right' ? '16px' : 'auto';
+    const joyOpacity = input.joystickOpacity ?? 55;
+    base.style.opacity = String(joyOpacity / 100);
     const knob = doc.createElement('div');
     knob.className = 'cobble-touch-knob';
     base.appendChild(knob);
@@ -144,12 +168,38 @@ export function mountTouchControls(container: HTMLElement, input: InputConfig): 
   }
 
   const buttons: Array<() => void> = [];
-  input.buttons.forEach((button, index) => {
+  const defaultSize = input.buttonSize ?? 'md';
+  const sizePx = { sm: 52, md: 76, lg: 84 } as const;
+  const sideCount = { left: 0, right: 0 };
+  input.buttons.forEach((button) => {
+    const size = button.size ?? defaultSize;
+    const side = button.side ?? 'right';
+    const px = sizePx[size];
     const el = doc.createElement('div');
     el.className = 'cobble-touch-btn';
     el.dataset.testid = `touch-btn-${button.id}`;
-    el.textContent = localizeLabel(button.label);
-    el.style.bottom = `${16 + index * 92}px`;
+    el.dataset.side = side;
+    el.style.width = `${px}px`;
+    el.style.height = `${px}px`;
+    el.style.bottom = `${16 + sideCount[side] * (px + 16)}px`;
+    el.style.left = side === 'left' ? '16px' : 'auto';
+    el.style.right = side === 'right' ? '16px' : 'auto';
+    el.style.opacity = String((button.opacity ?? 62) / 100);
+    el.style.fontSize = size === 'sm' ? '12px' : size === 'lg' ? '16px' : '15px';
+    if (button.icon) {
+      el.classList.add('is-icon');
+      const icon = doc.createElement('span');
+      icon.className = 'cobble-touch-icon';
+      icon.textContent = button.icon;
+      el.appendChild(icon);
+      const label = doc.createElement('span');
+      label.className = 'cobble-touch-label';
+      label.textContent = localizeLabel(button.label);
+      el.appendChild(label);
+    } else {
+      el.textContent = localizeLabel(button.label);
+    }
+    sideCount[side] += 1;
     root.appendChild(el);
     buttons.push(mountButton(el, button.bindingId, active));
   });

@@ -5,6 +5,7 @@ import * as Blockly from 'blockly';
 import { buildToolbox } from '@cobble/blocks';
 import { createBlocklyTheme, registerSquareRenderer } from '../blockly-theme';
 import { useEditorStore } from '../store';
+import { readSettings } from '../settings';
 
 export function BlocksView() {
   const { t } = useTranslation();
@@ -29,7 +30,7 @@ export function BlocksView() {
       media: '',
       trashcan: false,
       sounds: false,
-      grid: { spacing: 32, length: 2, colour: initialState.theme === 'dark' ? '#1f2227' : '#e0e0d6', snap: false },
+      grid: { spacing: 32, length: 2, colour: initialState.theme === 'dark' ? '#1f2227' : '#e0e0d6', snap: readSettings().gridSnap },
       zoom: { controls: false, wheel: true, pinch: true, startScale: 0.85, minScale: 0.3, maxScale: 2.2 },
       move: { scrollbars: true, drag: true, wheel: true },
     });

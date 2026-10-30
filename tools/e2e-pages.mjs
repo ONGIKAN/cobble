@@ -65,7 +65,7 @@ check('site: stable tags', (await sitePage.locator('.release-tag.is-stable').cou
   check('beta: runtime running', Boolean(frame), betaPage.url());
   const status = await betaPage.locator('[data-testid="status-changelog-link"]').innerText();
   check('beta: status shows beta', status.includes('beta'), status);
-  check('beta: status version v0.12', status.includes('v0.12'), status);
+  check('beta: status version v0.13', status.includes('v0.13'), status);
   await betaPage.screenshot({ path: `${SHOTS}/pages-beta.png` });
   await betaPage.close();
 }
@@ -110,7 +110,7 @@ await sitePage.waitForTimeout(1200);
 const state = await runtimeState(sitePage);
 check('demo: runtime running', state?.running === true, JSON.stringify(state));
 const stableStatus = await sitePage.locator('[data-testid="status-changelog-link"]').innerText();
-check('demo: stable version v0.12', stableStatus.includes('v0.12') && !stableStatus.includes('beta'), stableStatus);
+check('demo: stable version v0.13', stableStatus.includes('v0.13') && !stableStatus.includes('beta'), stableStatus);
 await sitePage.screenshot({ path: `${SHOTS}/pages-demo.png` });
 
 // 演示 -> 官网（链接存在且可点）

@@ -1,5 +1,12 @@
 import * as Blockly from 'blockly';
-import { inputConfig, type AssetDef, type InputConfig, type ProjectDoc, type SpriteDef } from '@cobble/project';
+import {
+  DEFAULT_INPUT,
+  defaultBindings,
+  type AssetDef,
+  type InputConfig,
+  type ProjectDoc,
+  type SpriteDef,
+} from '@cobble/project';
 import {
   attachStatement,
   attachValue,
@@ -28,49 +35,6 @@ function dataUrl(svg: string): string {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-const CAT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
-  <path d="M26 46 L22 14 L50 32 Z" fill="#f5a623"/>
-  <path d="M94 46 L98 14 L70 32 Z" fill="#f5a623"/>
-  <circle cx="60" cy="66" r="42" fill="#f5a623"/>
-  <circle cx="46" cy="60" r="5.5" fill="#2b1d14"/>
-  <circle cx="74" cy="60" r="5.5" fill="#2b1d14"/>
-  <ellipse cx="60" cy="82" rx="16" ry="12" fill="#fff2e0"/>
-  <ellipse cx="60" cy="76" rx="4.5" ry="3.5" fill="#c96f5c"/>
-  <path d="M30 78 h14 M30 86 h14 M76 78 h14 M76 86 h14" stroke="#2b1d14" stroke-width="2.4" stroke-linecap="round"/>
-</svg>`;
-
-const COIN_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
-  <circle cx="40" cy="40" r="36" fill="#f2b93b"/>
-  <circle cx="40" cy="40" r="36" fill="none" stroke="#d19a24" stroke-width="4"/>
-  <circle cx="40" cy="40" r="24" fill="none" stroke="#d19a24" stroke-width="3"/>
-  <path d="M40 26 v28 M32 34 h16 M32 46 h16" stroke="#d19a24" stroke-width="4" stroke-linecap="round"/>
-</svg>`;
-
-const MOLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">  <ellipse cx="60" cy="110" rx="34" ry="7" fill="rgba(0,0,0,.16)"/>
-  <circle cx="60" cy="64" r="46" fill="#a9744f"/>
-  <ellipse cx="60" cy="80" rx="24" ry="18" fill="#e8c9a8"/>
-  <circle cx="46" cy="52" r="6" fill="#2b1d14"/>
-  <circle cx="74" cy="52" r="6" fill="#2b1d14"/>
-  <ellipse cx="60" cy="74" rx="5" ry="4" fill="#7a4a30"/>
-  <path d="M60 78 q-8 8 0 12 q8 -4 0 -12" fill="#c96f5c"/>
-  <path d="M24 30 q10 -12 22 -8" stroke="#8a5c3c" stroke-width="5" fill="none" stroke-linecap="round"/>
-  <path d="M96 30 q-10 -12 -22 -8" stroke="#8a5c3c" stroke-width="5" fill="none" stroke-linecap="round"/>
-</svg>`;
-
-const APPLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
-  <path d="M50 24 q-8 -14 4 -20" stroke="#7a4a30" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <path d="M54 10 q20 0 22 16 q-20 4 -22 -16" fill="#5aa955"/>
-  <path d="M50 26 c22 0 34 18 32 36 c-2 20 -16 30 -32 30 c-16 0 -30 -10 -32 -30 c-2 -18 10 -36 32 -36" fill="#e0473c"/>
-  <ellipse cx="38" cy="44" rx="6" ry="9" fill="rgba(255,255,255,.45)"/>
-</svg>`;
-
-const BASKET_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="110" viewBox="0 0 160 110">
-  <path d="M44 52 q36 -40 72 0" stroke="#8a5a2c" stroke-width="9" fill="none"/>
-  <rect x="30" y="50" width="100" height="50" rx="6" fill="#b5793f"/>
-  <path d="M36 64 h88 M36 80 h88" stroke="#8a5a2c" stroke-width="5"/>
-  <rect x="24" y="44" width="112" height="10" fill="#c98d4e"/>
-</svg>`;
-
 function nowMeta(id: string, name: string): ProjectDoc['meta'] {
   return { id, name, updatedAt: new Date().toISOString() };
 }
@@ -91,1182 +55,450 @@ function sprite(input: SpriteInput): SpriteDef {
   };
 }
 
-function imageAsset(id: string, name: string, svg: string): AssetDef {
+function asset(id: string, name: string, svg: string): AssetDef {
   return { id, name, kind: 'image', dataUrl: dataUrl(svg) };
 }
 
-/** 在一个临时 workspace 里拼脚本并序列化 */
-function serialize(build: (ws: Blockly.Workspace) => void): Record<string, unknown> {
-  const ws = new Blockly.Workspace();
-  try {
-    build(ws);
-    // 模板里多个 hat 脚本默认都堆在原点，横向错开，打开时看着整齐
-    ws.getTopBlocks(true).forEach((block, index) => {
-      block.moveBy(40 + index * 800, 40);
-    });
-    return Blockly.serialization.workspaces.save(ws) as Record<string, unknown>;
-  } finally {
-    ws.dispose();
+function padInput(overrides: Partial<InputConfig>): InputConfig {
+  return {
+    ...DEFAULT_INPUT,
+    bindings: defaultBindings(),
+    buttons: DEFAULT_INPUT.buttons.map((button) => ({ ...button })),
+    ...overrides,
+  };
+}
+
+export function templateThumb(project: ProjectDoc): string | undefined {
+  for (const spriteDef of project.sprites) {
+    const assetId = spriteDef.costumes[0]?.assetId;
+    const found = project.assets.find((item) => item.id === assetId && item.dataUrl);
+    if (found?.dataUrl) return found.dataUrl;
   }
+  return undefined;
 }
 
-function keyIf(ws: Blockly.Workspace, key: string, actionType: string, delta: number): Blockly.Block {
-  const ifBlock = makeBlock(ws, 'control_if');
-  attachValue(ifBlock, 'COND', makeBlock(ws, 'sensing_input', { INPUT: key }));
-  const action = makeBlock(ws, actionType);
-  attachValue(action, 'VALUE', num(ws, delta));
-  attachStatement(ifBlock, 'DO', action);
-  return ifBlock;
+// ── 贪吃蛇素材 ─────────────────────────────────────────────
+
+const SNAKE_HEAD_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <rect x="4" y="4" width="40" height="40" rx="8" fill="#47c25a"/>
+  <rect x="4" y="4" width="40" height="12" fill="#6fe07e"/>
+  <rect x="11" y="16" width="9" height="9" fill="#10241a"/>
+  <rect x="28" y="16" width="9" height="9" fill="#10241a"/>
+  <rect x="19" y="32" width="10" height="5" fill="#10241a"/>
+  <rect x="20" y="30" width="8" height="2" fill="#e0473c"/>
+</svg>`;
+
+const SNAKE_BODY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+  <rect x="3" y="3" width="38" height="38" rx="7" fill="#3aa84c"/>
+  <rect x="3" y="3" width="38" height="10" rx="5" fill="#59cf6b"/>
+  <rect x="12" y="18" width="8" height="8" fill="#2a7d38"/>
+  <rect x="25" y="25" width="7" height="7" fill="#2a7d38"/>
+</svg>`;
+
+const APPLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+  <path d="M22 10 q-3 -6 2 -8" stroke="#7a4a30" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M24 3 q9 0 10 7 q-9 2 -10 -7" fill="#5aa955"/>
+  <path d="M22 11 c10 0 15 8 14 16 c-1 9 -7 13 -14 13 c-7 0 -13 -4 -14 -13 c-1 -8 4 -16 14 -16" fill="#e0473c"/>
+  <ellipse cx="16" cy="19" rx="3" ry="4" fill="rgba(255,255,255,.45)"/>
+</svg>`;
+
+const WALL_V_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="50" height="560" viewBox="0 0 50 560">
+  <rect width="50" height="560" fill="#3b2f66"/>
+  <rect width="50" height="10" fill="#6c58a8"/>
+  <rect x="0" y="70" width="50" height="8" fill="#4d3e85"/>
+  <rect x="0" y="140" width="50" height="8" fill="#4d3e85"/>
+  <rect x="0" y="210" width="50" height="8" fill="#4d3e85"/>
+  <rect x="0" y="280" width="50" height="8" fill="#4d3e85"/>
+  <rect x="0" y="350" width="50" height="8" fill="#4d3e85"/>
+  <rect x="0" y="420" width="50" height="8" fill="#4d3e85"/>
+  <rect x="0" y="490" width="50" height="8" fill="#4d3e85"/>
+</svg>`;
+
+const WALL_H_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="980" height="40" viewBox="0 0 980 40">
+  <rect width="980" height="40" fill="#3b2f66"/>
+  <rect width="980" height="8" fill="#6c58a8"/>
+  <rect x="60" y="16" width="8" height="24" fill="#4d3e85"/>
+  <rect x="180" y="16" width="8" height="24" fill="#4d3e85"/>
+  <rect x="300" y="16" width="8" height="24" fill="#4d3e85"/>
+  <rect x="420" y="16" width="8" height="24" fill="#4d3e85"/>
+  <rect x="540" y="16" width="8" height="24" fill="#4d3e85"/>
+  <rect x="660" y="16" width="8" height="24" fill="#4d3e85"/>
+  <rect x="780" y="16" width="8" height="24" fill="#4d3e85"/>
+  <rect x="900" y="16" width="8" height="24" fill="#4d3e85"/>
+</svg>`;
+
+// ── 积木拼装小工具 ─────────────────────────────────────────
+
+type Node = Blockly.Block;
+type Expr = Blockly.Block;
+
+function seq(_ws: Blockly.Workspace, blocks: Node[]): Node {
+  chain(blocks);
+  return blocks[0];
 }
 
-function flagForever(ws: Blockly.Workspace, first: Blockly.Block): void {
-  const forever = makeBlock(ws, 'control_forever');
-  attachStatement(forever, 'DO', first);
-  const flag = makeBlock(ws, 'event_whenflag');
-  connectNext(flag, forever);
+function vget(ws: Blockly.Workspace, id: string): Expr {
+  return makeBlock(ws, 'var_get', { VAR: id });
 }
 
-function waitBlock(ws: Blockly.Workspace, seconds: number): Blockly.Block {
-  const wait = makeBlock(ws, 'control_wait');
-  attachValue(wait, 'SECS', num(ws, seconds));
-  return wait;
-}
-
-function randomWait(ws: Blockly.Workspace, min: number, max: number): Blockly.Block {
-  const wait = makeBlock(ws, 'control_wait');
-  attachValue(wait, 'SECS', randomRange(ws, min, max));
-  return wait;
-}
-
-// ── v0.7.0 变量/逻辑辅助 ────────────────────────────────────
-function seq(first: Blockly.Block, ...rest: Blockly.Block[]): Blockly.Block {
-  chain([first, ...rest]);
-  return first;
-}
-
-function varGet(ws: Blockly.Workspace, varId: string): Blockly.Block {
-  return makeBlock(ws, 'var_get', { VAR: varId });
-}
-
-function setVar(ws: Blockly.Workspace, varId: string, value: Blockly.Block): Blockly.Block {
-  const block = makeBlock(ws, 'var_set', { VAR: varId });
+function setVar(ws: Blockly.Workspace, id: string, value: Expr): Node {
+  const block = makeBlock(ws, 'var_set', { VAR: id });
   attachValue(block, 'VALUE', value);
   return block;
 }
 
-function changeVar(ws: Blockly.Workspace, varId: string, delta: Blockly.Block): Blockly.Block {
-  const block = makeBlock(ws, 'var_change', { VAR: varId });
-  attachValue(block, 'VALUE', delta);
+function changeVar(ws: Blockly.Workspace, id: string, value: Expr): Node {
+  const block = makeBlock(ws, 'var_change', { VAR: id });
+  attachValue(block, 'VALUE', value);
   return block;
 }
 
-function compareBlock(ws: Blockly.Workspace, op: string, left: Blockly.Block, right: Blockly.Block): Blockly.Block {
+function arith(ws: Blockly.Workspace, op: string, left: Expr, right: Expr): Expr {
+  const block = makeBlock(ws, 'operators_arithmetic', { OP: op });
+  attachValue(block, 'A', left);
+  attachValue(block, 'B', right);
+  return block;
+}
+
+function compare(ws: Blockly.Workspace, op: string, left: Expr, right: Expr): Expr {
   const block = makeBlock(ws, 'operators_compare', { OP: op });
   attachValue(block, 'A', left);
   attachValue(block, 'B', right);
   return block;
 }
 
-function logicAnd(ws: Blockly.Workspace, left: Blockly.Block, right: Blockly.Block): Blockly.Block {
+function and(ws: Blockly.Workspace, left: Expr, right: Expr): Expr {
   const block = makeBlock(ws, 'operators_logic', { OP: 'and' });
   attachValue(block, 'A', left);
   attachValue(block, 'B', right);
   return block;
 }
 
-// ── 平台跳跃（v0.7.0 示例游戏）──────────────────────────────
-const HERO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="64" viewBox="0 0 56 64">
-  <ellipse cx="28" cy="60" rx="19" ry="4" fill="rgba(0,0,0,.28)"/>
-  <path d="M40 46 q14 -6 14 -20" stroke="#8b5cf6" stroke-width="7" fill="none" stroke-linecap="round"/>
-  <ellipse cx="28" cy="42" rx="17" ry="15" fill="#8b5cf6"/>
-  <rect x="17" y="52" width="8" height="8" fill="#6d4bd8"/>
-  <rect x="31" y="52" width="8" height="8" fill="#6d4bd8"/>
-  <path d="M13 14 L9 0 L24 8 Z" fill="#8b5cf6"/>
-  <path d="M43 14 L47 0 L32 8 Z" fill="#8b5cf6"/>
-  <circle cx="28" cy="22" r="16" fill="#9d7bff"/>
-  <rect x="20" y="17" width="5" height="6" fill="#1b1330"/>
-  <rect x="31" y="17" width="5" height="6" fill="#1b1330"/>
-  <rect x="25" y="27" width="6" height="3" fill="#e8dcff"/>
-  <rect x="14" y="27" width="6" height="2" fill="#6d4bd8"/>
-  <rect x="16" y="31" width="6" height="2" fill="#6d4bd8"/>
-  <rect x="36" y="27" width="6" height="2" fill="#6d4bd8"/>
-  <rect x="34" y="31" width="6" height="2" fill="#6d4bd8"/>
-  <rect x="24" y="10" width="3" height="3" fill="#6d4bd8"/>
-  <rect x="30" y="12" width="3" height="3" fill="#6d4bd8"/>
-</svg>`;
+function not(ws: Blockly.Workspace, value: Expr): Expr {
+  const block = makeBlock(ws, 'operators_not');
+  attachValue(block, 'VALUE', value);
+  return block;
+}
 
-const HERO_JUMP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="64" viewBox="0 0 56 64">
-  <path d="M40 34 q14 2 16 16" stroke="#8b5cf6" stroke-width="7" fill="none" stroke-linecap="round"/>
-  <ellipse cx="28" cy="40" rx="17" ry="15" fill="#8b5cf6" transform="rotate(-8 28 40)"/>
-  <rect x="14" y="46" width="9" height="7" fill="#6d4bd8" transform="rotate(-18 18 49)"/>
-  <rect x="33" y="46" width="9" height="7" fill="#6d4bd8" transform="rotate(18 38 49)"/>
-  <path d="M13 14 L9 0 L24 8 Z" fill="#8b5cf6"/>
-  <path d="M43 14 L47 0 L32 8 Z" fill="#8b5cf6"/>
-  <circle cx="28" cy="22" r="16" fill="#9d7bff"/>
-  <rect x="20" y="16" width="5" height="7" fill="#1b1330"/>
-  <rect x="31" y="16" width="5" height="7" fill="#1b1330"/>
-  <rect x="25" y="27" width="6" height="3" fill="#e8dcff"/>
-  <rect x="24" y="10" width="3" height="3" fill="#6d4bd8"/>
-  <rect x="30" y="12" width="3" height="3" fill="#6d4bd8"/>
-</svg>`;
+function touching(ws: Blockly.Workspace, target: string): Expr {
+  return makeBlock(ws, 'sensing_touching', { TARGET: target });
+}
 
-const GROUND_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="90" viewBox="0 0 960 90">
-  <rect width="960" height="90" fill="#241f3d"/>
-  <rect width="960" height="16" fill="#4fbf7a"/>
-  <rect y="16" width="960" height="6" fill="#3d9c60"/>
-  <g fill="#332a52">
-    <rect x="40" y="36" width="26" height="10"/><rect x="120" y="52" width="34" height="12"/>
-    <rect x="210" y="34" width="20" height="10"/><rect x="300" y="60" width="28" height="10"/>
-    <rect x="380" y="40" width="30" height="10"/><rect x="470" y="56" width="22" height="10"/>
-    <rect x="560" y="36" width="26" height="10"/><rect x="650" y="58" width="30" height="10"/>
-    <rect x="740" y="42" width="24" height="10"/><rect x="830" y="60" width="28" height="10"/>
-  </g>
-</svg>`;
+function inputActive(ws: Blockly.Workspace, binding: string): Expr {
+  return makeBlock(ws, 'sensing_input', { INPUT: binding });
+}
 
-const CLOUD_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60">
-  <path d="M40 52 q-26 0 -26 -18 q0 -16 18 -16 q4 -14 22 -14 q14 0 20 10 q10 -8 24 -2 q16 6 14 22 q14 2 14 10 q0 8 -12 8 Z" fill="rgba(226,220,255,.28)"/>
-</svg>`;
+function ifBlock(ws: Blockly.Workspace, cond: Expr, body: Node[]): Node {
+  const block = makeBlock(ws, 'control_if');
+  attachValue(block, 'COND', cond);
+  attachStatement(block, 'DO', seq(ws, body));
+  return block;
+}
 
-const GOAL_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="140" viewBox="0 0 80 140">
-  <rect x="14" y="6" width="7" height="130" fill="#c9c2e8"/>
-  <path d="M21 12 L74 30 L21 52 Z" fill="#9d7bff"/>
-  <circle cx="21" cy="10" r="6" fill="#e8dcff"/>
-  <rect x="4" y="130" width="34" height="8" fill="#6d4bd8"/>
-</svg>`;
+function forever(ws: Blockly.Workspace, body: Node[]): Node {
+  const block = makeBlock(ws, 'control_forever');
+  attachStatement(block, 'DO', seq(ws, body));
+  return block;
+}
 
-const PLATFORM_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="26" viewBox="0 0 240 26">
-  <rect width="240" height="26" fill="#4a3f7a"/>
-  <rect width="240" height="6" fill="#8b7ad6"/>
-  <rect y="20" width="240" height="6" fill="#312a56"/>
-</svg>`;
+function waitSecs(ws: Blockly.Workspace, seconds: number): Node {
+  const block = makeBlock(ws, 'control_wait');
+  attachValue(block, 'SECS', num(ws, seconds));
+  return block;
+}
 
-const ENEMY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 60 50">
-  <path d="M4 48 q0 -42 26 -42 q26 0 26 42 z" fill="#7f5bc9"/>
-  <ellipse cx="22" cy="27" rx="5" ry="6" fill="#1b1330"/>
-  <ellipse cx="38" cy="27" rx="5" ry="6" fill="#1b1330"/>
-  <path d="M24 38 q6 6 12 0" stroke="#1b1330" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <path d="M6 20 l6 -10 l4 10 z" fill="#5c3fa0"/>
-  <path d="M54 20 l-6 -10 l-4 10 z" fill="#5c3fa0"/>
-</svg>`;
+function gotoXY(ws: Blockly.Workspace, x: Expr, y: Expr): Node {
+  const block = makeBlock(ws, 'motion_gotoxy');
+  attachValue(block, 'X', x);
+  attachValue(block, 'Y', y);
+  return block;
+}
 
-const POTION_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="56" viewBox="0 0 44 56">
-  <rect x="16" y="4" width="12" height="8" fill="#c9d4f5"/>
-  <path d="M10 16 h24 v10 q10 6 10 18 q0 8 -10 8 h-24 q-10 0 -10 -8 q0 -12 10 -18 z" fill="#e05a7a"/>
-  <rect x="10" y="18" width="24" height="8" fill="#f29bb0"/>
-</svg>`;
+function changeX(ws: Blockly.Workspace, value: number): Node {
+  const block = makeBlock(ws, 'motion_changex');
+  attachValue(block, 'VALUE', num(ws, value));
+  return block;
+}
 
-function projectPlatformer(): ProjectDoc {
+function changeY(ws: Blockly.Workspace, value: number): Node {
+  const block = makeBlock(ws, 'motion_changey');
+  attachValue(block, 'VALUE', num(ws, value));
+  return block;
+}
+
+function show(ws: Blockly.Workspace): Node {
+  return makeBlock(ws, 'looks_show');
+}
+
+function hide(ws: Blockly.Workspace): Node {
+  return makeBlock(ws, 'looks_hide');
+}
+
+function say(ws: Blockly.Workspace, text: string, seconds: number): Node {
+  const block = makeBlock(ws, 'looks_say', { TEXT: text });
+  attachValue(block, 'SECS', num(ws, seconds));
+  return block;
+}
+
+function stopAll(ws: Blockly.Workspace): Node {
+  return makeBlock(ws, 'control_stop', { MODE: 'all' });
+}
+
+function flagHat(ws: Blockly.Workspace, body: Node[]): Node {
+  const hat = makeBlock(ws, 'event_whenflag');
+  connectNext(hat, seq(ws, body));
+  return hat;
+}
+
+function saveWorkspace(ws: Blockly.Workspace): Record<string, unknown> {
+  return Blockly.serialization.workspaces.save(ws) as Record<string, unknown>;
+}
+
+// ── 贪吃蛇 ────────────────────────────────────────────────
+
+const SNAKE_CELL = 60;
+const SNAKE_START_X = 30;
+const SNAKE_START_Y = 0;
+const SNAKE_MAX_LEN = 5;
+const SNAKE_WALLS = ['sprite_wall_left', 'sprite_wall_right', 'sprite_wall_top', 'sprite_wall_bottom'];
+const SNAKE_TRAIL = [1, 2, 3, 4] as const;
+
+function snakeGridX(ws: Blockly.Workspace): Expr {
+  // (随机 0~13) * 60 - 390  →  -390 … 390，正好对齐格子
+  return arith(ws, '-', arith(ws, '*', randomRange(ws, 0, 13), num(ws, SNAKE_CELL)), num(ws, 390));
+}
+
+function snakeGridY(ws: Blockly.Workspace): Expr {
+  // (随机 0~6) * 60 - 180  →  -180 … 180
+  return arith(ws, '-', arith(ws, '*', randomRange(ws, 0, 6), num(ws, SNAKE_CELL)), num(ws, 180));
+}
+
+function projectSnake(): ProjectDoc {
+  const assets: AssetDef[] = [
+    asset('asset_snake_head', '蛇头', SNAKE_HEAD_SVG),
+    asset('asset_snake_body', '蛇身', SNAKE_BODY_SVG),
+    asset('asset_snake_apple', '苹果', APPLE_SVG),
+    asset('asset_snake_wall_v', '竖墙', WALL_V_SVG),
+    asset('asset_snake_wall_h', '横墙', WALL_H_SVG),
+  ];
+
+  const sprites: SpriteDef[] = [
+    sprite({
+      id: 'sprite_snake_head',
+      name: '蛇头',
+      x: SNAKE_START_X,
+      y: SNAKE_START_Y,
+      zIndex: 4,
+      costumes: [{ name: '蛇头', assetId: 'asset_snake_head' }],
+    }),
+    ...SNAKE_TRAIL.map((index) =>
+      sprite({
+        id: `sprite_snake_body${index}`,
+        name: `蛇身 ${index}`,
+        x: -2000,
+        y: -2000,
+        zIndex: 3,
+        visible: index <= 2,
+        costumes: [{ name: `蛇身 ${index}`, assetId: 'asset_snake_body' }],
+      }),
+    ),
+    sprite({
+      id: 'sprite_apple',
+      name: '苹果',
+      x: -150,
+      y: 120,
+      zIndex: 2,
+      costumes: [{ name: '苹果', assetId: 'asset_snake_apple' }],
+    }),
+    sprite({
+      id: 'sprite_wall_left',
+      name: '左墙',
+      x: -455,
+      y: 0,
+      zIndex: 1,
+      costumes: [{ name: '竖墙', assetId: 'asset_snake_wall_v' }],
+    }),
+    sprite({
+      id: 'sprite_wall_right',
+      name: '右墙',
+      x: 455,
+      y: 0,
+      zIndex: 1,
+      costumes: [{ name: '竖墙', assetId: 'asset_snake_wall_v' }],
+    }),
+    sprite({
+      id: 'sprite_wall_top',
+      name: '上墙',
+      x: 0,
+      y: 250,
+      zIndex: 1,
+      costumes: [{ name: '横墙', assetId: 'asset_snake_wall_h' }],
+    }),
+    sprite({
+      id: 'sprite_wall_bottom',
+      name: '下墙',
+      x: 0,
+      y: -250,
+      zIndex: 1,
+      costumes: [{ name: '横墙', assetId: 'asset_snake_wall_h' }],
+    }),
+  ];
+
+  const variables = [
+    { id: 'var_snake_score', name: '分数', value: 0 },
+    { id: 'var_snake_dir', name: '_方向', value: 0 },
+    { id: 'var_snake_len', name: '_长度', value: 3 },
+    { id: 'var_snake_prevx', name: '_上次X', value: SNAKE_START_X },
+    { id: 'var_snake_prevy', name: '_上次Y', value: SNAKE_START_Y },
+    { id: 'var_snake_h1x', name: '_尾1X', value: SNAKE_START_X - SNAKE_CELL },
+    { id: 'var_snake_h1y', name: '_尾1Y', value: SNAKE_START_Y },
+    { id: 'var_snake_h2x', name: '_尾2X', value: SNAKE_START_X - SNAKE_CELL * 2 },
+    { id: 'var_snake_h2y', name: '_尾2Y', value: SNAKE_START_Y },
+    { id: 'var_snake_h3x', name: '_尾3X', value: SNAKE_START_X - SNAKE_CELL * 3 },
+    { id: 'var_snake_h3y', name: '_尾3Y', value: SNAKE_START_Y },
+    { id: 'var_snake_h4x', name: '_尾4X', value: SNAKE_START_X - SNAKE_CELL * 4 },
+    { id: 'var_snake_h4y', name: '_尾4Y', value: SNAKE_START_Y },
+  ];
+
   return {
     schemaVersion: 1,
-    meta: nowMeta('platformer', '平台跳跃'),
-    stage: { width: 960, height: 540, background: '#1d1b33' },
-    assets: [
-      imageAsset('asset_hero', '英雄站立', HERO_SVG),
-      imageAsset('asset_hero_jump', '英雄跳跃', HERO_JUMP_SVG),
-      imageAsset('asset_ground', '地面', GROUND_SVG),
-      imageAsset('asset_cloud', '云朵', CLOUD_SVG),
-      imageAsset('asset_coin', '金币', COIN_SVG),
-      imageAsset('asset_goal', '终点旗', GOAL_SVG),
-      imageAsset('asset_platform', '平台', PLATFORM_SVG),
-      imageAsset('asset_enemy', '史莱姆', ENEMY_SVG),
-      imageAsset('asset_potion', '药水', POTION_SVG),
-    ],
-    variables: [
-      { id: 'var_vy', name: '速度', value: 0 },
-      { id: 'var_ground', name: '落地', value: 1 },
-      { id: 'var_score', name: '分数', value: 0 },
-      { id: 'var_hp', name: 'HP', value: 3 },
-    ],
-    sprites: [
-      sprite({
-        id: 'sprite_hero',
-        name: '英雄',
-        x: -380,
-        y: -148,
-        zIndex: 3,
-        rotationStyle: 'left-right',
-        costumes: [
-          { name: '站立', assetId: 'asset_hero' },
-          { name: '跳跃', assetId: 'asset_hero_jump' },
-        ],
-      }),
-      sprite({ id: 'sprite_ground', name: '地面', y: -225, zIndex: 1, costumes: [{ name: '地面', assetId: 'asset_ground' }] }),
-      sprite({ id: 'sprite_cloud_a', name: '云朵 A', x: -180, y: 110, zIndex: 1, costumes: [{ name: '云朵', assetId: 'asset_cloud' }] }),
-      sprite({ id: 'sprite_cloud_b', name: '云朵 B', x: 160, y: 60, zIndex: 1, costumes: [{ name: '云朵', assetId: 'asset_cloud' }] }),
-      sprite({ id: 'sprite_platform_a', name: '平台 A', x: -80, y: 10, zIndex: 2, size: 80, costumes: [{ name: '平台', assetId: 'asset_platform' }] }),
-      sprite({ id: 'sprite_platform_b', name: '平台 B', x: 190, y: 80, zIndex: 2, size: 70, costumes: [{ name: '平台', assetId: 'asset_platform' }] }),
-      sprite({ id: 'sprite_platform_c', name: '移动平台', x: 60, y: 150, zIndex: 2, size: 60, costumes: [{ name: '平台', assetId: 'asset_platform' }] }),
-      sprite({ id: 'sprite_enemy_a', name: '史莱姆 A', x: -190, y: -148, zIndex: 2, costumes: [{ name: '史莱姆', assetId: 'asset_enemy' }] }),
-      sprite({ id: 'sprite_enemy_b', name: '史莱姆 B', x: 300, y: 20, zIndex: 2, size: 90, costumes: [{ name: '史莱姆', assetId: 'asset_enemy' }] }),
-      sprite({ id: 'sprite_coin_a', name: '金币 1', x: -300, y: -80, zIndex: 2, costumes: [{ name: '金币', assetId: 'asset_coin' }] }),
-      sprite({ id: 'sprite_coin_b', name: '金币 2', x: -80, y: 40, zIndex: 2, costumes: [{ name: '金币', assetId: 'asset_coin' }] }),
-      sprite({ id: 'sprite_coin_c', name: '金币 3', x: 190, y: 110, zIndex: 2, costumes: [{ name: '金币', assetId: 'asset_coin' }] }),
-      sprite({ id: 'sprite_coin_d', name: '金币 4', x: 60, y: 190, zIndex: 2, costumes: [{ name: '金币', assetId: 'asset_coin' }] }),
-      sprite({ id: 'sprite_coin_e', name: '金币 5', x: 360, y: -100, zIndex: 2, costumes: [{ name: '金币', assetId: 'asset_coin' }] }),
-      sprite({ id: 'sprite_potion', name: '药水', x: 420, y: 30, zIndex: 2, costumes: [{ name: '药水', assetId: 'asset_potion' }] }),
-      sprite({ id: 'sprite_goal', name: '终点', x: 400, y: -150, zIndex: 2, costumes: [{ name: '旗子', assetId: 'asset_goal' }] }),
-    ],
+    meta: nowMeta('snake-demo', '贪吃蛇'),
+    stage: { width: 960, height: 540, background: '#0d1220' },
+    assets,
+    variables,
+    sprites,
     scripts: {},
+    input: padInput({ buttons: [], joystickSize: 'lg', joystickOpacity: 62 }),
   };
 }
 
-function workspacesPlatformer(): Record<string, unknown> {
-  const heroId = 'sprite_hero';
-  const score = 'var_score';
-  const vy = 'var_vy';
-  const grounded = 'var_ground';
-  const hp = 'var_hp';
-  const platforms = ['sprite_platform_a', 'sprite_platform_b', 'sprite_platform_c'];
-  const enemies = ['sprite_enemy_a', 'sprite_enemy_b'];
+function workspacesSnake(): Record<string, unknown> {
+  const ws = new Blockly.Workspace();
+  const result: Record<string, unknown> = {};
 
-  const hero = serialize((ws) => {
-    const right = makeBlock(ws, 'control_if');
-    attachValue(right, 'COND', makeBlock(ws, 'sensing_input', { INPUT: 'right' }));
-    const faceRight = makeBlock(ws, 'motion_point');
-    attachValue(faceRight, 'DIRECTION', num(ws, 90));
-    const stepRight = makeBlock(ws, 'motion_changex');
-    attachValue(stepRight, 'VALUE', num(ws, 7));
-    attachStatement(right, 'DO', seq(faceRight, stepRight));
+  const dir = 'var_snake_dir';
+  const len = 'var_snake_len';
 
-    const left = makeBlock(ws, 'control_if');
-    attachValue(left, 'COND', makeBlock(ws, 'sensing_input', { INPUT: 'left' }));
-    const faceLeft = makeBlock(ws, 'motion_point');
-    attachValue(faceLeft, 'DIRECTION', num(ws, 270));
-    const stepLeft = makeBlock(ws, 'motion_changex');
-    attachValue(stepLeft, 'VALUE', num(ws, -7));
-    attachStatement(left, 'DO', seq(faceLeft, stepLeft));
+  const turnRight = ifBlock(ws, not(ws, compare(ws, '=', vget(ws, dir), num(ws, 2))), [setVar(ws, dir, num(ws, 0))]);
+  const turnLeft = ifBlock(ws, not(ws, compare(ws, '=', vget(ws, dir), num(ws, 0))), [setVar(ws, dir, num(ws, 2))]);
+  const turnDown = ifBlock(ws, not(ws, compare(ws, '=', vget(ws, dir), num(ws, 3))), [setVar(ws, dir, num(ws, 1))]);
+  const turnUp = ifBlock(ws, not(ws, compare(ws, '=', vget(ws, dir), num(ws, 1))), [setVar(ws, dir, num(ws, 3))]);
 
-    const jump = makeBlock(ws, 'control_if');
-    attachValue(
-      jump,
-      'COND',
-      logicAnd(ws, makeBlock(ws, 'sensing_input', { INPUT: 'jump' }), compareBlock(ws, '=', varGet(ws, grounded), num(ws, 1))),
-    );
-    attachStatement(jump, 'DO', seq(setVar(ws, vy, num(ws, 15)), setVar(ws, grounded, num(ws, 0))));
+  const remember = [
+    setVar(ws, 'var_snake_prevx', makeBlock(ws, 'motion_xpos')),
+    setVar(ws, 'var_snake_prevy', makeBlock(ws, 'motion_ypos')),
+  ];
 
-    const gravity = changeVar(ws, vy, num(ws, -1));
-    const applyY = makeBlock(ws, 'motion_changey');
-    attachValue(applyY, 'VALUE', varGet(ws, vy));
+  const moveByDirection = [
+    ifBlock(ws, compare(ws, '=', vget(ws, dir), num(ws, 0)), [changeX(ws, SNAKE_CELL)]),
+    ifBlock(ws, compare(ws, '=', vget(ws, dir), num(ws, 2)), [changeX(ws, -SNAKE_CELL)]),
+    ifBlock(ws, compare(ws, '=', vget(ws, dir), num(ws, 1)), [changeY(ws, -SNAKE_CELL)]),
+    ifBlock(ws, compare(ws, '=', vget(ws, dir), num(ws, 3)), [changeY(ws, SNAKE_CELL)]),
+  ];
 
-    const onPlatform = makeBlock(ws, 'control_if');
-    attachValue(
-      onPlatform,
-      'COND',
-      logicAnd(ws, touchingAny(ws, platforms), compareBlock(ws, '<=', varGet(ws, vy), num(ws, 0))),
-    );
-    attachStatement(onPlatform, 'DO', seq(setVar(ws, vy, num(ws, 0)), setVar(ws, grounded, num(ws, 1))));
+  const shiftTrail = [
+    setVar(ws, 'var_snake_h4x', vget(ws, 'var_snake_h3x')),
+    setVar(ws, 'var_snake_h4y', vget(ws, 'var_snake_h3y')),
+    setVar(ws, 'var_snake_h3x', vget(ws, 'var_snake_h2x')),
+    setVar(ws, 'var_snake_h3y', vget(ws, 'var_snake_h2y')),
+    setVar(ws, 'var_snake_h2x', vget(ws, 'var_snake_h1x')),
+    setVar(ws, 'var_snake_h2y', vget(ws, 'var_snake_h1y')),
+    setVar(ws, 'var_snake_h1x', vget(ws, 'var_snake_prevx')),
+    setVar(ws, 'var_snake_h1y', vget(ws, 'var_snake_prevy')),
+  ];
 
-    const land = makeBlock(ws, 'control_if');
-    attachValue(land, 'COND', compareBlock(ws, '<', makeBlock(ws, 'motion_ypos'), num(ws, -152)));
-    const landX = makeBlock(ws, 'motion_gotoxy');
-    attachValue(landX, 'X', makeBlock(ws, 'motion_xpos'));
-    attachValue(landX, 'Y', num(ws, -148));
-    attachStatement(land, 'DO', seq(landX, setVar(ws, vy, num(ws, 0)), setVar(ws, grounded, num(ws, 1))));
+  let wallCond: Expr = touching(ws, SNAKE_WALLS[0]);
+  for (const wall of SNAKE_WALLS.slice(1)) {
+    const block = makeBlock(ws, 'operators_logic', { OP: 'or' });
+    attachValue(block, 'A', wallCond);
+    attachValue(block, 'B', touching(ws, wall));
+    wallCond = block;
+  }
 
-    const hurt = makeBlock(ws, 'control_if');
-    attachValue(hurt, 'COND', touchingAny(ws, enemies));
-    const loseHp = changeVar(ws, hp, num(ws, -1));
-    const ouch = makeBlock(ws, 'looks_say', { TEXT: '啊！被史莱姆撞到了，HP -1' });
-    attachValue(ouch, 'SECS', num(ws, 0.8));
-    const cooldown = makeBlock(ws, 'control_wait');
-    attachValue(cooldown, 'SECS', num(ws, 1));
-    const dead = makeBlock(ws, 'control_if');
-    attachValue(dead, 'COND', compareBlock(ws, '<=', varGet(ws, hp), num(ws, 0)));
-    const gameOver = makeBlock(ws, 'looks_say', { TEXT: '游戏结束…点击「重置工程」再来一局' });
-    attachValue(gameOver, 'SECS', num(ws, 5));
-    const halt = makeBlock(ws, 'control_stop', { MODE: 'all' });
-    attachStatement(dead, 'DO', seq(gameOver, halt));
-    const respawn = makeBlock(ws, 'motion_gotoxy');
-    attachValue(respawn, 'X', num(ws, -380));
-    attachValue(respawn, 'Y', num(ws, -148));
-    attachStatement(hurt, 'DO', seq(loseHp, ouch, cooldown, dead, respawn));
+  const hitSelf: Node[] = [];
+  for (const index of [2, 3, 4] as const) {
+    const cond = and(ws, compare(ws, '>=', vget(ws, len), num(ws, index + 1)), touching(ws, `sprite_snake_body${index}`));
+    hitSelf.push(ifBlock(ws, cond, [say(ws, '咬到自己了，游戏结束！点「运行」重新开始', 2), stopAll(ws)]));
+  }
 
-    const costume = makeBlock(ws, 'control_ifelse');
-    attachValue(costume, 'COND', compareBlock(ws, '>', varGet(ws, vy), num(ws, 0)));
-    attachStatement(costume, 'DO', makeBlock(ws, 'looks_switchcostume', { COSTUME: '跳跃' }));
-    attachStatement(costume, 'ELSE', makeBlock(ws, 'looks_switchcostume', { COSTUME: '站立' }));
+  flagHat(ws, [
+    forever(ws, [
+      ifBlock(ws, inputActive(ws, 'right'), [turnRight]),
+      ifBlock(ws, inputActive(ws, 'left'), [turnLeft]),
+      ifBlock(ws, inputActive(ws, 'down'), [turnDown]),
+      ifBlock(ws, inputActive(ws, 'up'), [turnUp]),
+      ...remember,
+      ...moveByDirection,
+      ...shiftTrail,
+      ifBlock(ws, wallCond, [say(ws, '撞墙了，游戏结束！得分见左上角，点「运行」重新开始', 2), stopAll(ws)]),
+      ...hitSelf,
+      waitSecs(ws, 0.16),
+    ]),
+  ]);
+  result.sprite_snake_head = saveWorkspace(ws);
+  ws.clear();
+  ws.dispose();
 
-    chain([right, left, jump, gravity, applyY, onPlatform, land, hurt, costume]);
-    flagForever(ws, right);
-  });
+  const appleWs = new Blockly.Workspace();
+  const eat = ifBlock(appleWs, touching(appleWs, 'sprite_snake_head'), [
+    changeVar(appleWs, 'var_snake_score', num(appleWs, 1)),
+    ifBlock(appleWs, compare(appleWs, '<', vget(appleWs, len), num(appleWs, SNAKE_MAX_LEN)), [
+      changeVar(appleWs, len, num(appleWs, 1)),
+    ]),
+    hide(appleWs),
+    gotoXY(appleWs, snakeGridX(appleWs), snakeGridY(appleWs)),
+    show(appleWs),
+    say(appleWs, '好吃！蛇变长了', 0.6),
+  ]);
+  flagHat(appleWs, [forever(appleWs, [eat, waitSecs(appleWs, 0.12)])]);
+  result.sprite_apple = saveWorkspace(appleWs);
+  appleWs.clear();
+  appleWs.dispose();
 
-  const coinScript = (): Record<string, unknown> =>
-    serialize((ws) => {
-      const collect = makeBlock(ws, 'control_if');
-      attachValue(collect, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: heroId }));
-      const hide = makeBlock(ws, 'looks_hide');
-      const add = changeVar(ws, score, num(ws, 10));
-      const cheer = makeBlock(ws, 'control_if');
-      attachValue(cheer, 'COND', compareBlock(ws, '>=', varGet(ws, score), num(ws, 50)));
-      const say = makeBlock(ws, 'looks_say', { TEXT: '金币收集完成，冲向终点！' });
-      attachValue(say, 'SECS', num(ws, 2.5));
-      attachStatement(cheer, 'DO', say);
-      const stopThis = makeBlock(ws, 'control_stop', { MODE: 'this' });
-      attachStatement(collect, 'DO', seq(hide, add, cheer, stopThis));
-      flagForever(ws, collect);
-    });
+  for (const index of SNAKE_TRAIL) {
+    const bodyWs = new Blockly.Workspace();
+    const follow = ifBlock(bodyWs, compare(bodyWs, '>=', vget(bodyWs, len), num(bodyWs, index + 1)), [
+      show(bodyWs),
+      gotoXY(bodyWs, vget(bodyWs, `var_snake_h${index}x`), vget(bodyWs, `var_snake_h${index}y`)),
+    ]);
+    const away = ifBlock(bodyWs, compare(bodyWs, '<', vget(bodyWs, len), num(bodyWs, index + 1)), [
+      hide(bodyWs),
+      gotoXY(bodyWs, num(bodyWs, -2000), num(bodyWs, -2000)),
+    ]);
+    flagHat(bodyWs, [forever(bodyWs, [follow, away, waitSecs(bodyWs, 0.03)])]);
+    result[`sprite_snake_body${index}`] = saveWorkspace(bodyWs);
+    bodyWs.clear();
+    bodyWs.dispose();
+  }
 
-  const enemyScript = (x1: number, y1: number, x2: number, y2: number): Record<string, unknown> =>
-    serialize((ws) => {
-      const go1 = makeBlock(ws, 'motion_glide');
-      attachValue(go1, 'SECS', num(ws, 1.4));
-      attachValue(go1, 'X', num(ws, x1));
-      attachValue(go1, 'Y', num(ws, y1));
-      const go2 = makeBlock(ws, 'motion_glide');
-      attachValue(go2, 'SECS', num(ws, 1.4));
-      attachValue(go2, 'X', num(ws, x2));
-      attachValue(go2, 'Y', num(ws, y2));
-      flagForever(ws, seq(go1, go2));
-    });
-
-  const movingPlatform = serialize((ws) => {
-    const up = makeBlock(ws, 'motion_glide');
-    attachValue(up, 'SECS', num(ws, 1.6));
-    attachValue(up, 'X', num(ws, 60));
-    attachValue(up, 'Y', num(ws, 200));
-    const down = makeBlock(ws, 'motion_glide');
-    attachValue(down, 'SECS', num(ws, 1.6));
-    attachValue(down, 'X', num(ws, 60));
-    attachValue(down, 'Y', num(ws, 140));
-    flagForever(ws, seq(up, down));
-  });
-
-  const potion = serialize((ws) => {
-    const drink = makeBlock(ws, 'control_if');
-    attachValue(drink, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: heroId }));
-    const heal = changeVar(ws, hp, num(ws, 2));
-    const say = makeBlock(ws, 'looks_say', { TEXT: '喝下药水，恢复 2 点 HP！' });
-    attachValue(say, 'SECS', num(ws, 1.5));
-    attachStatement(drink, 'DO', seq(heal, say, makeBlock(ws, 'looks_hide'), makeBlock(ws, 'control_stop', { MODE: 'this' })));
-    flagForever(ws, drink);
-  });
-
-  const goal = serialize((ws) => {
-    const win = makeBlock(ws, 'control_if');
-    attachValue(win, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: heroId }));
-    const check = makeBlock(ws, 'control_ifelse');
-    attachValue(check, 'COND', compareBlock(ws, '>=', varGet(ws, score), num(ws, 50)));
-    const cheer = makeBlock(ws, 'looks_say', { TEXT: '🏆 通关！全部金币到手！' });
-    attachValue(cheer, 'SECS', num(ws, 5));
-    const hint = makeBlock(ws, 'looks_say', { TEXT: '还差金币：先把金币全部收集起来！' });
-    attachValue(hint, 'SECS', num(ws, 2));
-    attachStatement(check, 'DO', cheer);
-    attachStatement(check, 'ELSE', hint);
-    attachStatement(win, 'DO', check);
-    flagForever(ws, win);
-  });
-
-  const result: Record<string, unknown> = { [heroId]: hero, sprite_platform_c: movingPlatform, sprite_potion: potion, sprite_goal: goal };
-  for (const id of ['sprite_coin_a', 'sprite_coin_b', 'sprite_coin_c', 'sprite_coin_d', 'sprite_coin_e']) result[id] = coinScript();
-  result.sprite_enemy_a = enemyScript(-120, -148, -260, -148);
-  result.sprite_enemy_b = enemyScript(300, 60, 300, 0);
   return result;
 }
 
-// ── 空白工程 ────────────────────────────────────────────────
+// ── 空白工程 ──────────────────────────────────────────────
+
 function projectBlank(): ProjectDoc {
-  const project: ProjectDoc = {
+  const assetDef = asset('asset_blank_sprite', '角色素材', spritePlaceholderSvg(0));
+  return {
     schemaVersion: 1,
-    meta: nowMeta('blank', '未命名工程'),
+    meta: nowMeta('blank-project', '未命名工程'),
     stage: { width: 960, height: 540, background: '#8fd3ff' },
-    assets: [{ id: 'asset_blank_1', name: '角色', kind: 'image', dataUrl: spritePlaceholderSvg(0) }],
+    assets: [assetDef],
     variables: [],
-    sprites: [sprite({ id: 'sprite_1', name: '角色 1', costumes: [{ name: '造型 1', assetId: 'asset_blank_1' }] })],
+    sprites: [
+      sprite({
+        id: 'sprite_1',
+        name: '角色 1',
+        costumes: [{ name: '造型 1', assetId: 'asset_blank_sprite' }],
+      }),
+    ],
     scripts: {},
+    input: padInput({}),
   };
-  return project;
 }
 
 function workspacesBlank(): Record<string, unknown> {
   return {};
 }
-
-// ── 小猫吃金币 ──────────────────────────────────────────────
-function projectCatCoin(): ProjectDoc {
-  const catId = 'sprite_cat';
-  const coinId = 'sprite_coin';
-  const score = 'var_score';
-  const project: ProjectDoc = {
-    schemaVersion: 1,
-    meta: nowMeta('cat-coin', '小猫吃金币'),
-    stage: { width: 960, height: 540, background: '#8fd3ff' },
-    assets: [
-      imageAsset('asset_cat', '小猫', CAT_SVG),
-      imageAsset('asset_coin', '金币', COIN_SVG),
-    ],
-    variables: [{ id: score, name: '分数', value: 0 }],
-    sprites: [
-      sprite({
-        id: catId,
-        name: '小猫',
-        x: -180,
-        y: -60,
-        zIndex: 2,
-        rotationStyle: 'left-right',
-        costumes: [{ name: '小猫', assetId: 'asset_cat' }],
-      }),
-      sprite({ id: coinId, name: '金币', x: 150, y: 80, costumes: [{ name: '金币', assetId: 'asset_coin' }] }),
-    ],
-    scripts: {},
-  };
-
-  return project;
-}
-
-function workspacesCatCoin(): Record<string, unknown> {
-  const catId = 'sprite_cat';
-  const coinId = 'sprite_coin';
-  const score = 'var_score';
-  const cat = serialize((ws) => {
-    const right = keyIf(ws, 'right', 'motion_changex', 7);
-    const left = keyIf(ws, 'left', 'motion_changex', -7);
-    const up = keyIf(ws, 'up', 'motion_changey', 7);
-    const down = keyIf(ws, 'down', 'motion_changey', -7);
-    const touch = makeBlock(ws, 'control_if');
-    attachValue(touch, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: coinId }));
-    const change = makeBlock(ws, 'var_change', { VAR: score });
-    attachValue(change, 'VALUE', num(ws, 1));
-    const broadcast = makeBlock(ws, 'event_broadcast', { MESSAGE: 'hit' });
-    attachStatement(touch, 'DO', change);
-    connectNext(change, broadcast);
-    chain([right, left, up, down, touch]);
-    flagForever(ws, right);
-  });
-
-  const coin = serialize((ws) => {
-    const hat = makeBlock(ws, 'event_whenmessage', { MESSAGE: 'hit' });
-    const hide = makeBlock(ws, 'looks_hide');
-    const goTo = makeBlock(ws, 'motion_gotoxy');
-    attachValue(goTo, 'X', randomRange(ws, -380, 380));
-    attachValue(goTo, 'Y', randomRange(ws, -180, 180));
-    const show = makeBlock(ws, 'looks_show');
-    chain([hide, waitBlock(ws, 0.3), goTo, show]);
-    connectNext(hat, hide);
-  });
-
-  return { [catId]: cat, [coinId]: coin };
-}
-
-// ── 打地鼠 ─────────────────────────────────────────────────
-function projectWhackMole(): ProjectDoc {
-  const moleId = 'sprite_mole';
-  const score = 'var_score';
-  const project: ProjectDoc = {
-    schemaVersion: 1,
-    meta: nowMeta('whack-mole', '打地鼠'),
-    stage: { width: 960, height: 540, background: '#b7d9a8' },
-    assets: [imageAsset('asset_mole', '地鼠', MOLE_SVG)],
-    variables: [{ id: score, name: '分数', value: 0 }],
-    sprites: [
-      sprite({
-        id: moleId,
-        name: '地鼠',
-        x: 0,
-        y: -80,
-        size: 110,
-        costumes: [{ name: '地鼠', assetId: 'asset_mole' }],
-      }),
-    ],
-    scripts: {},
-  };
-
-  return project;
-}
-
-function workspacesWhackMole(): Record<string, unknown> {
-  const moleId = 'sprite_mole';
-  const score = 'var_score';
-  const mole = serialize((ws) => {
-    const goTo = makeBlock(ws, 'motion_gotoxy');
-    attachValue(goTo, 'X', randomRange(ws, -320, 320));
-    attachValue(goTo, 'Y', randomRange(ws, -200, -40));
-    const show = makeBlock(ws, 'looks_show');
-    const hide = makeBlock(ws, 'looks_hide');
-    chain([goTo, show, waitBlock(ws, 0.9), hide, randomWait(ws, 0.2, 0.5)]);
-    flagForever(ws, goTo);
-
-    const clickHat = makeBlock(ws, 'event_whenclick');
-    const change = makeBlock(ws, 'var_change', { VAR: score });
-    attachValue(change, 'VALUE', num(ws, 1));
-    const hideOnHit = makeBlock(ws, 'looks_hide');
-    connectNext(clickHat, change);
-    connectNext(change, hideOnHit);
-  });
-
-  return { [moleId]: mole };
-}
-
-// ── 接苹果 ─────────────────────────────────────────────────
-function projectCatchApple(): ProjectDoc {
-  const basketId = 'sprite_basket';
-  const appleId = 'sprite_apple';
-  const score = 'var_score';
-  const project: ProjectDoc = {
-    schemaVersion: 1,
-    meta: nowMeta('catch-apple', '接苹果'),
-    stage: { width: 960, height: 540, background: '#8fd3ff' },
-    assets: [
-      imageAsset('asset_apple', '苹果', APPLE_SVG),
-      imageAsset('asset_basket', '篮子', BASKET_SVG),
-    ],
-    variables: [{ id: score, name: '分数', value: 0 }],
-    sprites: [
-      sprite({
-        id: basketId,
-        name: '篮子',
-        x: 0,
-        y: -210,
-        size: 110,
-        zIndex: 2,
-        costumes: [{ name: '篮子', assetId: 'asset_basket' }],
-      }),
-      sprite({
-        id: appleId,
-        name: '苹果',
-        x: 0,
-        y: 250,
-        size: 80,
-        zIndex: 1,
-        costumes: [{ name: '苹果', assetId: 'asset_apple' }],
-      }),
-    ],
-    scripts: {},
-  };
-
-  return project;
-}
-
-function workspacesCatchApple(): Record<string, unknown> {
-  const basketId = 'sprite_basket';
-  const appleId = 'sprite_apple';
-  const score = 'var_score';
-  const basket = serialize((ws) => {
-    const right = keyIf(ws, 'right', 'motion_changex', 12);
-    const left = keyIf(ws, 'left', 'motion_changex', -12);
-    chain([right, left]);
-    flagForever(ws, right);
-  });
-
-  const apple = serialize((ws) => {
-    const goTo = makeBlock(ws, 'motion_gotoxy');
-    attachValue(goTo, 'X', randomRange(ws, -380, 380));
-    attachValue(goTo, 'Y', num(ws, 250));
-    const show = makeBlock(ws, 'looks_show');
-    const glide = makeBlock(ws, 'motion_glide');
-    attachValue(glide, 'SECS', num(ws, 1.8));
-    attachValue(glide, 'X', randomRange(ws, -320, 320));
-    attachValue(glide, 'Y', num(ws, -215));
-    const touch = makeBlock(ws, 'control_if');
-    attachValue(touch, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: basketId }));
-    const change = makeBlock(ws, 'var_change', { VAR: score });
-    attachValue(change, 'VALUE', num(ws, 1));
-    attachStatement(touch, 'DO', change);
-    const hide = makeBlock(ws, 'looks_hide');
-    chain([goTo, show, glide, touch, hide, waitBlock(ws, 0.1)]);
-    flagForever(ws, goTo);
-  });
-
-  return { [basketId]: basket, [appleId]: apple };
-}
-
-// ── 吃豆豆（v0.8.0 示例游戏）────────────────────────────────
-const PAC_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
-  <circle cx="22" cy="22" r="20" fill="#ffd93b"/>
-  <path d="M22 22 L44 13 L44 31 Z" fill="#0e0b1a"/>
-  <circle cx="24" cy="13" r="3" fill="#3a2c00"/>
-</svg>`;
-
-const GHOST_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48">
-  <path d="M4 46 V20 a18 18 0 0 1 36 0 V46 l-6 -5 -6 5 -6 -5 -6 5 -6 -5 Z" fill="#b39cff"/>
-  <circle cx="16" cy="21" r="5" fill="#1b1330"/>
-  <circle cx="29" cy="21" r="5" fill="#1b1330"/>
-  <circle cx="17" cy="20" r="1.6" fill="#fff"/>
-  <circle cx="30" cy="20" r="1.6" fill="#fff"/>
-</svg>`;
-
-const DOT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
-  <circle cx="9" cy="9" r="7" fill="#ffe27a"/>
-  <circle cx="9" cy="9" r="7" fill="none" stroke="#d9b23c" stroke-width="2"/>
-</svg>`;
-
-function wallSvg(width: number, height: number): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-  <rect width="${width}" height="${height}" fill="#43356f"/>
-  <rect width="${width}" height="4" fill="#7b63d1"/>
-  <rect y="${height - 4}" width="${width}" height="4" fill="#2c2350"/>
-</svg>`;
-}
-
-/** 多个目标里任意一个被碰到：or 串联 sensing_touching */
-function touchingAny(ws: Blockly.Workspace, targets: string[]): Blockly.Block {
-  const checks = targets.map((target) => makeBlock(ws, 'sensing_touching', { TARGET: target }));
-  let acc = checks[0];
-  for (const check of checks.slice(1)) {
-    const logic = makeBlock(ws, 'operators_logic', { OP: 'or' });
-    attachValue(logic, 'A', acc);
-    attachValue(logic, 'B', check);
-    acc = logic;
-  }
-  return acc;
-}
-
-function projectDotMaze(): ProjectDoc {
-  const dots: Array<[string, number, number]> = [
-    ['sprite_dot_a', -60, 170],
-    ['sprite_dot_b', 60, 170],
-    ['sprite_dot_c', -60, -170],
-    ['sprite_dot_d', 60, -170],
-    ['sprite_dot_e', -350, 0],
-    ['sprite_dot_f', 350, 0],
-  ];
-  const project: ProjectDoc = {
-    schemaVersion: 1,
-    meta: nowMeta('dot-maze', '吃豆豆'),
-    stage: { width: 960, height: 540, background: '#0e0b1a' },
-    assets: [
-      imageAsset('asset_pac', '吃豆人', PAC_SVG),
-      imageAsset('asset_ghost', '幽灵', GHOST_SVG),
-      imageAsset('asset_dot', '豆子', DOT_SVG),
-      imageAsset('asset_wall_h', '横墙', wallSvg(320, 20)),
-      imageAsset('asset_wall_v', '竖墙', wallSvg(20, 300)),
-      imageAsset('asset_border_h', '上边框', wallSvg(940, 20)),
-      imageAsset('asset_border_v', '侧边框', wallSvg(20, 500)),
-    ],
-    variables: [
-      { id: 'var_score', name: '分数', value: 0 },
-      { id: 'var_prev_x', name: '上次 X', value: 0 },
-      { id: 'var_prev_y', name: '上次 Y', value: 0 },
-    ],
-    sprites: [
-      sprite({ id: 'sprite_player', name: '吃豆人', x: -300, y: -60, zIndex: 3, costumes: [{ name: '吃豆人', assetId: 'asset_pac' }] }),
-      sprite({ id: 'sprite_ghost', name: '幽灵', x: 300, y: -60, zIndex: 2, costumes: [{ name: '幽灵', assetId: 'asset_ghost' }] }),
-      sprite({ id: 'sprite_border_top', name: '上边框', y: 256, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_border_h' }] }),
-      sprite({ id: 'sprite_border_bottom', name: '下边框', y: -256, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_border_h' }] }),
-      sprite({ id: 'sprite_border_left', name: '左边框', x: -462, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_border_v' }] }),
-      sprite({ id: 'sprite_border_right', name: '右边框', x: 462, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_border_v' }] }),
-      sprite({ id: 'sprite_wall_a', name: '横墙 A', x: -120, y: 40, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_wall_h' }] }),
-      sprite({ id: 'sprite_wall_b', name: '横墙 B', x: 140, y: -40, zIndex: 1, costumes: [{ name: '墙', assetId: 'asset_wall_h' }] }),
-      sprite({ id: 'sprite_wall_c', name: '竖墙 C', y: 120, zIndex: 1, size: 55, costumes: [{ name: '墙', assetId: 'asset_wall_v' }] }),
-      ...dots.map(([id, x, y]) =>
-        sprite({ id, name: id.replace('sprite_dot_', '豆子 '), x, y, zIndex: 2, costumes: [{ name: '豆子', assetId: 'asset_dot' }] }),
-      ),
-    ],
-    scripts: {},
-  };
-  return project;
-}
-
-function workspacesDotMaze(): Record<string, unknown> {
-  const score = 'var_score';
-  const prevX = 'var_prev_x';
-  const prevY = 'var_prev_y';
-  const wallIds = [
-    'sprite_border_top',
-    'sprite_border_bottom',
-    'sprite_border_left',
-    'sprite_border_right',
-    'sprite_wall_a',
-    'sprite_wall_b',
-    'sprite_wall_c',
-  ];
-  const player = serialize((ws) => {
-    const moveStep = (input: string, axis: 'x' | 'y', delta: number) => {
-      const tryMove = makeBlock(ws, 'control_if');
-      attachValue(tryMove, 'COND', makeBlock(ws, 'sensing_input', { INPUT: input }));
-      const rememberX = setVar(ws, prevX, makeBlock(ws, 'motion_xpos'));
-      const rememberY = setVar(ws, prevY, makeBlock(ws, 'motion_ypos'));
-      const move = makeBlock(ws, axis === 'x' ? 'motion_changex' : 'motion_changey');
-      attachValue(move, 'VALUE', num(ws, delta));
-      const blocked = makeBlock(ws, 'control_if');
-      attachValue(blocked, 'COND', touchingAny(ws, wallIds));
-      const back = makeBlock(ws, 'motion_gotoxy');
-      attachValue(back, 'X', varGet(ws, prevX));
-      attachValue(back, 'Y', varGet(ws, prevY));
-      attachStatement(blocked, 'DO', back);
-      attachStatement(tryMove, 'DO', seq(rememberX, rememberY, move, blocked));
-      return tryMove;
-    };
-    const right = moveStep('right', 'x', 6);
-    const left = moveStep('left', 'x', -6);
-    const up = moveStep('up', 'y', 6);
-    const down = moveStep('down', 'y', -6);
-    chain([right, left, up, down]);
-    flagForever(ws, right);
-
-    // 吃完所有豆子后由广播触发通关提示
-    const win = makeBlock(ws, 'looks_say', { TEXT: '🎉 豆子全部吃完，通关！' });
-    attachValue(win, 'SECS', num(ws, 5));
-    connectNext(makeBlock(ws, 'event_whenmessage', { MESSAGE: 'win' }), win);
-  });
-
-  const ghost = serialize((ws) => {
-    const dirs: Array<['x' | 'y', number]> = [
-      ['x', 6],
-      ['x', -6],
-      ['y', 6],
-      ['y', -6],
-    ];
-    const branches = dirs.map(([axis, delta], index) => {
-      const pick = makeBlock(ws, 'control_if');
-      attachValue(pick, 'COND', compareBlock(ws, '=', randomRange(ws, 1, 4), num(ws, index + 1)));
-      const rememberX = setVar(ws, prevX, makeBlock(ws, 'motion_xpos'));
-      const rememberY = setVar(ws, prevY, makeBlock(ws, 'motion_ypos'));
-      const move = makeBlock(ws, axis === 'x' ? 'motion_changex' : 'motion_changey');
-      attachValue(move, 'VALUE', num(ws, delta));
-      const blocked = makeBlock(ws, 'control_if');
-      attachValue(blocked, 'COND', touchingAny(ws, wallIds));
-      const back = makeBlock(ws, 'motion_gotoxy');
-      attachValue(back, 'X', varGet(ws, prevX));
-      attachValue(back, 'Y', varGet(ws, prevY));
-      attachStatement(blocked, 'DO', back);
-      attachStatement(pick, 'DO', seq(rememberX, rememberY, move, blocked));
-      return pick;
-    });
-    const caught = makeBlock(ws, 'control_if');
-    attachValue(caught, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_player' }));
-    const deduct = changeVar(ws, score, num(ws, -1));
-    const shout = makeBlock(ws, 'looks_say', { TEXT: '被抓到啦！' });
-    attachValue(shout, 'SECS', num(ws, 1));
-    attachStatement(caught, 'DO', seq(deduct, shout));
-    chain([...branches, caught, waitBlock(ws, 0.05)]);
-    flagForever(ws, branches[0]);
-  });
-
-  const pellet = (): Record<string, unknown> =>
-    serialize((ws) => {
-      const eat = makeBlock(ws, 'control_if');
-      attachValue(eat, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_player' }));
-      const hide = makeBlock(ws, 'looks_hide');
-      const add = changeVar(ws, score, num(ws, 1));
-      const allDone = makeBlock(ws, 'control_if');
-      attachValue(allDone, 'COND', compareBlock(ws, '=', varGet(ws, score), num(ws, 6)));
-      attachStatement(allDone, 'DO', makeBlock(ws, 'event_broadcast', { MESSAGE: 'win' }));
-      const stopThis = makeBlock(ws, 'control_stop', { MODE: 'this' });
-      attachStatement(eat, 'DO', seq(hide, add, allDone, stopThis));
-      chain([eat]);
-      flagForever(ws, eat);
-    });
-
-  const result: Record<string, unknown> = {
-    sprite_player: player,
-    sprite_ghost: ghost,
-  };
-  for (const id of ['sprite_dot_a', 'sprite_dot_b', 'sprite_dot_c', 'sprite_dot_d', 'sprite_dot_e', 'sprite_dot_f']) {
-    result[id] = pellet();
-  }
-  return result;
-}
-
-// ── 勇者小镇（v0.11.0 示例游戏）──────────────────────────────
-const KNIGHT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="80" viewBox="0 0 64 80">
-  <rect x="14" y="36" width="36" height="36" fill="#4b66b8"/>
-  <rect x="18" y="18" width="28" height="22" fill="#c9d4f5"/>
-  <rect x="22" y="26" width="6" height="6" fill="#232a3d"/>
-  <rect x="36" y="26" width="6" height="6" fill="#232a3d"/>
-  <rect x="26" y="48" width="12" height="12" fill="#9db0e8"/>
-  <rect x="8" y="52" width="8" height="6" fill="#c9d4f5"/>
-  <rect x="48" y="52" width="8" height="6" fill="#c9d4f5"/>
-  <rect x="18" y="70" width="10" height="8" fill="#232a3d"/>
-  <rect x="36" y="70" width="10" height="8" fill="#232a3d"/>
-  <rect x="20" y="34" width="24" height="4" fill="#7a8fc9"/>
-</svg>`;
-
-const PROF_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="82" viewBox="0 0 64 82">
-  <rect x="12" y="38" width="40" height="40" fill="#7a5bb5"/>
-  <rect x="20" y="18" width="24" height="22" fill="#f0d9c0"/>
-  <rect x="23" y="26" width="6" height="6" fill="#232a3d"/>
-  <rect x="35" y="26" width="6" height="6" fill="#232a3d"/>
-  <rect x="28" y="35" width="8" height="4" fill="#b98b6f"/>
-  <rect x="16" y="10" width="32" height="8" fill="#3f2d63"/>
-  <rect x="22" y="2" width="20" height="8" fill="#3f2d63"/>
-  <rect x="26" y="66" width="12" height="12" fill="#5d448f"/>
-</svg>`;
-
-const VILLAGER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="80" viewBox="0 0 64 80">
-  <rect x="12" y="38" width="40" height="38" fill="#4f9e69"/>
-  <rect x="20" y="18" width="24" height="22" fill="#f0d9c0"/>
-  <rect x="23" y="26" width="6" height="6" fill="#232a3d"/>
-  <rect x="35" y="26" width="6" height="6" fill="#232a3d"/>
-  <rect x="28" y="35" width="8" height="4" fill="#b98b6f"/>
-  <rect x="18" y="10" width="28" height="8" fill="#6b4a2c"/>
-  <rect x="26" y="66" width="12" height="10" fill="#3d7a52"/>
-</svg>`;
-
-const HOUSE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="170" viewBox="0 0 200 170">
-  <rect x="20" y="70" width="160" height="96" fill="#e8d5b5"/>
-  <path d="M8 76 L100 8 L192 76 Z" fill="#a8493f"/>
-  <rect x="78" y="104" width="44" height="62" fill="#6b4a2c"/>
-  <rect x="34" y="96" width="30" height="28" fill="#8fc7d8"/>
-  <rect x="136" y="96" width="30" height="28" fill="#8fc7d8"/>
-  <rect x="152" y="30" width="16" height="30" fill="#7a5a3a"/>
-</svg>`;
-
-const TREE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="110" height="140" viewBox="0 0 110 140">
-  <rect x="46" y="90" width="18" height="46" fill="#7a4a30"/>
-  <circle cx="55" cy="56" r="44" fill="#4a8f52"/>
-  <circle cx="34" cy="76" r="26" fill="#57a35f"/>
-  <circle cx="78" cy="76" r="26" fill="#57a35f"/>
-</svg>`;
-
-const RPG_STAR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-  <path d="M24 4 L30 18 L45 19 L34 29 L37 44 L24 36 L11 44 L14 29 L3 19 L18 18 Z" fill="#ffd45c" stroke="#d9a72c" stroke-width="2"/>
-</svg>`;
-
-const SLIME_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="52" viewBox="0 0 64 52">
-  <path d="M4 50 q0 -44 28 -44 q28 0 28 44 z" fill="#6fbf7f"/>
-  <ellipse cx="24" cy="28" rx="5" ry="6" fill="#1f3324"/>
-  <ellipse cx="40" cy="28" rx="5" ry="6" fill="#1f3324"/>
-  <path d="M26 40 q6 6 12 0" stroke="#1f3324" stroke-width="3" fill="none" stroke-linecap="round"/>
-</svg>`;
-
-function projectRpg(): ProjectDoc {
-  return {
-    schemaVersion: 1,
-    meta: nowMeta('rpg-quest', '勇者小镇'),
-    stage: { width: 960, height: 540, background: '#6ec06a' },
-    assets: [
-      imageAsset('asset_knight', '勇者', KNIGHT_SVG),
-      imageAsset('asset_prof', '教授', PROF_SVG),
-      imageAsset('asset_villager', '村民', VILLAGER_SVG),
-      imageAsset('asset_house', '房子', HOUSE_SVG),
-      imageAsset('asset_tree', '树', TREE_SVG),
-      imageAsset('asset_star', '星星', RPG_STAR_SVG),
-      imageAsset('asset_slime', '史莱姆', SLIME_SVG),
-    ],
-    variables: [
-      { id: 'var_stars', name: '星星', value: 0 },
-      { id: 'var_hp', name: 'HP', value: 5 },
-      { id: 'var_slime_hp', name: '史莱姆HP', value: 3 },
-      { id: 'var_prev_x', name: '上次 X', value: 0 },
-      { id: 'var_prev_y', name: '上次 Y', value: 0 },
-    ],
-    sprites: [
-      sprite({ id: 'sprite_knight', name: '勇者', x: -360, y: -180, rotation: 90, zIndex: 3, rotationStyle: 'left-right', costumes: [{ name: '勇者', assetId: 'asset_knight' }] }),
-      sprite({ id: 'sprite_house_a', name: '房子', x: -150, y: 120, zIndex: 1, costumes: [{ name: '房子', assetId: 'asset_house' }] }),
-      sprite({ id: 'sprite_house_b', name: '木屋', x: 210, y: 150, zIndex: 1, size: 80, costumes: [{ name: '房子', assetId: 'asset_house' }] }),
-      sprite({ id: 'sprite_tree_a', name: '大树', x: 330, y: -40, zIndex: 1, size: 90, costumes: [{ name: '树', assetId: 'asset_tree' }] }),
-      sprite({ id: 'sprite_tree_b', name: '小树', x: -420, y: 10, zIndex: 1, size: 75, costumes: [{ name: '树', assetId: 'asset_tree' }] }),
-      sprite({ id: 'sprite_prof', name: '教授', x: 40, y: 40, zIndex: 2, size: 90, costumes: [{ name: '教授', assetId: 'asset_prof' }] }),
-      sprite({ id: 'sprite_villager', name: '村民', x: -300, y: 130, zIndex: 2, size: 80, costumes: [{ name: '村民', assetId: 'asset_villager' }] }),
-      sprite({ id: 'sprite_star_a', name: '星星 A', x: -260, y: 200, zIndex: 2, costumes: [{ name: '星星', assetId: 'asset_star' }] }),
-      sprite({ id: 'sprite_star_b', name: '星星 B', x: 150, y: 230, zIndex: 2, costumes: [{ name: '星星', assetId: 'asset_star' }] }),
-      sprite({ id: 'sprite_star_c', name: '星星 C', x: -60, y: -210, zIndex: 2, costumes: [{ name: '星星', assetId: 'asset_star' }] }),
-      sprite({ id: 'sprite_slime', name: '史莱姆', x: 320, y: -230, zIndex: 2, size: 80, costumes: [{ name: '史莱姆', assetId: 'asset_slime' }] }),
-    ],
-    scripts: {},
-  };
-}
-
-function workspacesRpg(): Record<string, unknown> {
-  const prevX = 'var_prev_x';
-  const prevY = 'var_prev_y';
-  const solids = ['sprite_house_a', 'sprite_house_b', 'sprite_tree_a', 'sprite_tree_b'];
-  const hero = serialize((ws) => {
-    const moveStep = (input: string, axis: 'x' | 'y', delta: number, facing: number) => {
-      const tryMove = makeBlock(ws, 'control_if');
-      attachValue(tryMove, 'COND', makeBlock(ws, 'sensing_input', { INPUT: input }));
-      const rememberX = setVar(ws, prevX, makeBlock(ws, 'motion_xpos'));
-      const rememberY = setVar(ws, prevY, makeBlock(ws, 'motion_ypos'));
-      const face = makeBlock(ws, 'motion_point');
-      attachValue(face, 'DIRECTION', num(ws, facing));
-      const move = makeBlock(ws, axis === 'x' ? 'motion_changex' : 'motion_changey');
-      attachValue(move, 'VALUE', num(ws, delta));
-      const blocked = makeBlock(ws, 'control_if');
-      attachValue(blocked, 'COND', touchingAny(ws, solids));
-      const back = makeBlock(ws, 'motion_gotoxy');
-      attachValue(back, 'X', varGet(ws, prevX));
-      attachValue(back, 'Y', varGet(ws, prevY));
-      attachStatement(blocked, 'DO', back);
-      attachStatement(tryMove, 'DO', seq(rememberX, rememberY, face, move, blocked));
-      return tryMove;
-    };
-    const right = moveStep('right', 'x', 6, 90);
-    const left = moveStep('left', 'x', -6, 270);
-    const up = moveStep('up', 'y', 6, 0);
-    const down = moveStep('down', 'y', -6, 180);
-    const attack = makeBlock(ws, 'control_if');
-    attachValue(
-      attack,
-      'COND',
-      logicAnd(
-        ws,
-        makeBlock(ws, 'sensing_input', { INPUT: 'action' }),
-        makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_slime' }),
-      ),
-    );
-    const dmg = changeVar(ws, 'var_slime_hp', num(ws, -1));
-    const hitSay = makeBlock(ws, 'looks_say', { TEXT: '命中！史莱姆 HP -1' });
-    attachValue(hitSay, 'SECS', num(ws, 0.6));
-    attachStatement(attack, 'DO', seq(dmg, hitSay, waitBlock(ws, 0.25)));
-    chain([right, left, up, down, attack]);
-    flagForever(ws, right);
-  });
-  const star = () =>
-    serialize((ws) => {
-      const collect = makeBlock(ws, 'control_if');
-      attachValue(collect, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_knight' }));
-      const hide = makeBlock(ws, 'looks_hide');
-      const add = changeVar(ws, 'var_stars', num(ws, 1));
-      const say = makeBlock(ws, 'looks_say', { TEXT: '得到一颗星星！' });
-      attachValue(say, 'SECS', num(ws, 0.8));
-      const allDone = makeBlock(ws, 'control_if');
-      attachValue(allDone, 'COND', compareBlock(ws, '=', varGet(ws, 'var_stars'), num(ws, 3)));
-      const broadcast = makeBlock(ws, 'event_broadcast', { MESSAGE: 'allstars' });
-      attachStatement(allDone, 'DO', broadcast);
-      const stopThis = makeBlock(ws, 'control_stop', { MODE: 'this' });
-      attachStatement(collect, 'DO', seq(hide, add, say, allDone, stopThis));
-      flagForever(ws, collect);
-    });
-  const slime = serialize((ws) => {
-    const wander = makeBlock(ws, 'motion_glide');
-    attachValue(wander, 'SECS', num(ws, 2));
-    attachValue(wander, 'X', randomRange(ws, -320, 380));
-    attachValue(wander, 'Y', randomRange(ws, -230, 200));
-    const checkDead = makeBlock(ws, 'control_if');
-    attachValue(checkDead, 'COND', compareBlock(ws, '<=', varGet(ws, 'var_slime_hp'), num(ws, 0)));
-    const deadSay = makeBlock(ws, 'looks_say', { TEXT: '史莱姆被打败了！' });
-    attachValue(deadSay, 'SECS', num(ws, 1.4));
-    const hideSelf = makeBlock(ws, 'looks_hide');
-    const stopSelf = makeBlock(ws, 'control_stop', { MODE: 'this' });
-    attachStatement(checkDead, 'DO', seq(deadSay, hideSelf, stopSelf));
-
-    const hit = makeBlock(ws, 'control_if');
-    attachValue(
-      hit,
-      'COND',
-      logicAnd(
-        ws,
-        makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_knight' }),
-        compareBlock(ws, '>', varGet(ws, 'var_slime_hp'), num(ws, 0)),
-      ),
-    );
-    const hurt = changeVar(ws, 'var_hp', num(ws, -1));
-    const shout = makeBlock(ws, 'looks_say', { TEXT: '史莱姆撞了你！HP -1' });
-    attachValue(shout, 'SECS', num(ws, 1));
-    const dead = makeBlock(ws, 'control_if');
-    attachValue(dead, 'COND', compareBlock(ws, '<=', varGet(ws, 'var_hp'), num(ws, 0)));
-    const faint = makeBlock(ws, 'looks_say', { TEXT: '你倒下了…回到村口恢复。' });
-    attachValue(faint, 'SECS', num(ws, 1.6));
-    const back = makeBlock(ws, 'motion_gotoxy');
-    attachValue(back, 'X', num(ws, -360));
-    attachValue(back, 'Y', num(ws, -180));
-    const heal = setVar(ws, 'var_hp', num(ws, 5));
-    attachStatement(dead, 'DO', seq(faint, back, heal));
-    attachStatement(hit, 'DO', seq(hurt, shout, dead));
-    chain([wander, hit, checkDead, waitBlock(ws, 0.1)]);
-    flagForever(ws, checkDead);
-  });
-  const professor = serialize((ws) => {
-    const greet = makeBlock(ws, 'control_if');
-    attachValue(greet, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_knight' }));
-    const hello = makeBlock(ws, 'looks_say', { TEXT: '欢迎来到积木镇！先收集 3 颗星星吧。' });
-    attachValue(hello, 'SECS', num(ws, 1.8));
-    attachStatement(greet, 'DO', hello);
-    const proud = makeBlock(ws, 'control_if');
-    attachValue(proud, 'COND', compareBlock(ws, '=', varGet(ws, 'var_stars'), num(ws, 3)));
-    const medal = makeBlock(ws, 'looks_say', { TEXT: '太棒了！你集齐星星，获得小镇徽章！' });
-    attachValue(medal, 'SECS', num(ws, 3));
-    attachStatement(proud, 'DO', medal);
-    chain([greet, proud, waitBlock(ws, 0.5)]);
-    flagForever(ws, greet);
-  });
-  const villager = serialize((ws) => {
-    const chat = makeBlock(ws, 'control_if');
-    attachValue(chat, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_knight' }));
-    const line = makeBlock(ws, 'looks_say', { TEXT: '右上角有史莱姆出没，小心掉 HP。' });
-    attachValue(line, 'SECS', num(ws, 1.8));
-    attachStatement(chat, 'DO', line);
-    chain([chat, waitBlock(ws, 0.5)]);
-    flagForever(ws, chat);
-  });
-  return {
-    sprite_knight: hero,
-    sprite_prof: professor,
-    sprite_villager: villager,
-    sprite_star_a: star(),
-    sprite_star_b: star(),
-    sprite_star_c: star(),
-    sprite_slime: slime,
-  };
-}
-
-// ── 2D 横版格斗（v0.11.0 示例游戏）─────────────────────────
-const RIVAL_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="64" viewBox="0 0 56 64">
-  <path d="M6 22 L6 10 L20 10 L20 4 L26 4 L26 10 L34 10 L34 4 L42 4 L42 10 L50 10 L50 22 Z" fill="#d9584f"/>
-  <rect x="8" y="22" width="40" height="30" fill="#e8796f"/>
-  <rect x="16" y="30" width="7" height="7" fill="#2a1020"/>
-  <rect x="33" y="30" width="7" height="7" fill="#2a1020"/>
-  <rect x="24" y="40" width="8" height="4" fill="#2a1020"/>
-  <rect x="14" y="52" width="10" height="10" fill="#b84a42"/>
-  <rect x="32" y="52" width="10" height="10" fill="#b84a42"/>
-</svg>`;
-
-function projectFighting(): ProjectDoc {
-  return {
-    schemaVersion: 1,
-    meta: nowMeta('fighting', '横版格斗'),
-    stage: { width: 960, height: 540, background: '#16112a' },
-    assets: [
-      imageAsset('asset_hero', '玩家', HERO_SVG),
-      imageAsset('asset_rival', '对手', RIVAL_SVG),
-      imageAsset('asset_ground', '地面', GROUND_SVG),
-      imageAsset('asset_cloud', '云朵', CLOUD_SVG),
-    ],
-    variables: [
-      { id: 'var_vy', name: '速度', value: 0 },
-      { id: 'var_ground', name: '落地', value: 1 },
-      { id: 'var_hp', name: 'HP', value: 10 },
-      { id: 'var_enemy_hp', name: '对手HP', value: 10 },
-    ],
-    sprites: [
-      sprite({
-        id: 'sprite_hero',
-        name: '玩家',
-        x: -240,
-        y: -148,
-        zIndex: 3,
-        rotationStyle: 'left-right',
-        costumes: [{ name: '玩家', assetId: 'asset_hero' }],
-      }),
-      sprite({
-        id: 'sprite_rival',
-        name: '对手',
-        x: 240,
-        y: -148,
-        zIndex: 3,
-        rotationStyle: 'left-right',
-        costumes: [{ name: '对手', assetId: 'asset_rival' }],
-      }),
-      sprite({ id: 'sprite_ground', name: '地面', y: -225, zIndex: 1, costumes: [{ name: '地面', assetId: 'asset_ground' }] }),
-      sprite({ id: 'sprite_cloud', name: '月牙', x: 0, y: 150, zIndex: 1, costumes: [{ name: '云朵', assetId: 'asset_cloud' }] }),
-    ],
-    scripts: {},
-  };
-}
-
-function workspacesFighting(): Record<string, unknown> {
-  const hp = 'var_hp';
-  const enemyHp = 'var_enemy_hp';
-  const vy = 'var_vy';
-  const grounded = 'var_ground';
-  const rivalId = 'sprite_rival';
-
-  const hero = serialize((ws) => {
-    const right = keyIf(ws, 'right', 'motion_changex', 6);
-    const left = keyIf(ws, 'left', 'motion_changex', -6);
-
-    const jump = makeBlock(ws, 'control_if');
-    attachValue(
-      jump,
-      'COND',
-      logicAnd(ws, makeBlock(ws, 'sensing_input', { INPUT: 'jump' }), compareBlock(ws, '=', varGet(ws, grounded), num(ws, 1))),
-    );
-    attachStatement(jump, 'DO', seq(setVar(ws, vy, num(ws, 14)), setVar(ws, grounded, num(ws, 0))));
-
-    const gravity = changeVar(ws, vy, num(ws, -1));
-    const applyY = makeBlock(ws, 'motion_changey');
-    attachValue(applyY, 'VALUE', varGet(ws, vy));
-    const land = makeBlock(ws, 'control_if');
-    attachValue(land, 'COND', compareBlock(ws, '<', makeBlock(ws, 'motion_ypos'), num(ws, -152)));
-    const landX = makeBlock(ws, 'motion_gotoxy');
-    attachValue(landX, 'X', makeBlock(ws, 'motion_xpos'));
-    attachValue(landX, 'Y', num(ws, -148));
-    attachStatement(land, 'DO', seq(landX, setVar(ws, vy, num(ws, 0)), setVar(ws, grounded, num(ws, 1))));
-
-    // 攻击：贴近对手时按「动作」造成伤害
-    const attack = makeBlock(ws, 'control_if');
-    attachValue(
-      attack,
-      'COND',
-      logicAnd(ws, makeBlock(ws, 'sensing_input', { INPUT: 'action' }), makeBlock(ws, 'sensing_touching', { TARGET: rivalId })),
-    );
-    const enemyHit = changeVar(ws, enemyHp, num(ws, -1));
-    const hitSay = makeBlock(ws, 'looks_say', { TEXT: '命中！对手 HP -1' });
-    attachValue(hitSay, 'SECS', num(ws, 0.6));
-    const knock = makeBlock(ws, 'motion_glide');
-    attachValue(knock, 'SECS', num(ws, 0.12));
-    attachValue(knock, 'X', num(ws, 320));
-    attachValue(knock, 'Y', num(ws, -148));
-    attachStatement(attack, 'DO', seq(enemyHit, hitSay, waitBlock(ws, 0.25), knock));
-
-    // 胜负判定
-    const win = makeBlock(ws, 'control_if');
-    attachValue(win, 'COND', compareBlock(ws, '<=', varGet(ws, enemyHp), num(ws, 0)));
-    const winSay = makeBlock(ws, 'looks_say', { TEXT: '🏆 K.O.！你赢了！' });
-    attachValue(winSay, 'SECS', num(ws, 5));
-    attachStatement(win, 'DO', seq(winSay, makeBlock(ws, 'control_stop', { MODE: 'all' })));
-
-    const lose = makeBlock(ws, 'control_if');
-    attachValue(lose, 'COND', compareBlock(ws, '<=', varGet(ws, hp), num(ws, 0)));
-    const loseSay = makeBlock(ws, 'looks_say', { TEXT: '败北…点击「重置工程」再战一局' });
-    attachValue(loseSay, 'SECS', num(ws, 5));
-    attachStatement(lose, 'DO', seq(loseSay, makeBlock(ws, 'control_stop', { MODE: 'all' })));
-
-    chain([right, left, jump, gravity, applyY, land, attack, win, lose]);
-    flagForever(ws, right);
-  });
-
-  const rival = serialize((ws) => {
-    const goLeft = makeBlock(ws, 'motion_glide');
-    attachValue(goLeft, 'SECS', num(ws, 1.1));
-    attachValue(goLeft, 'X', num(ws, -260));
-    attachValue(goLeft, 'Y', num(ws, -148));
-    const goRight = makeBlock(ws, 'motion_glide');
-    attachValue(goRight, 'SECS', num(ws, 1.1));
-    attachValue(goRight, 'X', num(ws, 300));
-    attachValue(goRight, 'Y', num(ws, -148));
-
-    const hurt = makeBlock(ws, 'control_if');
-    attachValue(hurt, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_hero' }));
-    const damage = changeVar(ws, hp, num(ws, -1));
-    const ouch = makeBlock(ws, 'looks_say', { TEXT: '对手击中你！HP -1' });
-    attachValue(ouch, 'SECS', num(ws, 0.7));
-    attachStatement(hurt, 'DO', seq(damage, ouch));
-
-    chain([goLeft, goRight, hurt]);
-    flagForever(ws, goLeft);
-  });
-
-  return { sprite_hero: hero, sprite_rival: rival };
-}
-
-/** 给模板工程写入默认触屏配置（每个工程独立保存 input） */
-function withInput(factory: () => ProjectDoc, input: Partial<InputConfig>): () => ProjectDoc {
-  return () => {
-    const project = factory();
-    return { ...project, input: { ...inputConfig(project), ...input } };
-  };
-}
-
-const PAD_JUMP: Partial<InputConfig> = {
-  touchMode: 'pad',
-  joystickSize: 'md',
-  buttonSize: 'lg',
-  buttons: [{ id: 'btn-jump', bindingId: 'jump', label: 'inputs.jumpButton' }],
-};
-
-const PAD_JOYSTICK: Partial<InputConfig> = {
-  touchMode: 'pad',
-  joystickSize: 'md',
-  buttons: [],
-};
-
-const PAD_ACTION: Partial<InputConfig> = {
-  touchMode: 'pad',
-  joystickSize: 'md',
-  buttonSize: 'md',
-  buttons: [{ id: 'btn-action', bindingId: 'action', label: 'inputs.actionButton' }],
-};
-
-const PAD_JUMP_ACTION: Partial<InputConfig> = {
-  touchMode: 'pad',
-  joystickSize: 'md',
-  buttonSize: 'md',
-  buttons: [
-    { id: 'btn-jump', bindingId: 'jump', label: 'inputs.jumpButton' },
-    { id: 'btn-action', bindingId: 'action', label: 'inputs.actionButton' },
-  ],
-};
 
 export const TEMPLATES: TemplateDefinition[] = [
   {
@@ -1274,76 +506,17 @@ export const TEMPLATES: TemplateDefinition[] = [
     nameKey: 'templates.blank',
     taglineKey: 'templates.blankTagline',
     scriptGroups: 0,
-    project: withInput(projectBlank, PAD_JUMP),
+    project: projectBlank,
     workspaces: workspacesBlank,
     build: () => ({ project: projectBlank(), workspaces: workspacesBlank() }),
   },
   {
-    id: 'cat-coin',
-    nameKey: 'templates.catCoin',
-    taglineKey: 'templates.catCoinTagline',
-    scriptGroups: 2,
-    project: withInput(projectCatCoin, PAD_JUMP),
-    workspaces: workspacesCatCoin,
-    build: () => ({ project: projectCatCoin(), workspaces: workspacesCatCoin() }),
-  },
-  {
-    id: 'whack-mole',
-    nameKey: 'templates.whackMole',
-    taglineKey: 'templates.whackMoleTagline',
-    scriptGroups: 1,
-    project: withInput(projectWhackMole, { touchMode: 'direct', buttons: [] }),
-    workspaces: workspacesWhackMole,
-    build: () => ({ project: projectWhackMole(), workspaces: workspacesWhackMole() }),
-  },
-  {
-    id: 'catch-apple',
-    nameKey: 'templates.catchApple',
-    taglineKey: 'templates.catchAppleTagline',
-    scriptGroups: 2,
-    project: withInput(projectCatchApple, PAD_JOYSTICK),
-    workspaces: workspacesCatchApple,
-    build: () => ({ project: projectCatchApple(), workspaces: workspacesCatchApple() }),
-  },
-  {
-    id: 'platformer',
-    nameKey: 'templates.platformer',
-    taglineKey: 'templates.platformerTagline',
-    scriptGroups: 11,
-    project: withInput(projectPlatformer, PAD_JUMP),
-    workspaces: workspacesPlatformer,
-    build: () => ({ project: projectPlatformer(), workspaces: workspacesPlatformer() }),
-  },
-  {
-    id: 'dot-maze',
-    nameKey: 'templates.dotMaze',
-    taglineKey: 'templates.dotMazeTagline',
-    scriptGroups: 8,
-    project: withInput(projectDotMaze, PAD_JOYSTICK),
-    workspaces: workspacesDotMaze,
-    build: () => ({ project: projectDotMaze(), workspaces: workspacesDotMaze() }),
-  },
-  {
-    id: 'rpg-quest',
-    nameKey: 'templates.rpg',
-    taglineKey: 'templates.rpgTagline',
+    id: 'snake',
+    nameKey: 'templates.snake',
+    taglineKey: 'templates.snakeTagline',
     scriptGroups: 7,
-    project: withInput(projectRpg, PAD_ACTION),
-    workspaces: workspacesRpg,
-    build: () => ({ project: projectRpg(), workspaces: workspacesRpg() }),
-  },
-  {
-    id: 'fighting',
-    nameKey: 'templates.fighting',
-    taglineKey: 'templates.fightingTagline',
-    scriptGroups: 2,
-    project: withInput(projectFighting, PAD_JUMP_ACTION),
-    workspaces: workspacesFighting,
-    build: () => ({ project: projectFighting(), workspaces: workspacesFighting() }),
+    project: projectSnake,
+    workspaces: workspacesSnake,
+    build: () => ({ project: projectSnake(), workspaces: workspacesSnake() }),
   },
 ];
-
-/** 模板封面：取第一个图片素材 */
-export function templateThumb(project: ProjectDoc): string | undefined {
-  return project.assets.find((asset) => asset.kind === 'image' && asset.dataUrl)?.dataUrl;
-}

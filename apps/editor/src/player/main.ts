@@ -25,7 +25,8 @@ function post(message: unknown): void {
 
 function renderHud(): void {
   if (!session) return;
-  const variables = session.runtime.getVariables();
+  // 以下划线开头的变量是模板内部用的辅助变量（例如贪吃蛇的尾部历史），不显示在 HUD
+  const variables = session.runtime.getVariables().filter((variable) => !variable.name.startsWith('_'));
   hud.replaceChildren(
     ...variables.map((variable) => {
       const item = document.createElement('span');
@@ -42,8 +43,20 @@ function renderHud(): void {
   );
 }
 
+function destroySession(notify: boolean): void {
+  if (!session) return;
+  session.runtime.stop();
+  session.adapter.destroy();
+  session = null;
+  window.clearInterval(hudTimer);
+  hud.replaceChildren();
+  (window as unknown as { __cobbleRuntime?: Runtime }).__cobbleRuntime = undefined;
+  if (notify) post({ type: 'stopped' });
+}
+
 async function run(project: CompiledProject): Promise<void> {
-  stop();
+  // 切换/重开时静默销毁旧会话，避免旧会话的 stopped 消息把新会话的「运行中」状态冲掉
+  destroySession(false);
   const adapter = new PhaserAdapter();
   let runtime: Runtime | null = null;
   await adapter.init(stage, project, {
@@ -61,14 +74,7 @@ async function run(project: CompiledProject): Promise<void> {
 }
 
 function stop(): void {
-  if (!session) return;
-  session.runtime.stop();
-  session.adapter.destroy();
-  session = null;
-  window.clearInterval(hudTimer);
-  hud.replaceChildren();
-  (window as unknown as { __cobbleRuntime?: Runtime }).__cobbleRuntime = undefined;
-  post({ type: 'stopped' });
+  destroySession(true);
 }
 
 window.addEventListener('message', (event: MessageEvent) => {

@@ -82,7 +82,7 @@ export function StageView({ compact = false }: Props) {
    * 优先尝试 screen.orientation.lock；锁不住（桌面、iOS）时用 CSS 旋转兜底。
    */
   const syncFullscreen = useCallback(() => {
-    const active = Boolean(document.fullscreenElement);
+    const active = Boolean(document.fullscreenElement?.contains(stageBodyRef.current));
     setFullscreen(active);
     if (!active) {
       setRotation(0);
@@ -212,7 +212,10 @@ export function StageView({ compact = false }: Props) {
   };
 
   const toggleFullscreen = useCallback(async () => {
-    const element = stageBodyRef.current;
+    // 不要对 stage-body 本身进全屏：浏览器 UA 的 :fullscreen 规则会强制
+    // transform:none / width:100% / height:100%，导致旋转兜底失效。
+    // 改为让父级 stage-zone 进全屏，内部的 stage-body 再整体旋转。
+    const element = stageBodyRef.current?.parentElement;
     if (!element) return;
     try {
       if (document.fullscreenElement) {

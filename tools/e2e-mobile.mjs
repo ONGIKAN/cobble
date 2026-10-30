@@ -19,9 +19,9 @@ async function runtimeState(page) {
     const frame = document.querySelector('[data-testid="stage-iframe"]');
     const runtime = frame?.contentWindow?.__cobbleRuntime;
     if (!runtime) return null;
-    const cat = runtime.getSpriteState('sprite_cat');
+    const snake = runtime.getSpriteState('sprite_snake_head');
     const vars = runtime.getVariables();
-    return { cat, score: vars.find((entry) => entry.id === 'var_score')?.value };
+    return { snake, score: vars.find((entry) => entry.id === 'var_score')?.value };
   });
 }
 
@@ -70,37 +70,33 @@ async function runPhone() {
   check('phone save/open buttons', await page.locator('[data-testid="m-save-project"]').isVisible() && (await page.locator('[data-testid="m-open-project"]').isVisible()) && (await page.locator('[data-testid="m-export-html5"]').isVisible()));
   check('phone topbar files hidden', !(await page.locator('[data-testid="save-project"]').isVisible()));
 
+  // 贪吃蛇会自动前进，先重开一局再测摇杆（避免开局撞墙导致线程已停止）
+  await page.getByTestId('run').click();
+  await page.waitForTimeout(300);
   const before = await runtimeState(page);
-  check('phone runtime running', Boolean(before?.cat));
+  check('phone runtime running', Boolean(before?.snake));
 
   await holdJoystick(page, 'right', 600);
   const after = await runtimeState(page);
-  check('joystick right moves cat', Boolean(after && before && after.cat.x > before.cat.x), `x ${before?.cat.x} → ${after?.cat.x}`);
+  check('joystick right moves snake', Boolean(after && before && after.snake.x > before.snake.x), `x ${before?.snake.x} → ${after?.snake.x}`);
 
-  // 触屏按键：跳跃按钮可按下（发送 jump 绑定到运行时）
-  check('phone jump button', await page.locator('[data-testid="pad-btn-jump"]').isVisible());
-  const jumpBox = await page.locator('[data-testid="pad-btn-jump"]').boundingBox();
-  if (jumpBox) {
-    await page.mouse.move(jumpBox.x + jumpBox.width / 2, jumpBox.y + jumpBox.height / 2);
-    await page.mouse.down();
-    await page.waitForTimeout(180);
-    await page.mouse.up();
-    await page.waitForTimeout(120);
-  }
+  // 贪吃蛇模板：摇杆为大号（joystickSize lg）
+  const joyBox = await page.locator('[data-testid="pad-joystick"]').boundingBox();
+  check('snake large joystick', (joyBox?.width ?? 0) >= 110, `w=${Math.round(joyBox?.width ?? 0)}`);
 
   check('sprite strip visible', await page.locator('[data-testid="sprite-strip"]').isVisible());
   await page.screenshot({ path: 'tools/shots/m-phone-stage.png' });
 
-  // 舞台页快捷条切换角色 → 属性页应显示金币
-  await page.locator('[data-testid="chip-sprite_coin"]').tap();
+  // 舞台页快捷条切换角色 → 属性页应显示苹果
+  await page.locator('[data-testid="chip-sprite_apple"]').tap();
   await page.waitForTimeout(300);
   await page.locator('[data-testid="tab-props"]').tap();
   await page.waitForTimeout(400);
   const selectedName = await page.locator('.inspector input').first().inputValue();
-  check('sprite strip selects coin', selectedName === '金币', `name=${selectedName}`);
+  check('sprite strip selects apple', selectedName === '苹果', `name=${selectedName}`);
   await page.locator('[data-testid="tab-stage"]').tap();
   await page.waitForTimeout(300);
-  await page.locator('[data-testid="chip-sprite_cat"]').tap();
+  await page.locator('[data-testid="chip-sprite_snake_head"]').tap();
   await page.waitForTimeout(300);
 
   await page.locator('[data-testid="tab-blocks"]').tap();
@@ -122,12 +118,12 @@ async function runPhone() {
 
   await page.locator('[data-testid="tab-sprites"]').tap();
   await page.waitForTimeout(500);
-  check('sprites tab shows 2 sprites', (await page.locator('.sprite-card').count()) === 2);
+  check('sprites tab shows 10 sprites', (await page.locator('.sprite-card').count()) === 10, '10 sprites');
   await page.screenshot({ path: 'tools/shots/m-phone-sprites.png' });
 
   await page.locator('[data-testid="add-sprite"]').tap();
   await page.waitForTimeout(500);
-  check('phone add sprite', (await page.locator('.sprite-card').count()) === 3, '3 sprites after add');
+  check('phone add sprite', (await page.locator('.sprite-card').count()) === 11, '11 sprites after add');
   await page.locator('[data-testid="tab-props"]').tap();
   await page.waitForTimeout(400);
   check('phone costume upload visible', await page.locator('[data-testid="costume-add-input"]').count() === 1);
@@ -136,7 +132,7 @@ async function runPhone() {
   await page.waitForTimeout(500);
   await page.locator('[data-testid="tab-sprites"]').tap();
   await page.waitForTimeout(400);
-  check('phone delete sprite', (await page.locator('.sprite-card').count()) === 2, 'sprites back to 2');
+  check('phone delete sprite', (await page.locator('.sprite-card').count()) === 10, 'sprites back to 10');
 
   await page.locator('[data-testid="tab-stage"]').tap();
   await page.waitForTimeout(400);
@@ -230,25 +226,26 @@ async function runTablet() {
   await page.locator('.modal-close').tap();
   await page.waitForTimeout(300);
 
-  // 每个工程独立的触屏配置：打地鼠=直接触摸，平台跳跃=大号按钮
+  // 贪吃蛇模板：大号摇杆 + 直接触摸模式切换（v0.13.0）
   page.once('dialog', (dialog) => void dialog.accept());
   await page.locator('[data-testid="m-new-project"]').tap();
   await page.waitForTimeout(400);
-  await page.locator('[data-testid="template-whack-mole"]').tap();
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(1500);
-  const directPad = await page.locator('[data-testid="stage-pad"]').count();
-  const directHint = await page.locator('[data-testid="stage-direct-hint"]').count();
-  check('direct touch template', directPad === 0 && directHint === 1, `pad=${directPad} hint=${directHint}`);
-
-  page.once('dialog', (dialog) => void dialog.accept());
-  await page.locator('[data-testid="m-new-project"]').tap();
-  await page.waitForTimeout(400);
-  await page.locator('[data-testid="template-platformer"]').tap();
+  await page.locator('[data-testid="template-snake"]').tap();
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1600);
-  const padBtn = await page.locator('[data-testid^="pad-btn-"]').first().boundingBox();
-  check('large pad button', (padBtn?.width ?? 0) >= 80, `w=${padBtn?.width ?? 0}`);
+  const tabletJoy = await page.locator('[data-testid="pad-joystick"]').boundingBox();
+  check('tablet snake joystick', (tabletJoy?.width ?? 0) >= 110, `w=${Math.round(tabletJoy?.width ?? 0)}`);
+
+  await page.locator('[data-testid="m-input-settings"]').tap();
+  await page.waitForTimeout(400);
+  await page.locator('[data-testid="input-tab-touch"]').tap();
+  await page.waitForTimeout(300);
+  await page.locator('[data-testid="touch-mode-direct"]').tap();
+  await page.locator('[data-testid="input-settings-save"]').tap();
+  await page.waitForTimeout(1000);
+  const directPad = await page.locator('[data-testid="stage-pad"]').count();
+  const directHint = await page.locator('[data-testid="stage-direct-hint"]').count();
+  check('direct touch mode', directPad === 0 && directHint === 1, `pad=${directPad} hint=${directHint}`);
 
   page.once('dialog', (dialog) => void dialog.accept());
   await page.locator('[data-testid="reset-project"]').tap().catch(() => {});

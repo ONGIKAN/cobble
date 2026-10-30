@@ -12,9 +12,13 @@ export const DEFAULT_INPUT: InputConfig = {
   ],
   joystick: true,
   joystickSize: 'md',
+  joystickSide: 'left',
+  joystickOpacity: 55,
   buttonSize: 'md',
   touchMode: 'pad',
-  buttons: [{ id: 'btn-jump', bindingId: 'jump', label: 'inputs.jumpButton' }],
+  buttons: [
+    { id: 'btn-jump', bindingId: 'jump', label: 'inputs.jumpButton', icon: '⬆', size: 'md', side: 'right', opacity: 62 },
+  ],
 };
 
 /** 默认按键绑定的深拷贝，模板用它构造工程自己的输入配置 */

@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { exportGameExe, isDesktopRuntime } from '../export-exe';
 import { downloadStandaloneHtml } from '../export-html';
 import { openNewProjectDialog } from '../new-project';
 import { downloadProject, readProjectFile } from '../project-file';
@@ -27,6 +28,24 @@ export function ProjectFileButtons({ variant = 'bar' }: Props) {
     } catch {
       window.alert(t('toolbar.exportFailed'));
     }
+  };
+
+  const exportExe = async (): Promise<void> => {
+    if (!isDesktopRuntime()) {
+      window.alert(t('toolbar.exeDesktopOnly'));
+      return;
+    }
+    const state = useEditorStore.getState();
+    try {
+      const savedPath = await exportGameExe(state.project, state.workspaces);
+      window.alert(t('toolbar.exeDone', { path: savedPath }));
+    } catch {
+      window.alert(t('toolbar.exeFailed'));
+    }
+  };
+
+  const exportAndroid = (): void => {
+    window.alert(t('toolbar.androidBeta'));
   };
 
   const open = async (file: File): Promise<void> => {
@@ -78,6 +97,30 @@ export function ProjectFileButtons({ variant = 'bar' }: Props) {
       >
         {t('toolbar.shortExport')}
       </button>
+      {!inline ? (
+        <>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            data-testid="export-exe"
+            title={t('toolbar.exportExe')}
+            onClick={() => {
+              void exportExe();
+            }}
+          >
+            {t('toolbar.shortExe')}
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            data-testid="export-android"
+            title={t('toolbar.exportAndroid')}
+            onClick={exportAndroid}
+          >
+            {t('toolbar.shortAndroid')}
+          </button>
+        </>
+      ) : null}
       <input
         ref={inputRef}
         type="file"

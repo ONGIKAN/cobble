@@ -1,4 +1,5 @@
-import { createDemoProject, type ProjectDoc } from '@cobble/project';
+import type { ProjectDoc } from '@cobble/project';
+import { TEMPLATES } from './templates';
 import { parseProjectFile } from './project-file';
 import {
   deleteNativeProject,
@@ -38,7 +39,8 @@ function isEntry(value: unknown): value is ProjectEntry {
 }
 
 function createDemoEntry(): ProjectEntry {
-  const project = createDemoProject();
+  const snake = TEMPLATES.find((template) => template.id === 'snake') ?? TEMPLATES[0];
+  const project = snake.project();
   const now = new Date().toISOString();
   return {
     id: newProjectId(),
@@ -47,6 +49,7 @@ function createDemoEntry(): ProjectEntry {
     updatedAt: now,
     project,
     workspaces: {},
+    templateId: snake.id,
   };
 }
 
