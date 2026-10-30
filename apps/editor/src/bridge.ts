@@ -13,3 +13,8 @@ export function sendRun(project: CompiledProject): void {
 export function sendStop(): void {
   frame?.contentWindow?.postMessage({ type: 'stop' }, '*');
 }
+
+/** 编辑器外部摇杆/按钮把当前激活的输入事件发给 iframe */
+export function sendTouch(bindings: string[]): void {
+  frame?.contentWindow?.postMessage({ type: 'touch', bindings }, '*');
+}

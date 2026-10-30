@@ -82,7 +82,11 @@ export class PhaserAdapter implements EngineAdapter {
     this.mouseDown = false;
   };
 
-  async init(container: HTMLElement, project: CompiledProject): Promise<void> {
+  async init(
+    container: HTMLElement,
+    project: CompiledProject,
+    options?: { mountTouch?: boolean },
+  ): Promise<void> {
     this.destroy();
     this.project = project;
     this.container = container;
@@ -125,9 +129,8 @@ export class PhaserAdapter implements EngineAdapter {
     });
 
     this.bindInput();
-    this.touch = project.input
-      ? mountTouchControls(container, project.input)
-      : null;
+    this.touch =
+      options?.mountTouch !== false && project.input ? mountTouchControls(container, project.input) : null;
   }
 
   private createScene(scene: Phaser.Scene): void {

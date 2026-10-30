@@ -7,7 +7,7 @@ export type TouchingTarget =
   | { kind: 'mouse' };
 
 export type ArithOp = '+' | '-' | '*' | '/';
-export type CompareOp = '>' | '<' | '=';
+export type CompareOp = '>' | '<' | '=' | '<=' | '>=' | '!=';
 
 export type IRExpr =
   | { kind: 'const'; value: number | string }

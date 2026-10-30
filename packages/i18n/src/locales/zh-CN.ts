@@ -90,6 +90,10 @@ export const zhCN = {
     platformerTagline: '重力、跳跃与金币收集的横版小游戏',
     dotMaze: '吃豆豆',
     dotMazeTagline: '迷宫吃豆：收集全部豆子，小心会走动的幽灵',
+    rpg: '勇者小镇',
+    rpgTagline: '和 NPC 对话、收集星星、躲避史莱姆的迷你 RPG',
+    fighting: '横版格斗',
+    fightingTagline: '2D 横版格斗：贴近对手按「动作」攻击，先把对手 HP 打空获胜',
   },
   panels: {
     stage: '舞台',

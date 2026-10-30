@@ -278,7 +278,7 @@ try {
   const tmplSprites = await page.locator('.sprite-card').count();
   const tmplName = await page.locator('.sprite-name').first().innerText();
   const tmplBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
-  record('new project template', templateCards === 6 && tmplSprites === 1 && tmplName.includes('地鼠') && tmplBlocks > 10, `cards=${templateCards} sprites=${tmplSprites} name=${tmplName} blocks=${tmplBlocks}`);
+  record('new project template', templateCards === 8 && tmplSprites === 1 && tmplName.includes('地鼠') && tmplBlocks > 10, `cards=${templateCards} sprites=${tmplSprites} name=${tmplName} blocks=${tmplBlocks}`);
 
   // 10b. 平台跳跃模板（v0.7.0 能力块：坐标上报 / 切换造型 / 等待直到 / 移到角色）
   page.once('dialog', (dialog) => void dialog.accept());
@@ -294,7 +294,7 @@ try {
   await page.waitForTimeout(900);
   const platSprites = await page.locator('.sprite-card').count();
   const platBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
-  record('platformer template', platSprites === 7 && platBlocks > 12, `sprites=${platSprites} blocks=${platBlocks}`);
+  record('platformer template', platSprites === 16 && platBlocks > 20, `sprites=${platSprites} blocks=${platBlocks}`);
 
   // 10c. 吃豆豆模板（v0.8.0 墙体碰撞 + 收集 + 追捕）
   page.once('dialog', (dialog) => void dialog.accept());
@@ -311,6 +311,31 @@ try {
   const mazeSprites = await page.locator('.sprite-card').count();
   const mazeBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
   record('dot-maze template', mazeSprites === 15 && mazeBlocks > 15, `sprites=${mazeSprites} blocks=${mazeBlocks}`);
+
+  await page.getByTestId('back-to-projects').click();
+  await page.waitForTimeout(600);
+  await page.getByTestId('hub-new').click();
+  await page.waitForTimeout(300);
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.click('[data-testid="template-rpg-quest"]');
+  await page.waitForTimeout(1800);
+  const rpgSprites = await page.locator('.sprite-card').count();
+  const rpgBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
+  record('rpg template', rpgSprites === 11 && rpgBlocks > 10, `sprites=${rpgSprites} blocks=${rpgBlocks}`);
+
+  // 10e. 横版格斗模板（v0.11.0：贴近 + 动作键攻击）
+  await page.getByTestId('back-to-projects').click();
+  await page.waitForTimeout(600);
+  await page.getByTestId('hub-new').click();
+  await page.waitForTimeout(300);
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.click('[data-testid="template-fighting"]');
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
+  await page.waitForTimeout(900);
+  const fightSprites = await page.locator('.sprite-card').count();
+  const fightBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
+  record('fighting template', fightSprites === 4 && fightBlocks > 40, `sprites=${fightSprites} blocks=${fightBlocks}`);
 
   // 回到工程管理页，避免模板工程影响下次运行
   page.once('dialog', (dialog) => void dialog.accept());

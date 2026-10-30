@@ -92,6 +92,10 @@ export const en: Messages = {
     platformerTagline: 'Side-scrolling jump, gravity and coin collecting',
     dotMaze: 'Dot Muncher',
     dotMazeTagline: 'Maze muncher: eat every dot and dodge the wandering ghost',
+    rpg: 'Knight Town',
+    rpgTagline: 'Talk to NPCs, collect stars and dodge slimes in this mini RPG',
+    fighting: 'Side-scroller Brawl',
+    fightingTagline: 'A 2D side-scroller fight: close in and press Action to drain the rival HP',
   },
   panels: {
     stage: 'Stage',

@@ -77,6 +77,8 @@ export class Runtime {
   /** 输入事件 id -> 绑定的按键 code 列表 */
   private bindingKeys = new Map<string, string[]>();
   private prevBindings = new Set<string>();
+  /** 编辑器外部摇杆/按钮注入的绑定（iframe 内不自绘控件时使用） */
+  private externalTouch = new Set<string>();
   private timeMs = 0;
   private dt = 16.7;
   private accumulator = 0;
@@ -170,8 +172,14 @@ export class Runtime {
     return ids;
   }
 
+  /** 由编辑器外部的摇杆/按钮注入当前激活的输入事件 */
+  setTouchBindings(bindings: Iterable<string>): void {
+    this.externalTouch = new Set(bindings);
+  }
+
   /** 输入事件是否被按下：任一绑定按键按下，或触屏控件触发 */
   private bindingActive(id: string): boolean {
+    if (this.externalTouch.has(id)) return true;
     if (this.input.touchBindings?.has(id)) return true;
     const keys = this.bindingKeys.get(id);
     if (!keys || keys.length === 0) return this.input.keysDown.has(id);
@@ -501,6 +509,12 @@ export class Runtime {
             return a < b ? 1 : 0;
           case '=':
             return a === b ? 1 : 0;
+          case '<=':
+            return a <= b ? 1 : 0;
+          case '>=':
+            return a >= b ? 1 : 0;
+          case '!=':
+            return a !== b ? 1 : 0;
           default:
             return 0;
         }

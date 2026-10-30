@@ -8,6 +8,7 @@ const hudNode = document.getElementById('hud');
 if (!stageNode || !hudNode) throw new Error('缺少播放器容器');
 
 const stage: HTMLElement = stageNode;
+const embedTouch = new URLSearchParams(window.location.search).get('touch') !== '0';
 const hud: HTMLElement = hudNode;
 
 interface Session {
@@ -44,7 +45,7 @@ function renderHud(): void {
 async function run(project: CompiledProject): Promise<void> {
   stop();
   const adapter = new PhaserAdapter();
-  await adapter.init(stage, project);
+  await adapter.init(stage, project, { mountTouch: embedTouch });
   const runtime = new Runtime(adapter, project);
   runtime.start();
   session = { adapter, runtime };
@@ -73,6 +74,11 @@ window.addEventListener('message', (event: MessageEvent) => {
     void run(data.project);
   } else if (data.type === 'stop') {
     stop();
+  } else if (data.type === 'touch') {
+    const bindings = (data as { bindings?: unknown }).bindings;
+    if (session && Array.isArray(bindings)) {
+      session.runtime.setTouchBindings(bindings.filter((item): item is string => typeof item === 'string'));
+    }
   }
 });
 

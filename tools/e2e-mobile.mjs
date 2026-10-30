@@ -25,16 +25,18 @@ async function runtimeState(page) {
   });
 }
 
-async function holdDpad(page, direction, ms) {
-  await page.evaluate((dir) => {
-    const button = document.querySelector(`[data-testid="dpad-${dir}"]`);
-    button?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 7, pointerType: 'touch' }));
-  }, direction);
+async function holdJoystick(page, direction, ms) {
+  const box = await page.locator('[data-testid="pad-joystick"]').boundingBox();
+  if (!box) return;
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  const dx = direction === 'left' ? -box.width * 0.45 : direction === 'right' ? box.width * 0.45 : 0;
+  const dy = direction === 'up' ? -box.height * 0.45 : direction === 'down' ? box.height * 0.45 : 0;
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  await page.mouse.move(cx + dx, cy + dy, { steps: 6 });
   await page.waitForTimeout(ms);
-  await page.evaluate((dir) => {
-    const button = document.querySelector(`[data-testid="dpad-${dir}"]`);
-    button?.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 7, pointerType: 'touch' }));
-  }, direction);
+  await page.mouse.up();
   await page.waitForTimeout(150);
 }
 
@@ -64,37 +66,26 @@ async function runPhone() {
   check('phone boots', (await page.locator('[data-testid="stage-iframe"]').count()) === 1);
   check('compact layout', (await page.locator('.layout-compact').count()) === 1);
   check('4 bottom tabs', (await page.locator('.mobile-tab').count()) === 4);
-  check('dpad visible', await page.locator('[data-testid="dpad"]').isVisible());
+  check('touch pad visible', await page.locator('[data-testid="stage-pad"]').isVisible());
   check('phone save/open buttons', await page.locator('[data-testid="m-save-project"]').isVisible() && (await page.locator('[data-testid="m-open-project"]').isVisible()) && (await page.locator('[data-testid="m-export-html5"]').isVisible()));
   check('phone topbar files hidden', !(await page.locator('[data-testid="save-project"]').isVisible()));
 
   const before = await runtimeState(page);
   check('phone runtime running', Boolean(before?.cat));
 
-  await holdDpad(page, 'right', 450);
+  await holdJoystick(page, 'right', 600);
   const after = await runtimeState(page);
-  check('dpad right moves cat', Boolean(after && before && after.cat.x > before.cat.x), `x ${before?.cat.x} → ${after?.cat.x}`);
+  check('joystick right moves cat', Boolean(after && before && after.cat.x > before.cat.x), `x ${before?.cat.x} → ${after?.cat.x}`);
 
-  // 触屏摇杆（v0.5.0）：在 iframe 里找到摇杆，按住往右拖，小猫 x 应增大
-  const playerFrame = page.frames().find((frame) => frame.url().includes('player.html'));
-  const joystick = playerFrame?.locator('[data-testid="joystick"]');
-  const joystickVisible = joystick ? await joystick.isVisible() : false;
-  check('phone joystick visible', joystickVisible);
-  if (joystickVisible && joystick) {
-    const box = await joystick.boundingBox();
-    if (box) {
-      const cx = box.x + box.width / 2;
-      const cy = box.y + box.height / 2;
-      const x0 = (await runtimeState(page))?.cat?.x ?? 0;
-      await page.mouse.move(cx, cy);
-      await page.mouse.down();
-      await page.mouse.move(cx + box.width * 0.45, cy, { steps: 6 });
-      await page.waitForTimeout(650);
-      await page.mouse.up();
-      await page.waitForTimeout(200);
-      const x1 = (await runtimeState(page))?.cat?.x ?? 0;
-      check('phone joystick moves cat', x1 > x0, `x ${x0} → ${x1}`);
-    }
+  // 触屏按键：跳跃按钮可按下（发送 jump 绑定到运行时）
+  check('phone jump button', await page.locator('[data-testid="pad-btn-jump"]').isVisible());
+  const jumpBox = await page.locator('[data-testid="pad-btn-jump"]').boundingBox();
+  if (jumpBox) {
+    await page.mouse.move(jumpBox.x + jumpBox.width / 2, jumpBox.y + jumpBox.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(180);
+    await page.mouse.up();
+    await page.waitForTimeout(120);
   }
 
   check('sprite strip visible', await page.locator('[data-testid="sprite-strip"]').isVisible());
@@ -184,7 +175,7 @@ async function runTablet() {
 
   check('tablet compact layout', (await page.locator('.layout-compact').count()) === 1);
   check('tablet stage running', Boolean(await runtimeState(page)));
-  check('tablet dpad visible', await page.locator('[data-testid="dpad"]').isVisible());
+  check('tablet pad visible', await page.locator('[data-testid="stage-pad"]').isVisible());
   await page.screenshot({ path: 'tools/shots/m-tablet-stage.png' });
 
   await page.locator('[data-testid="tab-blocks"]').tap();
