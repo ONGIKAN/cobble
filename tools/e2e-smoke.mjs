@@ -230,6 +230,27 @@ try {
   record('export html5', hud >= 1 && gameErrors.length === 0, `download=${exportDownload.suggestedFilename()} hud=${hud} errors=${gameErrors.length}`);
   await game.close();
 
+  // 10. 新建工程：从模板「打地鼠」创建
+  await page.click('[data-testid="new-project"]');
+  await page.waitForSelector('[data-testid="new-project-dialog"]', { timeout: 5000 });
+  const templateCards = await page.locator('.template-card').count();
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.click('[data-testid="template-whack-mole"]');
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
+  await page.waitForTimeout(900);
+  const tmplSprites = await page.locator('.sprite-card').count();
+  const tmplName = await page.locator('.sprite-name').first().innerText();
+  const tmplBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
+  record('new project template', templateCards === 4 && tmplSprites === 1 && tmplName.includes('地鼠') && tmplBlocks > 10, `cards=${templateCards} sprites=${tmplSprites} name=${tmplName} blocks=${tmplBlocks}`);
+
+  // 恢复演示工程，避免影响下次运行
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.click('[data-testid="reset-project"]');
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
+  await page.waitForTimeout(600);
+
   record('no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 } catch (error) {
   record('smoke run', false, String(error));

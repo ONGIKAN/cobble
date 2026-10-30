@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { downloadStandaloneHtml } from '../export-html';
+import { openNewProjectDialog } from '../new-project';
 import { downloadProject, readProjectFile } from '../project-file';
 import { useEditorStore } from '../store';
 
@@ -40,6 +41,14 @@ export function ProjectFileButtons({ variant = 'bar' }: Props) {
 
   return (
     <div className={`file-actions${inline ? ' is-inline' : ''}`}>
+      <button
+        type="button"
+        className="btn btn-ghost"
+        data-testid={inline ? 'm-new-project' : 'new-project'}
+        onClick={() => openNewProjectDialog()}
+      >
+        {label(t('toolbar.newProject'), t('toolbar.newProjectShort'))}
+      </button>
       <button
         type="button"
         className="btn btn-ghost"

@@ -161,6 +161,15 @@ async function runTablet() {
   check('tablet blocks rendered', (await page.locator('[data-testid="blocks-host"] .blocklySvg').isVisible()));
   await page.screenshot({ path: 'tools/shots/m-tablet-blocks.png' });
 
+  await page.locator('[data-testid="tab-stage"]').tap();
+  await page.waitForTimeout(300);
+  check('tablet new project entry', await page.locator('[data-testid="m-new-project"]').isVisible());
+  await page.locator('[data-testid="m-new-project"]').tap();
+  await page.waitForTimeout(600);
+  check('tablet template dialog', await page.locator('[data-testid="new-project-dialog"]').isVisible());
+  await page.locator('.modal-close').tap();
+  await page.waitForTimeout(300);
+
   check('tablet no console errors', errors.length === 0, errors.slice(0, 2).join(' | '));
   await context.close();
 }

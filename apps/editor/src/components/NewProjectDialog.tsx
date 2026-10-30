@@ -1,0 +1,97 @@
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { TEMPLATES, templateThumb, type TemplateDefinition } from '../templates';
+import { useEditorStore } from '../store';
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+}
+
+interface Preview {
+  template: TemplateDefinition;
+  thumb?: string;
+  sprites: number;
+  blocks: number;
+}
+
+export function NewProjectDialog({ open, onClose }: Props) {
+  if (!open) return null;
+  return <DialogBody onClose={onClose} />;
+}
+
+function DialogBody({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
+  const replaceProject = useEditorStore((state) => state.replaceProject);
+
+  const previews = useMemo<Preview[]>(
+    () =>
+      TEMPLATES.map((template) => {
+        const { project, workspaces } = template.build();
+        const blocks = Object.values(workspaces).reduce<number>((sum, state) => {
+          const serialized = state as { blocks?: { blocks?: unknown[] } };
+          return sum + (serialized.blocks?.blocks?.length ?? 0);
+        }, 0);
+        return { template, thumb: templateThumb(project), sprites: project.sprites.length, blocks };
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  const pick = (template: TemplateDefinition): void => {
+    if (!window.confirm(t('templates.confirmReplace'))) return;
+    const { project, workspaces } = template.build();
+    replaceProject(project, workspaces);
+  };
+
+  return (
+    <div
+      className="modal-overlay"
+      data-testid="new-project-dialog"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className="modal" role="dialog" aria-modal="true" aria-label={t('templates.title')}>
+        <header className="modal-head">
+          <div>
+            <h2>{t('templates.title')}</h2>
+            <p>{t('templates.subtitle')}</p>
+          </div>
+          <button type="button" className="modal-close" onClick={onClose} aria-label={t('templates.close')}>
+            ✕
+          </button>
+        </header>
+        <div className="template-grid">
+          {previews.map(({ template, thumb, sprites, blocks }) => (
+            <button
+              key={template.id}
+              type="button"
+              className="template-card"
+              data-testid={`template-${template.id}`}
+              onClick={() => pick(template)}
+            >
+              <span className="template-thumb">
+                {thumb ? <img src={thumb} alt="" /> : <span className="template-thumb-mark">＋</span>}
+              </span>
+              <span className="template-body">
+                <span className="template-name">{t(template.nameKey)}</span>
+                <span className="template-tagline">{t(template.taglineKey)}</span>
+                <span className="template-meta">
+                  {t('templates.meta', { sprites, blocks })}
+                </span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

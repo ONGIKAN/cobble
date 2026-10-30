@@ -9,6 +9,8 @@ import { BlocksView } from './components/BlocksView';
 import { Inspector } from './components/Inspector';
 import { StatusBar } from './components/StatusBar';
 import { MobileTabs } from './components/MobileTabs';
+import { NewProjectDialog } from './components/NewProjectDialog';
+import { onNewProjectDialog } from './new-project';
 import { useCompact, type MobileTab } from './useCompact';
 
 let bootstrapped = false;
@@ -57,6 +59,9 @@ export function App() {
   const compact = useCompact();
   const [tab, setTab] = useState<MobileTab>('stage');
   const [ready, setReady] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  useEffect(() => onNewProjectDialog(() => setDialogOpen(true)), []);
 
   useEffect(() => {
     bootstrap();
@@ -134,6 +139,7 @@ export function App() {
         </div>
       )}
       {compact && <MobileTabs value={tab} onChange={setTab} />}
+      <NewProjectDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
       <StatusBar />
     </div>
   );

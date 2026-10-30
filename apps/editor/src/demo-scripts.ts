@@ -1,36 +1,13 @@
 import * as Blockly from 'blockly';
-import 'blockly/blocks';
 import { DEMO_SPRITE_CAT, DEMO_SPRITE_COIN, DEMO_VAR_SCORE, type ProjectDoc } from '@cobble/project';
-
-function makeBlock(ws: Blockly.Workspace, type: string, fields: Record<string, string | number> = {}): Blockly.Block {
-  const block = ws.newBlock(type);
-  for (const [name, value] of Object.entries(fields)) block.setFieldValue(value, name);
-  return block;
-}
-
-function num(ws: Blockly.Workspace, value: number): Blockly.Block {
-  return makeBlock(ws, 'math_number', { NUM: value });
-}
-
-function attachValue(parent: Blockly.Block, input: string, child: Blockly.Block): void {
-  const connection = parent.getInput(input)?.connection;
-  const output = child.outputConnection;
-  if (connection && output) connection.connect(output);
-}
-
-function attachStatement(parent: Blockly.Block, input: string, first: Blockly.Block): void {
-  const connection = parent.getInput(input)?.connection;
-  const previous = first.previousConnection;
-  if (connection && previous) connection.connect(previous);
-}
-
-function chain(blocks: Blockly.Block[]): void {
-  for (let i = 0; i < blocks.length - 1; i++) {
-    const next = blocks[i].nextConnection;
-    const previous = blocks[i + 1].previousConnection;
-    if (next && previous) next.connect(previous);
-  }
-}
+import {
+  attachStatement,
+  attachValue,
+  chain,
+  makeBlock,
+  num,
+  randomRange,
+} from './block-builder';
 
 function keyIf(ws: Blockly.Workspace, key: string, actionType: string, delta: number): Blockly.Block {
   const ifBlock = makeBlock(ws, 'control_if');
@@ -40,13 +17,6 @@ function keyIf(ws: Blockly.Workspace, key: string, actionType: string, delta: nu
   attachValue(action, 'VALUE', num(ws, delta));
   attachStatement(ifBlock, 'DO', action);
   return ifBlock;
-}
-
-function randomRange(ws: Blockly.Workspace, min: number, max: number): Blockly.Block {
-  const random = makeBlock(ws, 'operators_random');
-  attachValue(random, 'MIN', num(ws, min));
-  attachValue(random, 'MAX', num(ws, max));
-  return random;
 }
 
 function buildCatWorkspace(ws: Blockly.Workspace): void {
