@@ -46,6 +46,7 @@ const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
       'motion_bounce',
       'motion_rotationstyle',
       'motion_gotosprite',
+      'motion_playermove',
       'motion_xpos',
       'motion_ypos',
       'motion_direction',

@@ -61,7 +61,8 @@ export type IRNode =
   | { op: 'broadcast'; message: string }
   | { op: 'setVar'; varId: string; value: IRExpr }
   | { op: 'changeVar'; varId: string; value: IRExpr }
-  | { op: 'setDraggable'; value: boolean };
+  | { op: 'setDraggable'; value: boolean }
+  | { op: 'playerMove'; speed: IRExpr };
 
 export type Hat =
   | { kind: 'flag' }

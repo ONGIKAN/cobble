@@ -1,7 +1,7 @@
 {
   "name": "@cobble/mobile",
   "private": true,
-  "version": "0.12.1",
+  "version": "0.12.2",
   "description": "Cobble Studio Android shell (Capacitor)",
   "scripts": {
     "sync": "cap sync android",
@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@capacitor/android": "^7.0.0",
-    "@capacitor/core": "^7.0.0"
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.6"
   },
   "devDependencies": {
     "@capacitor/cli": "^7.0.0"

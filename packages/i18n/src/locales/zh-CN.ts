@@ -205,6 +205,7 @@ export const zhCN = {
       bounce: '触碰舞台边缘反弹',
       rotationstyle: '旋转模式设为 %1',
       gotosprite: '移动到 %1 的位置',
+      playermove: '方向输入移动角色 速度 %1',
       xpos: 'x 坐标',
       ypos: 'y 坐标',
       direction: '朝向角度',

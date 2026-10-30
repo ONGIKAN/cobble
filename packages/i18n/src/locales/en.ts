@@ -207,6 +207,7 @@ export const en: Messages = {
       bounce: 'bounce on stage edge',
       rotationstyle: 'set rotation mode %1',
       gotosprite: 'go to position of %1',
+      playermove: 'move with direction input speed %1',
       xpos: 'x position',
       ypos: 'y position',
       direction: 'direction',

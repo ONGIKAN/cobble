@@ -154,6 +154,8 @@ function compileNode(b: Blockly.Block): IRNode | null {
       return { op: 'switchCostume', costume: String(b.getFieldValue('COSTUME') ?? '') };
     case 'motion_gotosprite':
       return { op: 'gotoSprite', spriteId: String(b.getFieldValue('TARGET') ?? '') };
+    case 'motion_playermove':
+      return { op: 'playerMove', speed: numOf(b.getInputTargetBlock('SPEED')) };
     case 'control_waituntil':
       return { op: 'waitUntil', cond: numOf(b.getInputTargetBlock('COND')) };
     case 'looks_setsize':

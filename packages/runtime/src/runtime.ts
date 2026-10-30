@@ -357,6 +357,23 @@ export class Runtime {
         }
         return;
       }
+      case 'playerMove': {
+        const steps = num(node.speed);
+        let dx = 0;
+        let dy = 0;
+        if (this.bindingActive('left')) dx -= steps;
+        if (this.bindingActive('right')) dx += steps;
+        if (this.bindingActive('up')) dy += steps;
+        if (this.bindingActive('down')) dy -= steps;
+        if (dx !== 0 || dy !== 0) {
+          sprite.x += dx;
+          sprite.y += dy;
+          if (dx !== 0 && sprite.rotationStyle === 'left-right') {
+            sprite.direction = dx > 0 ? 90 : 270;
+          }
+        }
+        return;
+      }
       case 'waitUntil': {
         while (this.running && !truthy(this.evalExpr(spriteId, node.cond))) {
           yield FRAME;

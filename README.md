@@ -125,7 +125,7 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 | --- | --- |
 | `packages/project` | 工程数据模型（ProjectDoc）、IR 类型、zod 校验、示例工程「小猫吃金币」 |
 | `packages/i18n` | i18next 初始化、中英文资源包、语言检测/持久化、整页切换 |
-| `packages/blocks` | 56 种自定义积木（含输入事件、交互、换成指定造型、x/y/方向 reporter、等待直到、移到角色等能力块）、9 分类工具箱（事件 / 交互 / 运动 / 渲染 / 音频 / 流程 / 感知 / 数学 / 变量）、Blockly → IR 编译器 |
+| `packages/blocks` | 57 种自定义积木（含输入事件、交互、换成指定造型、x/y/方向 reporter、等待直到、移到角色等能力块）、9 分类工具箱（事件 / 交互 / 运动 / 渲染 / 音频 / 流程 / 感知 / 数学 / 变量）、Blockly → IR 编译器 |
 | `packages/runtime` | 引擎无关的积木解释器：每帧指令预算、固定 60Hz 逻辑帧、hat 事件、广播、碰撞、变量表 |
 | `packages/engine-phaser` | Phaser 4 适配器：纹理预加载、Scratch 坐标系换算、朝向/翻转、说话气泡、键鼠输入 |
 | `apps/editor` | 三栏编辑器：角色/变量栏、舞台（iframe 预览）、Blockly 工作区、属性检查器；工程管理页、模板、输入设置、全屏运行；深浅主题；自动保存 |

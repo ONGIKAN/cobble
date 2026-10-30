@@ -643,6 +643,16 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
       nextStatement: null,
       style: 'control',
     },
+    // ── 方向输入控制角色（摇杆 / WASD / 方向键共用同一事件） ─
+    {
+      type: 'motion_playermove',
+      message0: t('blocks.motion.playermove'),
+      args0: [{ type: 'input_value', name: 'SPEED', check: 'Number' }],
+      inputsInline: true,
+      previousStatement: null,
+      nextStatement: null,
+      style: 'motion',
+    },
   ];
 
   Blockly.defineBlocksWithJsonArray(ops);

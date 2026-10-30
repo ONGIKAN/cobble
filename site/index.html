@@ -28,7 +28,7 @@
       <a class="brand" href="./">
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <span class="brand-name">Cobble Studio</span>
-        <span class="brand-ver" title="当前版本">v0.12.1</span>
+        <span class="brand-ver" title="当前版本">v0.12.2</span>
       </a>
       <nav class="site-nav">
         <a href="#features"><span class="zh">功能</span><span class="en">Features</span></a>
@@ -72,7 +72,7 @@
             </a>
           </div>
           <ul class="hero-meta">
-            <li>56 <span class="zh">种积木</span><span class="en">blocks</span></li>
+            <li>57 <span class="zh">种积木</span><span class="en">blocks</span></li>
             <li>Blockly + Phaser 4</li>
             <li><span class="zh">中英双语</span><span class="en">Bilingual UI</span></li>
             <li><span class="zh">深浅主题</span><span class="en">Dark / light</span></li>
@@ -110,7 +110,7 @@
             <h3><span class="zh">积木编程</span><span class="en">Block programming</span></h3>
             <p>
               <span class="zh">51 种积木覆盖事件、运动、外观、声音、控制、侦测、运算与变量，Blockly 工作区直接编译为引擎无关的 IR。</span>
-              <span class="en">56 blocks across events, interaction, motion, rendering, audio, flow, sensing, math and variables — compiled from Blockly into an engine-agnostic IR.</span>
+              <span class="en">57 blocks across events, interaction, motion, rendering, audio, flow, sensing, math and variables — compiled from Blockly into an engine-agnostic IR.</span>
             </p>
           </article>
           <article class="card">
@@ -218,7 +218,7 @@
         <p class="eyebrow">Download</p>
         <h2><span class="zh">下载安装包</span><span class="en">Get the apps</span></h2>
         <p class="section-sub">
-          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.12.1 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
+          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.12.2 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
           <span class="en">Windows and Android builds ship through GitHub Releases, both from the v0.11.0 stable build. Projects live on your machine and desktop installs store them as .gproj files — fully offline.</span>
         </p>
         <div class="download-grid">
@@ -434,11 +434,20 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <p class="eyebrow">Release log</p>
         <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
         <p class="section-sub">
-          <span class="zh">当前稳定版 <strong>v0.12.1</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
-          <span class="en">Current stable release <strong>v0.12.1</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
+          <span class="zh">当前稳定版 <strong>v0.12.2</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
+          <span class="en">Current stable release <strong>v0.12.2</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
         </p>
         <ol class="release-list">
           <li class="release is-current">
+            <div class="release-head"><span class="release-ver">v0.12.2</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">方向输入积木 + 安卓状态栏修复</span><span class="en">Direction input block + Android status bar fix</span></div>
+            <ul>
+              <li><span class="zh">新增「方向输入移动角色」积木：方向键 / WASD / 触屏摇杆共用同一个输入事件，绑定到角色循环脚本即可控制移动。</span><span class="en">New “move with direction input” block: arrows, WASD and the touch joystick share one input event, ready to bind to a character loop.</span></li>
+              <li><span class="zh">安卓端隐藏系统状态栏，编辑器顶部菜单不再被遮挡。</span><span class="en">Android app hides the system status bar so it no longer covers the editor top menu.</span></li>
+              <li><span class="zh">自定义积木总数 57，官网 / README 同步更新。</span><span class="en">Custom block count is now 57, site and README updated.</span></li>
+            </ul>
+          </li>
+          <li class="release">
             <div class="release-head"><span class="release-ver">v0.12.1</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <div class="release-tagline"><span class="zh">浅色品牌</span><span class="en">Light brand</span></div>
             <ul>
@@ -572,7 +581,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <div>
           <strong>Cobble Studio</strong>
-          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.12.1</span><span class="en">A lightweight 2D block game maker · v0.12.0</span></p>
+          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.12.2</span><span class="en">A lightweight 2D block game maker · v0.12.0</span></p>
         </div>
       </div>
       <nav class="foot-links">

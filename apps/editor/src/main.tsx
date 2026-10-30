@@ -6,7 +6,10 @@ import { ProjectHub } from './components/ProjectHub';
 import { parseRoute, routeToProjects, type Route } from './routes';
 import { THEME_KEY } from './store';
 import { syncDesktopLibrary } from './library';
+import { setupNativeShell } from './native-shell';
 import './styles/global.css';
+
+void setupNativeShell();
 
 const locale = detectLocale();
 initI18n(locale);

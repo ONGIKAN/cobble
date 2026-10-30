@@ -1,6 +1,6 @@
 {
   "name": "@cobble/editor",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,6 +9,7 @@
     "preview": "vite preview --port 5184"
   },
   "dependencies": {
+    "@capacitor/status-bar": "^7.0.6",
     "@vitejs/plugin-react": "^6.1.2",
     "blockly": "^13.4.0",
     "i18next": "^26.5.11",
