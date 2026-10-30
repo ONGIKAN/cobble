@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Cobble Studio · 轻量 2D 积木游戏创作平台</title>
+    <meta
+      name="description"
+      content="Cobble Studio 是一个轻量的 2D 积木游戏创作平台：拖积木拼逻辑，一键在浏览器里试玩。桌面、平板、手机都能用，支持深浅主题与中英双语。"
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23ff6b35'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='monospace' font-size='14' font-weight='700' fill='%23101216'%3EGF%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="site-head">
+      <a class="brand" href="./">
+        <span class="brand-mark">CB</span>
+        <span class="brand-name">Cobble Studio</span>
+      </a>
+      <nav class="site-nav">
+        <a href="#features"><span class="zh">功能</span><span class="en">Features</span></a>
+        <a href="#gallery"><span class="zh">截图</span><span class="en">Screens</span></a>
+        <a href="#roadmap"><span class="zh">路线图</span><span class="en">Roadmap</span></a>
+        <a href="./demo/"><span class="zh">在线演示</span><span class="en">Live demo</span></a>
+        <a href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+      <button class="lang-btn" id="lang-toggle" type="button" aria-label="切换语言 / Switch language">EN</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="dot"></span><span class="zh">P0 · M0 可运行原型</span><span class="en">P0 · working M0 prototype</span></p>
+          <h1>
+            <span class="zh">用积木拼出<br />你的 2D 小游戏</span>
+            <span class="en">Build your own<br />2D games with blocks</span>
+          </h1>
+          <p class="lede">
+            <span class="zh">轻量、跨端的积木游戏创作平台。拖积木 → 编译成运行时指令 → 立刻在浏览器里试玩。桌面、平板、手机都能用。</span>
+            <span class="en">A lightweight, cross-device block-based game maker. Snap blocks, compile to runtime instructions, play right in the browser — on desktop, tablet and phone.</span>
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="./demo/">
+              <span class="zh">在线体验</span><span class="en">Try the demo</span>
+              <span class="arrow">→</span>
+            </a>
+            <a class="btn" href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer">
+              <span class="zh">查看源码</span><span class="en">View source</span>
+            </a>
+          </div>
+          <ul class="hero-meta">
+            <li>43 <span class="zh">种积木</span><span class="en">blocks</span></li>
+            <li>Blockly + Phaser 4</li>
+            <li><span class="zh">中英双语</span><span class="en">Bilingual UI</span></li>
+            <li><span class="zh">深浅主题</span><span class="en">Dark / light</span></li>
+          </ul>
+        </div>
+        <figure class="hero-shot">
+          <a href="./demo/" title="打开在线演示">
+            <img src="./assets/01-editor-dark.png" alt="Cobble Studio 编辑器（深色主题）" width="1440" height="900" />
+          </a>
+          <figcaption>
+            <span class="zh">编辑器 · 深色主题 · 示例工程「小猫吃金币」</span>
+            <span class="en">Editor · dark theme · demo project “Cat &amp; Coin”</span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section" id="features">
+        <div class="section-head">
+          <p class="eyebrow">Features</p>
+          <h2><span class="zh">为“做出来”而设计</span><span class="en">Designed to ship something playable</span></h2>
+          <p class="section-sub">
+            <span class="zh">从第一块积木到能玩的作品，尽量少的概念、尽快的反馈。</span>
+            <span class="en">Few concepts, fast feedback — from the first block to a playable game.</span>
+          </p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <p class="card-no">01</p>
+            <h3><span class="zh">积木编程</span><span class="en">Block programming</span></h3>
+            <p>
+              <span class="zh">43 种积木覆盖事件、运动、外观、声音、控制、侦测、运算与变量，Blockly 工作区直接编译为引擎无关的 IR。</span>
+              <span class="en">43 blocks across events, motion, looks, sound, control, sensing, operators and variables — compiled from Blockly into an engine-agnostic IR.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">02</p>
+            <h3><span class="zh">实时预览</span><span class="en">Live preview</span></h3>
+            <p>
+              <span class="zh">舞台内嵌 Phaser 4 运行时，点「运行」立刻试玩；预览与以后的单文件导出复用同一套运行时。</span>
+              <span class="en">A Phaser 4 runtime is embedded in the stage. Hit Run to play immediately — the same runtime powers future single-file exports.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">03</p>
+            <h3><span class="zh">手机 / 平板</span><span class="en">Phone &amp; tablet</span></h3>
+            <p>
+              <span class="zh">触屏布局自动切换：底部标签页、屏幕方向键、角色快捷条；粗指针设备才显示方向键，桌面保持三栏。</span>
+              <span class="en">Touch layout switches automatically: bottom tabs, on-screen D-pad, quick sprite strip. The three-column desktop layout stays untouched.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">04</p>
+            <h3><span class="zh">方正 · 低饱和</span><span class="en">Square &amp; muted</span></h3>
+            <p>
+              <span class="zh">全站零圆角，积木使用自定义渲染器压平圆角与顶帽，走低饱和配色，长时间编辑不刺眼。</span>
+              <span class="en">Zero border radius everywhere. A custom Blockly renderer flattens corners and hats, with a muted palette for long editing sessions.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">05</p>
+            <h3><span class="zh">中英双语</span><span class="en">Bilingual</span></h3>
+            <p>
+              <span class="zh">界面文案全部走 i18n，积木与工具箱跟随语言；作品内的角色名、变量名属于内容，不随界面翻译。</span>
+              <span class="en">Every UI string is an i18n key; blocks and toolbox follow the locale. Sprite and variable names are content and are never translated.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">06</p>
+            <h3><span class="zh">本地优先</span><span class="en">Local-first</span></h3>
+            <p>
+              <span class="zh">无需登录，编辑内容自动保存到浏览器；账号、云端与社区分享在路线图中，当前不依赖任何后端。</span>
+              <span class="en">No sign-in. Work is autosaved in the browser. Accounts, cloud and community sharing are on the roadmap; today there is no backend.</span>
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="gallery">
+        <div class="section-head">
+          <p class="eyebrow">Screens</p>
+          <h2><span class="zh">长这样</span><span class="en">A look around</span></h2>
+        </div>
+        <div class="gallery gallery-wide">
+          <figure class="shot">
+            <img src="./assets/03-playing.png" alt="舞台运行中" loading="lazy" />
+            <figcaption><span class="zh">运行中 · 分数 +2</span><span class="en">Playing · score +2</span></figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="./assets/02-editor-light.png" alt="浅色主题" loading="lazy" />
+            <figcaption><span class="zh">桌面 · 浅色主题</span><span class="en">Desktop · light theme</span></figcaption>
+          </figure>
+        </div>
+        <div class="phone-row">
+          <figure class="shot is-phone">
+            <img src="./assets/m-phone-stage.png" alt="手机舞台页" loading="lazy" />
+            <figcaption><span class="zh">手机 · 舞台与方向键</span><span class="en">Phone · stage &amp; D-pad</span></figcaption>
+          </figure>
+          <figure class="shot is-phone">
+            <img src="./assets/m-phone-blocks.png" alt="手机积木页" loading="lazy" />
+            <figcaption><span class="zh">手机 · 积木页</span><span class="en">Phone · blocks</span></figcaption>
+          </figure>
+          <div class="phone-note">
+            <h3><span class="zh">触屏优先</span><span class="en">Touch first</span></h3>
+            <p>
+              <span class="zh">窄屏自动切成单栏：底部「舞台 / 积木 / 角色 / 属性」四标签，舞台页带方向键与角色快捷条，横屏时舞台与方向键并排；积木编辑器支持双指缩放。</span>
+              <span class="en">Narrow screens collapse into a single column with four bottom tabs (stage, blocks, sprites, props), an on-screen D-pad and a sprite strip; landscape puts the stage next to the D-pad, and blocks support pinch zoom.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="roadmap">
+        <div class="section-head">
+          <p class="eyebrow">Roadmap</p>
+          <h2><span class="zh">现在到哪了</span><span class="en">Where it stands</span></h2>
+          <p class="section-sub">
+            <span class="zh">M0 已打通「积木编辑 → 编译 → 运行」全链路，后续按 P0/P1 逐步补齐工程与导出能力。</span>
+            <span class="en">M0 ships the full edit → compile → run loop. Engineering and export features follow in P0/P1.</span>
+          </p>
+        </div>
+        <ol class="roadmap">
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">M0 可运行原型</span><span class="en">M0 working prototype</span></h3>
+              <p>
+                <span class="zh">积木编辑、IR 编译、固定 60Hz 解释器、Phaser 4 舞台、深浅主题、中英切换、触屏布局、本地自动保存。</span>
+                <span class="en">Block editing, IR compiler, 60 Hz fixed-step interpreter, Phaser 4 stage, themes, locales, touch layout, autosave.</span>
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="state"><span class="zh">下一步</span><span class="en">Next</span></span>
+            <div>
+              <h3><span class="zh">工程文件与素材</span><span class="en">Project files &amp; assets</span></h3>
+              <p>
+                <span class="zh">新建/保存/打开 .gproj，上传图片与音效，增删角色与造型。</span>
+                <span class="en">Create / save / open .gproj, upload images and sounds, add and remove sprites and costumes.</span>
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="state"><span class="zh">计划中</span><span class="en">Planned</span></span>
+            <div>
+              <h3><span class="zh">单文件 HTML5 导出</span><span class="en">Single-file HTML5 export</span></h3>
+              <p>
+                <span class="zh">把运行时和作品打包成一个双击可玩的 HTML 文件，并给预览 iframe 加上 sandbox 隔离。</span>
+                <span class="en">Bundle runtime + game into one playable HTML file, with sandbox isolation for previews.</span>
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="state"><span class="zh">计划中</span><span class="en">Planned</span></span>
+            <div>
+              <h3><span class="zh">桌面壳与模板库</span><span class="en">Desktop shell &amp; templates</span></h3>
+              <p>
+                <span class="zh">Tauri 2 桌面应用，直接打开本地工程；再补一批示例模板（打地鼠、接苹果等）。</span>
+                <span class="en">Tauri 2 desktop app that opens local projects, plus example templates (whack-a-mole, catch-the-fruit…).</span>
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section start" id="start">
+        <div class="start-copy">
+          <p class="eyebrow">Get started</p>
+          <h2><span class="zh">本地跑起来</span><span class="en">Run it locally</span></h2>
+          <p class="section-sub">
+            <span class="zh">需要 Node.js 20+。不需要后端，不需要登录。</span>
+            <span class="en">Requires Node.js 20+. No backend, no sign-in.</span>
+          </p>
+          <pre class="code"><code>git clone https://github.com/ONGIKAN/cobble.git
+cd cobble
+npm install
+npm run dev   # http://127.0.0.1:5183</code></pre>
+          <div class="start-links">
+            <a class="btn btn-primary" href="./demo/"><span class="zh">直接在线体验</span><span class="en">Open the live demo</span> <span class="arrow">→</span></a>
+            <a class="btn" href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer">GitHub</a>
+          </div>
+        </div>
+        <div class="start-side">
+          <h3><span class="zh">技术栈</span><span class="en">Stack</span></h3>
+          <ul class="chips">
+            <li>TypeScript</li>
+            <li>React</li>
+            <li>Vite</li>
+            <li>Blockly</li>
+            <li>Phaser 4</li>
+            <li>zustand</li>
+            <li>zod</li>
+            <li>i18next</li>
+            <li>Playwright</li>
+          </ul>
+          <h3><span class="zh">设计约束</span><span class="en">Design rules</span></h3>
+          <ul class="rules">
+            <li><span class="zh">界面文案禁止硬编码，全部走 i18n key</span><span class="en">No hardcoded UI strings — everything is an i18n key</span></li>
+            <li><span class="zh">全站零圆角、方正积木</span><span class="en">Zero radius, square blocks</span></li>
+            <li><span class="zh">预览与导出复用同一运行时</span><span class="en">One runtime for preview and export</span></li>
+            <li><span class="zh">模拟按固定 60Hz 步长推进</span><span class="en">Simulation advances at a fixed 60 Hz step</span></li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-foot">
+      <div class="foot-brand">
+        <span class="brand-mark">CB</span>
+        <div>
+          <strong>Cobble Studio</strong>
+          <p><span class="zh">轻量 2D 积木游戏创作平台</span><span class="en">A lightweight 2D block game maker</span></p>
+        </div>
+      </div>
+      <nav class="foot-links">
+        <a href="./"><span class="zh">官网首页</span><span class="en">Home</span></a>
+        <a href="./demo/"><span class="zh">在线演示</span><span class="en">Live demo</span></a>
+        <a href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer"><span class="zh">GitHub 仓库</span><span class="en">GitHub repo</span></a>
+        <a href="https://github.com/ONGIKAN/cobble/blob/main/docs/技术方案-v1.md" target="_blank" rel="noreferrer"><span class="zh">技术方案</span><span class="en">Design doc</span></a>
+      </nav>
+      <p class="foot-note">
+        <span class="zh">MIT License · 用积木拼出你的第一款游戏</span>
+        <span class="en">MIT License · Build your first game with blocks</span>
+      </p>
+    </footer>
+
+    <script src="./site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@cobble/project": ["packages/project/src/index.ts"],
+      "@cobble/i18n": ["packages/i18n/src/index.ts"],
+      "@cobble/blocks": ["packages/blocks/src/index.ts"],
+      "@cobble/runtime": ["packages/runtime/src/index.ts"],
+      "@cobble/engine-phaser": ["packages/engine-phaser/src/index.ts"]
+    }
+  },
+  "include": ["apps/editor/src", "apps/editor/*.d.ts", "packages/*/src"]
+}
