@@ -18,13 +18,14 @@
       <a class="brand" href="./">
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <span class="brand-name">Cobble Studio</span>
-        <span class="brand-ver" title="当前版本">v0.10.0</span>
+        <span class="brand-ver" title="当前版本">v0.12.0</span>
       </a>
       <nav class="site-nav">
         <a href="#features"><span class="zh">功能</span><span class="en">Features</span></a>
         <a href="#gallery"><span class="zh">截图</span><span class="en">Screens</span></a>
         <a href="#roadmap"><span class="zh">路线图</span><span class="en">Roadmap</span></a>
-        <a href="#changelog"><span class="zh">更新日志</span><span class="en">Changelog</span></a>
+        <a href="#changelog"><span class="zh">版本日志</span><span class="en">Release log</span></a>
+        <a href="#download"><span class="zh">下载</span><span class="en">Download</span></a>
         <a href="./demo/"><span class="zh">在线演示</span><span class="en">Live demo</span></a>
         <a href="./demo-beta/"><span class="zh">测试版</span><span class="en">Beta demo</span></a>
         <a href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer">GitHub</a>
@@ -51,6 +52,9 @@
             </a>
             <a class="btn" href="./demo-beta/">
               <span class="zh">测试版演示</span><span class="en">Beta demo</span>
+            </a>
+            <a class="btn btn-ghost" href="#download">
+              <span class="zh">下载安装包</span><span class="en">Download apps</span>
             </a>
             <a class="btn btn-ghost" href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer">
               <span class="zh">查看源码</span><span class="en">View source</span>
@@ -95,7 +99,7 @@
             <h3><span class="zh">积木编程</span><span class="en">Block programming</span></h3>
             <p>
               <span class="zh">51 种积木覆盖事件、运动、外观、声音、控制、侦测、运算与变量，Blockly 工作区直接编译为引擎无关的 IR。</span>
-              <span class="en">43 blocks across events, motion, looks, sound, control, sensing, operators and variables — compiled from Blockly into an engine-agnostic IR.</span>
+              <span class="en">51 blocks across events, motion, looks, sound, control, sensing, operators and variables — compiled from Blockly into an engine-agnostic IR.</span>
             </p>
           </article>
           <article class="card">
@@ -110,8 +114,8 @@
             <p class="card-no">03</p>
             <h3><span class="zh">手机 / 平板</span><span class="en">Phone &amp; tablet</span></h3>
             <p>
-              <span class="zh">触屏布局自动切换：底部标签页、屏幕方向键、角色快捷条；粗指针设备才显示方向键，桌面保持三栏。</span>
-              <span class="en">Touch layout switches automatically: bottom tabs, on-screen D-pad, quick sprite strip. The three-column desktop layout stays untouched.</span>
+              <span class="zh">触屏布局自动切换：底部标签页、舞台下方的摇杆与按钮手柄、角色快捷条；粗指针设备才显示手柄，桌面保持三栏。</span>
+              <span class="en">Touch layout switches automatically: bottom tabs, a joystick + button pad docked under the stage, and a quick sprite strip. Desktop keeps its three columns.</span>
             </p>
           </article>
           <article class="card">
@@ -152,8 +156,8 @@
             <figcaption><span class="zh">工程管理页 · 我的工程</span><span class="en">Project hub · my projects</span></figcaption>
           </figure>
           <figure class="shot">
-            <img src="./assets/03-playing.png" alt="舞台运行中" loading="lazy" />
-            <figcaption><span class="zh">运行中 · 分数 +2</span><span class="en">Playing · score +2</span></figcaption>
+            <img src="./assets/fighting.png" alt="横版格斗示例游戏" loading="lazy" />
+            <figcaption><span class="zh">示例游戏 · 横版格斗（命中对手 HP -1）</span><span class="en">Demo game · brawler (hit lands, rival HP -1)</span></figcaption>
           </figure>
           <figure class="shot">
             <img src="./assets/templates.png" alt="新建工程模板选择" loading="lazy" />
@@ -165,11 +169,15 @@
           </figure>
           <figure class="shot">
             <img src="./assets/dot-maze.png" alt="吃豆豆示例游戏" loading="lazy" />
-            <figcaption><span class="zh">示例游戏 · 吃豆豆</span><span class="en">Demo game · dot muncher</span></figcaption>
+            <figcaption><span class="zh">示例游戏 · 吃豆豆（迷宫 / 豆子 / 幽灵）</span><span class="en">Demo game · dot muncher (maze, pellets, ghost)</span></figcaption>
           </figure>
           <figure class="shot">
-            <img src="./assets/platformer.png" alt="平台跳跃示例游戏" loading="lazy" />
-            <figcaption><span class="zh">示例游戏 · 平台跳跃</span><span class="en">Demo game · platformer</span></figcaption>
+            <img src="./assets/platformer.png" alt="平台跳跃 v2 示例游戏" loading="lazy" />
+            <figcaption><span class="zh">示例游戏 · 平台跳跃 v2（移动平台 / 史莱姆 / HP）</span><span class="en">Demo game · platformer v2 (moving platforms, slimes, HP)</span></figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="./assets/rpg.png" alt="勇者小镇 RPG 示例游戏" loading="lazy" />
+            <figcaption><span class="zh">示例游戏 · 勇者小镇（NPC 对话 / 星星 / 史莱姆战斗）</span><span class="en">Demo game · Knight Town (NPCs, stars, slime battles)</span></figcaption>
           </figure>
           <figure class="shot">
             <img src="./assets/export-playing.png" alt="导出的单文件 HTML5 在浏览器里运行" loading="lazy" />
@@ -193,6 +201,60 @@
             </p>
           </div>
         </div>
+      </section>
+
+      <section class="section" id="download">
+        <p class="eyebrow">Download</p>
+        <h2><span class="zh">下载安装包</span><span class="en">Get the apps</span></h2>
+        <p class="section-sub">
+          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.11.0 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
+          <span class="en">Windows and Android builds ship through GitHub Releases, both from the v0.11.0 stable build. Projects live on your machine and desktop installs store them as .gproj files — fully offline.</span>
+        </p>
+        <div class="download-grid">
+          <article class="download-card">
+            <p class="download-os">Windows</p>
+            <h3><span class="zh">安装版</span><span class="en">Installer</span></h3>
+            <p class="download-meta">Tauri · NSIS · x64 · ~1.9 MB</p>
+            <p class="download-desc">
+              <span class="zh">装到当前用户目录，开始菜单出现「Cobble Studio」；工程自动保存到应用数据目录。</span>
+              <span class="en">Installs to your user profile and adds Cobble Studio to the Start menu. Projects autosave into the app data folder.</span>
+            </p>
+            <a class="btn btn-primary" href="https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Setup.exe">
+              <span class="zh">下载安装版</span><span class="en">Download installer</span>
+              <span class="arrow">↓</span>
+            </a>
+          </article>
+          <article class="download-card">
+            <p class="download-os">Windows</p>
+            <h3><span class="zh">便携版</span><span class="en">Portable</span></h3>
+            <p class="download-meta">Tauri · 免安装 · x64 · ~3.7 MB</p>
+            <p class="download-desc">
+              <span class="zh">单文件绿色版，双击即用；请放在纯英文路径下（中文路径会导致 WebView2 无法创建窗口）。</span>
+              <span class="en">Single-file, no install. Keep it on an ASCII-only path — WebView2 cannot create the window from a non-ASCII folder.</span>
+            </p>
+            <a class="btn" href="https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Portable.exe">
+              <span class="zh">下载便携版</span><span class="en">Download portable</span>
+              <span class="arrow">↓</span>
+            </a>
+          </article>
+          <article class="download-card">
+            <p class="download-os">Android</p>
+            <h3><span class="zh">APK</span><span class="en">APK</span></h3>
+            <p class="download-meta">Capacitor · debug 签名 · minSdk 23 · ~5.1 MB</p>
+            <p class="download-desc">
+              <span class="zh">适用于 Android 6.0 及以上；因为是调试签名，安装时需要允许「未知来源」，正式上架版本会换成发布签名。</span>
+              <span class="en">Android 6.0+. It is debug-signed, so allow installs from unknown sources; a release-signed build will follow when it hits the store.</span>
+            </p>
+            <a class="btn" href="https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Android.apk">
+              <span class="zh">下载 APK</span><span class="en">Download APK</span>
+              <span class="arrow">↓</span>
+            </a>
+          </article>
+        </div>
+        <p class="download-note">
+          <span class="zh">安装包未做代码签名：Windows 首次运行可能弹出 SmartScreen 提示，点「更多信息 → 仍要运行」即可。全部版本历史见 <a href="https://github.com/ONGIKAN/cobble/releases" target="_blank" rel="noreferrer">GitHub Releases</a>。</span>
+          <span class="en">Builds are not code-signed: Windows may show a SmartScreen prompt on first run — choose “More info → Run anyway”. See all versions on <a href="https://github.com/ONGIKAN/cobble/releases" target="_blank" rel="noreferrer">GitHub Releases</a>.</span>
+        </p>
       </section>
 
       <section class="section" id="roadmap">
@@ -358,26 +420,38 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         </div>
       </section>
       <section class="section" id="changelog">
-        <p class="eyebrow">Changelog</p>
-        <h2><span class="zh">每个版本改了什么</span><span class="en">What changed in each release</span></h2>
+        <p class="eyebrow">Release log</p>
+        <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
         <p class="section-sub">
-          <span class="zh">当前稳定版 <strong>v0.11.0</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，稳定版更新到<a href="./demo/">正式在线演示</a>。日期只显示相对时间（今天 → 最近 7 天 → 近期 → 较早），不暴露具体日期。</span>
-          <span class="en">Current stable release <strong>v0.11.0</strong>. Small releases: routine updates ship to the <a href="./demo-beta/">beta demo</a> first, stable ones update the <a href="./demo/">stable demo</a>. Dates are relative only (today → last 7 days → recently → earlier).</span>
+          <span class="zh">当前稳定版 <strong>v0.11.0</strong>，测试版 <strong>v0.12.0</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，稳定版更新到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
+          <span class="en">Stable release <strong>v0.11.0</strong>, experimental <strong>v0.12.0</strong>. Small releases: routine updates ship to the <a href="./demo-beta/">beta demo</a> first, stable ones update the <a href="./demo/">stable demo</a>. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
         </p>
         <ol class="release-list">
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.12.0</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-beta"><span class="zh">实验版</span><span class="en">experimental</span></span></div>
+            <h4><span class="zh">RPG 史莱姆战斗 + 全新示例截图</span><span class="en">RPG slime battles &amp; fresh demo shots</span></h4>
+            <ul>
+              <li><span class="zh">勇者小镇新增史莱姆战斗：贴近后按「动作」键攻击，史莱姆 HP 归零即被击败，HUD 实时显示史莱姆 HP。</span><span class="en">Knight Town gains slime battles: close in and press the action binding to attack; the slime drops once its HP hits zero, with HP shown live in the HUD.</span></li>
+              <li><span class="zh">官网截图全部换成当前版本的四款示例游戏（平台跳跃 v2 / 吃豆豆 / 勇者小镇 / 横版格斗）与 8 模板弹层。</span><span class="en">The gallery now shows the current four demo games (Platformer v2, Dot muncher, Knight Town, Brawler) plus the 8-template dialog.</span></li>
+              <li><span class="zh">官网新增「下载安装包」区块：Windows 安装版 / 便携版与 Android APK，由 GitHub Releases 分发。</span><span class="en">New download section: Windows installer / portable build and the Android APK, distributed via GitHub Releases.</span></li>
+              <li><span class="zh">触屏交互按工程单独配置：手柄模式（摇杆 + 自定义按钮，三档尺寸）或直接触摸模式（不显示手柄，点按互动 / 拖动角色），设置随工程保存。</span><span class="en">Touch controls are per project: choose pad (joystick + custom buttons, three sizes) or direct-touch (no on-screen pad; tap to interact, press and drag sprites). Settings persist with the project.</span></li>
+              <li><span class="zh">新增「交互」积木分类：当角色被拖动时、指针 X / 指针 Y、角色被拖动？、设置可拖动 开/关；直接触摸模式下可拖动舞台上的角色。</span><span class="en">New Interaction category: when sprite dragged, pointer X / Y, sprite being dragged?, set draggable on/off; direct-touch mode lets you drag sprites on the stage.</span></li>
+              <li><span class="zh">修复比较运算符：新增 ≤ / ≥ / ≠（此前横版格斗会开局误判胜负、平台跳跃无法按金币数通关）。</span><span class="en">Comparison operators now include ≤ / ≥ / ≠ (fixes the brawler auto-finishing and the platformer goal check).</span></li>
+            </ul>
+          </li>
           <li class="release is-current">
-            <div class="release-head"><span class="release-ver">v0.11.0</span><span class="release-date"><span class="zh">今天</span><span class="en">Today</span></span><span class="release-tag"><span class="zh">当前</span><span class="en">current</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.11.0</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">示例游戏加固 + 手机触屏手柄重做</span><span class="en">Harder demo games + redesigned touch pad</span></p>
             <ul>
               <li><span class="zh">平台跳跃 v2：16 个角色，多平台与移动平台、巡逻史莱姆、金币、药水、HP=3、受伤冷却回起点、终点要求金币达标</span><span class="en">Platformer v2: 16 sprites, multiple &amp; moving platforms, patrolling slimes, coins, potion, HP=3, damage cooldown and a coin-gated goal</span></li>
               <li><span class="zh">新增「横版格斗」模板：HP / 对手 HP、动作键攻击与击退、KO 结算</span><span class="en">New "Side-scroller Brawl" template: HP / rival HP, Action-key attacks, knockback and a K.O. result</span></li>
               <li><span class="zh">手机触屏手柄：非全屏时在舞台下方不遮挡画面，全屏时浮在画面底部；摇杆 + 自定义按钮</span><span class="en">Phone touch pad: docked below the stage when windowed, floating at the bottom in fullscreen; joystick + custom buttons</span></li>
-              <li><span class="zh">更新日志只显示相对时间（今天 / 最近 7 天 / 近期 / 较早）</span><span class="en">Changelog now shows relative time only (today / last 7 days / recently / earlier)</span></li>
+              <li><span class="zh">版本日志只显示相对时间（三天内 / 七天内 / 七天之前），不暴露具体日期</span><span class="en">Release log shows relative time only (within 3 days / within 7 days / more than 7 days ago)</span></li>
               <li><span class="zh">桌面安装包改用 Tauri NSIS（currentUser 安装，简体中文 + English）</span><span class="en">Desktop installer now uses Tauri NSIS (currentUser install, Simplified Chinese + English)</span></li>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.10.0</span><span class="release-date"><span class="zh">今天</span><span class="en">Today</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.10.0</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">桌面版原生工程文件 + 专业积木术语</span><span class="en">Native desktop project files + professional block terminology</span></p>
             <ul>
               <li><span class="zh">桌面端只用 Tauri 2（移除 Electron）：Windows 可执行文件约 3.4MB</span><span class="en">Desktop ships on Tauri 2 only (Electron removed): a ~3.4MB Windows executable</span></li>
@@ -391,7 +465,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.9.0</span><span class="release-date"><span class="zh">最近 3 天</span><span class="en">Last 3 days</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.9.0</span><span class="release-date"><span class="zh">七天内</span><span class="en">Within 7 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">全屏运行</span><span class="en">Fullscreen play</span></p>
             <ul>
               <li><span class="zh">舞台面板新增「全屏」按钮，运行时隐藏编辑器界面专注试玩</span><span class="en">A Fullscreen button on the stage panel hides the editor for focused playtesting</span></li>
@@ -400,7 +474,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.8.0</span><span class="release-date"><span class="zh">最近 7 天</span><span class="en">Last 7 days</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.8.0</span><span class="release-date"><span class="zh">七天内</span><span class="en">Within 7 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">吃豆豆示例</span><span class="en">Dot muncher demo</span></p>
             <ul>
               <li><span class="zh">新模板「吃豆豆」：迷宫墙体碰撞、6 颗豆子、会追人的幽灵</span><span class="en">New template "Dot muncher": maze wall collision, six pellets and a chasing ghost</span></li>
@@ -408,7 +482,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.7.0</span><span class="release-date"><span class="zh">最近 7 天</span><span class="en">Last 7 days</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.7.0</span><span class="release-date"><span class="zh">七天内</span><span class="en">Within 7 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">能力块 + 平台跳跃</span><span class="en">Capability blocks + platformer</span></p>
             <ul>
               <li><span class="zh">新增 6 个能力块：换成指定造型、x 坐标、y 坐标、方向、等待直到、移到某角色</span><span class="en">Six new blocks: switch costume to, x position, y position, direction, wait until, go to sprite</span></li>
@@ -416,7 +490,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.6.0</span><span class="release-date"><span class="zh">近期</span><span class="en">Recently</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.6.0</span><span class="release-date"><span class="zh">七天之前</span><span class="en">More than 7 days ago</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">工程管理页 + 紫色豹猫品牌</span><span class="en">Project hub + purple leopard branding</span></p>
             <ul>
               <li><span class="zh">初始页改为工程管理页：多工程卡片、搜索、导入、重命名 / 复制 / 导出 / 删除</span><span class="en">The app now starts on a project hub: multi-project cards, search, import, rename / duplicate / export / delete</span></li>
@@ -425,7 +499,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.5.0</span><span class="release-date"><span class="zh">近期</span><span class="en">Recently</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.5.0</span><span class="release-date"><span class="zh">七天之前</span><span class="en">More than 7 days ago</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">输入事件 + Apache-2.0</span><span class="en">Input events + Apache-2.0</span></p>
             <ul>
               <li><span class="zh">操作抽象成输入事件：一个事件可绑定多个按键</span><span class="en">Controls become named input events, each bindable to several keys</span></li>
@@ -434,35 +508,35 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.4.0</span><span class="release-date"><span class="zh">近期</span><span class="en">Recently</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.4.0</span><span class="release-date"><span class="zh">七天之前</span><span class="en">More than 7 days ago</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">模板与新建工程</span><span class="en">Templates &amp; new project</span></p>
             <ul>
               <li><span class="zh">新建工程弹层：空白工程 + 小猫吃金币 / 打地鼠 / 接苹果三个可玩模板</span><span class="en">New-project dialog: blank project plus three playable templates (cat &amp; coins, whack-a-mole, catch apples)</span></li>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.3.0</span><span class="release-date"><span class="zh">较早</span><span class="en">Earlier</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.3.0</span><span class="release-date"><span class="zh">七天之前</span><span class="en">More than 7 days ago</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">单文件 HTML5 导出</span><span class="en">Single-file HTML5 export</span></p>
             <ul>
               <li><span class="zh">一键导出双击就能玩的 HTML：运行时与作品打包成一个文件，可发给别人离线玩</span><span class="en">Export a double-clickable HTML file: runtime and project bundled, playable offline</span></li>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.2.1</span><span class="release-date"><span class="zh">较早</span><span class="en">Earlier</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.2.1</span><span class="release-date"><span class="zh">七天之前</span><span class="en">More than 7 days ago</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">品牌 logo 与桌面 / 移动壳</span><span class="en">Logo and desktop / mobile shells</span></p>
             <ul>
               <li><span class="zh">加入 Cobble 品牌 logo，编辑器、官网与安装包统一图标</span><span class="en">Cobble logo across editor, site and installer icons</span></li>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.2.0</span><span class="release-date"><span class="zh">较早</span><span class="en">Earlier</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.2.0</span><span class="release-date"><span class="zh">七天之前</span><span class="en">More than 7 days ago</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">素材与角色管理</span><span class="en">Assets &amp; sprites</span></p>
             <ul>
               <li><span class="zh">上传图片造型与音效、新建 / 删除角色、造型排序与改名、变量管理、舞台设置</span><span class="en">Upload costumes and sounds, add / remove sprites, reorder and rename costumes, manage variables, stage settings</span></li>
             </ul>
           </li>
           <li class="release">
-            <div class="release-head"><span class="release-ver">v0.1.0</span><span class="release-date"><span class="zh">早期</span><span class="en">Early</span></span></div>
+            <div class="release-head"><span class="release-ver">v0.1.0</span><span class="release-date"><span class="zh">七天之前</span><span class="en">More than 7 days ago</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">可运行原型</span><span class="en">Working prototype</span></p>
             <ul>
               <li><span class="zh">积木编辑、IR 编译、固定 60Hz 运行时、Phaser 4 舞台、深浅主题、中英双语、触屏布局</span><span class="en">Block editing, IR compile, fixed 60 Hz runtime, Phaser 4 stage, dark/light themes, bilingual UI, touch layout</span></li>
@@ -477,12 +551,12 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <div>
           <strong>Cobble Studio</strong>
-          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.10.0</span><span class="en">A lightweight 2D block game maker · v0.10.0</span></p>
+          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.12.0</span><span class="en">A lightweight 2D block game maker · v0.12.0</span></p>
         </div>
       </div>
       <nav class="foot-links">
         <a href="./"><span class="zh">官网首页</span><span class="en">Home</span></a>
-        <a href="#changelog"><span class="zh">更新日志</span><span class="en">Changelog</span></a>
+        <a href="#changelog"><span class="zh">版本日志</span><span class="en">Release log</span></a>
         <a href="./demo/"><span class="zh">在线演示</span><span class="en">Live demo</span></a>
         <a href="./demo-beta/"><span class="zh">测试版演示</span><span class="en">Beta demo</span></a>
         <a href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer"><span class="zh">GitHub 仓库</span><span class="en">GitHub repo</span></a>

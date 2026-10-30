@@ -15,9 +15,20 @@ const CATEGORIES: Array<{ key: string; colour: string; types: string[] }> = [
       'event_whenflag',
       'event_whenkey',
       'event_wheninput',
-      'event_whenclick',
       'event_whenmessage',
       'event_broadcast',
+    ],
+  },
+  {
+    key: 'interaction',
+    colour: '#8a8fb0',
+    types: [
+      'event_whenclick',
+      'event_whendrag',
+      'sensing_pointerx',
+      'sensing_pointery',
+      'sensing_dragging',
+      'control_setdraggable',
     ],
   },
   {

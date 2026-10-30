@@ -181,6 +181,48 @@ export function defineGameBlocks({ t, project }: BlockContext): void {
     },
     ...pick('event_wheninput'),
     {
+      type: 'event_whendrag',
+      message0: t('blocks.events.whendrag'),
+      nextStatement: null,
+      hat: 'cap',
+      style: 'events',
+    },
+    {
+      type: 'sensing_pointerx',
+      message0: t('blocks.sensing.pointerx'),
+      output: 'Number',
+      style: 'sensing',
+    },
+    {
+      type: 'sensing_pointery',
+      message0: t('blocks.sensing.pointery'),
+      output: 'Number',
+      style: 'sensing',
+    },
+    {
+      type: 'sensing_dragging',
+      message0: t('blocks.sensing.dragging'),
+      output: 'Boolean',
+      style: 'sensing',
+    },
+    {
+      type: 'control_setdraggable',
+      message0: t('blocks.control.setdraggable'),
+      args0: [
+        {
+          type: 'field_dropdown',
+          name: 'VALUE',
+          options: [
+            [t('blocks.control.dragOn'), 'on'],
+            [t('blocks.control.dragOff'), 'off'],
+          ],
+        },
+      ],
+      previousStatement: null,
+      nextStatement: null,
+      style: 'control',
+    },
+    {
       type: 'event_broadcast',
       message0: t('blocks.events.broadcast'),
       args0: [{ type: 'field_input', name: 'MESSAGE', text: 'hit' }],

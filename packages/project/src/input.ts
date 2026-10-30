@@ -11,8 +11,20 @@ export const DEFAULT_INPUT: InputConfig = {
     { id: 'action', name: 'inputs.action', keys: ['Enter'] },
   ],
   joystick: true,
+  joystickSize: 'md',
+  buttonSize: 'md',
+  touchMode: 'pad',
   buttons: [{ id: 'btn-jump', bindingId: 'jump', label: 'inputs.jumpButton' }],
 };
+
+/** 默认按键绑定的深拷贝，模板用它构造工程自己的输入配置 */
+export function defaultBindings(): InputBinding[] {
+  return DEFAULT_INPUT.bindings.map((binding) => ({ ...binding, keys: [...binding.keys] }));
+}
+
+export function touchMode(project: ProjectDoc): 'pad' | 'direct' {
+  return inputConfig(project).touchMode ?? 'pad';
+}
 
 /** 默认名称存的是 i18n key（inputs.*），展示时翻译；用户改过的名字原样显示 */
 export function displayName(name: string, translate: (key: string) => string): string {

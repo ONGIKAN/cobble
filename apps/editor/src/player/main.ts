@@ -45,8 +45,12 @@ function renderHud(): void {
 async function run(project: CompiledProject): Promise<void> {
   stop();
   const adapter = new PhaserAdapter();
-  await adapter.init(stage, project, { mountTouch: embedTouch });
-  const runtime = new Runtime(adapter, project);
+  let runtime: Runtime | null = null;
+  await adapter.init(stage, project, {
+    mountTouch: embedTouch,
+    onDrag: (spriteId, x, y) => runtime?.setSpritePosition(spriteId, x, y),
+  });
+  runtime = new Runtime(adapter, project);
   runtime.start();
   session = { adapter, runtime };
   (window as unknown as { __cobbleRuntime?: Runtime }).__cobbleRuntime = runtime;

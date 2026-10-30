@@ -1,13 +1,17 @@
 // 组装 GitHub Pages 产物（官网 + 在线演示），并可选推送到 gh-pages。
 //
 // 用法：
-//   node tools/publish-pages.mjs               # 只构建 pages-dist，便于本地验证
+//   node tools/publish-pages.mjs                       # 构建两个通道，便于本地验证
+//   node tools/publish-pages.mjs --channel beta        # 只重建 beta 通道（稳定版 demo 保持现状）
+//   node tools/publish-pages.mjs --channel stable      # 只重建稳定版通道（beta 保持现状）
 //   GH_TOKEN=... node tools/publish-pages.mjs --push
+//
+// 通道约定：常规小版本先进 beta（/demo-beta/，标记「实验版」），验证后再发 stable（/demo/，标记「稳定版」）。
 //
 // 产物结构：
 //   pages-dist/index.html     官网（site/index.html）
 //   pages-dist/demo/...       编辑器演示（apps/editor/dist）
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { execFileSync, execSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 
@@ -18,8 +22,20 @@ const git = 'git';
 
 const root = resolve('.');
 const staging = resolve('pages-dist');
+const backupDemo = resolve('.pages-demo-backup');
+const backupBeta = resolve('.pages-demo-beta-backup');
 const site = resolve('site');
 const dist = resolve('apps/editor/dist');
+
+const channelIndex = process.argv.indexOf('--channel');
+const channel = channelIndex === -1 ? 'both' : (process.argv[channelIndex + 1] ?? 'both');
+if (!['both', 'stable', 'beta', 'site'].includes(channel)) {
+  throw new Error(`--channel must be one of both | stable | beta | site (got "${channel}")`);
+}
+const buildsStable = channel === 'both' || channel === 'stable';
+const buildsBeta = channel === 'both' || channel === 'beta';
+const keepStable = !buildsStable && existsSync(join(staging, 'demo'));
+const keepBeta = !buildsBeta && existsSync(join(staging, 'demo-beta'));
 
 const sanitize = (text) => String(text).replace(/x-access-token:[^@]+@/g, 'x-access-token:***@');
 
@@ -39,19 +55,31 @@ const run = (command, args, options = {}) => {
   }
 };
 
-// 1) 构建编辑器（官网是纯静态，无需构建）
-//    稳定版 -> pages-dist/demo，测试版 -> pages-dist/demo-beta（VITE_CHANNEL=beta）
-console.log('== build standalone player ==');
-execSync('npm run build:standalone', { stdio: 'inherit', cwd: root });
+// 1) 需要重建的通道先保留旧产物，再构建编辑器（官网是纯静态，无需构建）
+if (keepStable) {
+  console.log('== keep previous stable demo ==');
+  rmSync(backupDemo, { recursive: true, force: true });
+  renameSync(join(staging, 'demo'), backupDemo);
+}
+if (keepBeta) {
+  console.log('== keep previous beta demo ==');
+  rmSync(backupBeta, { recursive: true, force: true });
+  renameSync(join(staging, 'demo-beta'), backupBeta);
+}
 
-console.log('== build editor (stable) ==');
-execSync('npm --workspace @cobble/editor run build', {
-  stdio: 'inherit',
-  cwd: root,
-  env: { ...process.env, VITE_CHANNEL: 'stable' },
-});
-if (!existsSync(dist)) {
-  throw new Error(`missing build output: ${dist}`);
+if (buildsStable) {
+  console.log('== build standalone player ==');
+  execSync('npm run build:standalone', { stdio: 'inherit', cwd: root });
+
+  console.log('== build editor (stable) ==');
+  execSync('npm --workspace @cobble/editor run build', {
+    stdio: 'inherit',
+    cwd: root,
+    env: { ...process.env, VITE_CHANNEL: 'stable' },
+  });
+  if (!existsSync(dist)) {
+    throw new Error(`missing build output: ${dist}`);
+  }
 }
 
 // 2) 组装 staging
@@ -59,17 +87,28 @@ console.log('== assemble pages-dist ==');
 rmSync(staging, { recursive: true, force: true });
 mkdirSync(staging, { recursive: true });
 cpSync(site, staging, { recursive: true });
-cpSync(dist, join(staging, 'demo'), { recursive: true });
 writeFileSync(join(staging, '.nojekyll'), '');
+
+if (buildsStable) {
+  cpSync(dist, join(staging, 'demo'), { recursive: true });
+} else if (existsSync(backupDemo)) {
+  cpSync(backupDemo, join(staging, 'demo'), { recursive: true });
+  rmSync(backupDemo, { recursive: true, force: true });
+}
 writeFileSync(join(staging, 'demo', '.nojekyll'), '');
 
-console.log('== build editor (beta) ==');
-execSync('npm --workspace @cobble/editor run build', {
-  stdio: 'inherit',
-  cwd: root,
-  env: { ...process.env, VITE_CHANNEL: 'beta' },
-});
-cpSync(dist, join(staging, 'demo-beta'), { recursive: true });
+if (buildsBeta) {
+  console.log('== build editor (beta) ==');
+  execSync('npm --workspace @cobble/editor run build', {
+    stdio: 'inherit',
+    cwd: root,
+    env: { ...process.env, VITE_CHANNEL: 'beta' },
+  });
+  cpSync(dist, join(staging, 'demo-beta'), { recursive: true });
+} else if (existsSync(backupBeta)) {
+  cpSync(backupBeta, join(staging, 'demo-beta'), { recursive: true });
+  rmSync(backupBeta, { recursive: true, force: true });
+}
 writeFileSync(join(staging, 'demo-beta', '.nojekyll'), '');
 
 const walk = (dir) => {

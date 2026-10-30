@@ -24,6 +24,18 @@
 | --- | --- |
 | ![平台跳跃](docs/screenshots/platformer.png) | ![吃豆豆](docs/screenshots/dot-maze.png) |
 
+## 下载安装包
+
+稳定版 v0.11.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobble/#download>）：
+
+| 平台 | 文件 | 说明 |
+| --- | --- | --- |
+| Windows | [`CobbleStudio-Windows-x64-Setup.exe`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Setup.exe) | Tauri NSIS 安装版，装到当前用户，约 1.9 MB |
+| Windows | [`CobbleStudio-Windows-x64-Portable.exe`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Portable.exe) | 免安装便携版，约 3.7 MB，需放纯英文路径 |
+| Android | [`CobbleStudio-Android.apk`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Android.apk) | Capacitor APK，debug 签名，Android 6.0+，约 5.1 MB |
+
+> 安装包未做代码签名；Windows 首次运行可能出现 SmartScreen 提示（更多信息 → 仍要运行），安卓安装需允许未知来源。桌面版工程以 `.gproj` 落盘到 `%APPDATA%/studio.cobble.app/projects`。
+
 ## 快速开始
 
 ```bash
@@ -37,10 +49,11 @@ npm run dev          # 打开 http://127.0.0.1:5183
 
 - 点右上角 **运行** 或直接按方向键，小猫会左右上下移动，碰到金币分数 +1，金币随机换位置
 - 舞台下方是触屏手柄：左侧摇杆控制方向，右侧按钮触发绑定的输入事件；全屏时手柄浮在下缘，手机上按住摇杆即可移动
+- 每个工程可以单独配置触屏交互（「输入」设置）：手柄模式（摇杆 + 自定义按钮，三档尺寸）或**直接触摸模式**（不显示手柄，点按角色互动、按住拖动角色）；也能自定义输入事件绑定的按键
 - **停止** 结束运行；**中文 / EN** 切换界面语言（会整页重载）；**浅色 / 深色** 切换主题
 - 顶栏 **保存工程 / 打开工程**：下载 `.gproj`（工程 + 各角色积木数据）或载入之前保存的文件；手机上入口在舞台页头部
 - 所有修改自动保存到 localStorage；桌面版（Tauri）会同时写入 `<应用数据目录>/projects/<id>.gproj`，可直接备份或拷走
-- 底栏显示当前版本号，点击版本号打开官网更新日志
+- 底栏显示当前版本号，点击版本号打开官网版本日志
 
 其他命令：
 
@@ -110,7 +123,7 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 | --- | --- |
 | `packages/project` | 工程数据模型（ProjectDoc）、IR 类型、zod 校验、示例工程「小猫吃金币」 |
 | `packages/i18n` | i18next 初始化、中英文资源包、语言检测/持久化、整页切换 |
-| `packages/blocks` | 51 种自定义积木（含输入事件、换成指定造型、x/y/方向 reporter、等待直到、移到角色等能力块）、8 分类工具箱、Blockly → IR 编译器 |
+| `packages/blocks` | 56 种自定义积木（含输入事件、交互、换成指定造型、x/y/方向 reporter、等待直到、移到角色等能力块）、9 分类工具箱（事件 / 交互 / 运动 / 渲染 / 音频 / 流程 / 感知 / 数学 / 变量）、Blockly → IR 编译器 |
 | `packages/runtime` | 引擎无关的积木解释器：每帧指令预算、固定 60Hz 逻辑帧、hat 事件、广播、碰撞、变量表 |
 | `packages/engine-phaser` | Phaser 4 适配器：纹理预加载、Scratch 坐标系换算、朝向/翻转、说话气泡、键鼠输入 |
 | `apps/editor` | 三栏编辑器：角色/变量栏、舞台（iframe 预览）、Blockly 工作区、属性检查器；工程管理页、模板、输入设置、全屏运行；深浅主题；自动保存 |
@@ -120,7 +133,8 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 | 素材与角色 | 新建/删除角色、上传图片造型（PNG/JPEG/WebP/GIF/SVG ≤2MB，可改名/排序/删除）、上传音效（MP3/WAV/OGG/WebM ≤5MB，可试听/改名/删除）、变量增删改名改值、舞台背景色与尺寸预设（960×540 / 1280×720 / 640×360） |
 | 模板与新建工程 | 新建工程弹层：空白工程 + 小猫吃金币 / 打地鼠 / 接苹果 / 平台跳跃 / 吃豆豆 / 勇者小镇 / 横版格斗 七个可玩模板；选择后新建工程并进入编辑，脚本随模板一起生成 |
 | 示例游戏与能力块 | v0.7.0 起补齐游戏常用能力：换成指定造型、x/y/方向上报、等待直到、移到某角色。内置 4 款完整示例：平台跳跃 v2（16 角色、多平台与上下移动平台、巡逻史莱姆、HP=3 受伤回起点、5 枚金币与药水、终点要求金币收集满）；吃豆豆（迷宫墙体碰撞、收豆、幽灵追捕、通关判定）；勇者小镇 RPG（四方向移动、NPC 对话、3 颗星星收集、史莱姆伤害与回城回血）；横版格斗（玩家 vs 对手、HP/对手 HP、贴近按动作键攻击并击退、KO 判定） |
-| 触屏适配 | 窗口 ≤1119px 自动切换紧凑布局：底部 4 标签（舞台/积木/角色/属性）、舞台页触屏手柄（摇杆 + 自定义按钮 + 全屏悬浮）、角色快捷条；粗指针设备（pointer: coarse）才显示手柄 |
+| 触屏适配 | 窗口 ≤1119px 自动切换紧凑布局：底部 4 标签（舞台/积木/角色/属性）、舞台页触屏手柄（摇杆 + 自定义按钮 + 全屏悬浮）、角色快捷条；粗指针设备（pointer: coarse）才显示手柄。每个工程可单独配置触屏交互模式（手柄 / 直接触摸）与尺寸，设置随工程保存 |
+| 交互积木 | 「交互」分类：当角色被拖动时、指针 X / 指针 Y、角色被拖动？、设置可拖动 开/关；配合直接触摸模式可做点按、拖拽类玩法 |
 | 积木外观 | 自定义 `square` 渲染器（thrasos 派生）：圆角半径 0、字段边框为直角、事件积木顶部压平；低饱和 8 类配色 |
 | 工程管理页 | 启动即进入工程库：多工程卡片（缩略图 / 角色数 / 脚本数 / 更新时间）、搜索、新建、`.gproj` 导入、重命名 / 复制 / 导出 / 删除；hash 路由 `#/projects` 与 `#/editor/<id>`，工程存 localStorage `cobble.library`（旧版单工程自动迁移） |
 | 官网 | `site/`：落地页（中英切换、截图、路线图、快速开始），直角深色设计，与演示页/仓库互链 |

@@ -10,6 +10,8 @@ export interface InputState {
   mousePressed: boolean;
   mouseX: number;
   mouseY: number;
+  /** 触屏直接拖动模式：当前被拖动的角色 id（未拖动为 null） */
+  draggingId: string | null;
 }
 
 /** 运行时每帧交给引擎渲染的角色快照 */
@@ -40,5 +42,7 @@ export interface EngineAdapter {
   onFrame(callback: (dtMs: number) => void): void;
   /** 角色在舞台坐标系中的当前像素尺寸（受大小百分比影响） */
   getSize(spriteId: string): { width: number; height: number };
+  /** 直接触摸模式下设置某个角色是否可被拖动 */
+  setDraggable(spriteId: string, draggable: boolean): void;
   destroy(): void;
 }

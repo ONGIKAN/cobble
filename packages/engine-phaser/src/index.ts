@@ -55,6 +55,11 @@ export class PhaserAdapter implements EngineAdapter {
   private frameCallback: ((dtMs: number) => void) | null = null;
   private inputBound = false;
   private touch: TouchControls | null = null;
+  private lastVisuals: SpriteVisual[] = [];
+  private dragEnabled = false;
+  private onDrag: ((spriteId: string, x: number, y: number) => void) | null = null;
+  private dragging: { id: string; dx: number; dy: number; moved: boolean } | null = null;
+  private draggable = new Map<string, boolean>();
 
   private onKeyDown = (event: KeyboardEvent): void => {
     if (isTypingTarget(event.target)) return;
@@ -69,27 +74,63 @@ export class PhaserAdapter implements EngineAdapter {
   };
 
   private onPointerDown = (event: PointerEvent): void => {
+    this.pointer = this.toStage(event.clientX, event.clientY);
     this.mouseDown = true;
     this.mousePressed = true;
-    this.pointer = this.toStage(event.clientX, event.clientY);
+    if (this.dragEnabled) {
+      const hit = this.hitSprite(this.pointer);
+      if (hit) {
+        this.dragging = { id: hit.id, dx: this.pointer.x - hit.x, dy: this.pointer.y - hit.y, moved: false };
+        // 拖动开始时不触发「点击」类事件；轻点（未移动）抬起时再补发
+        this.mousePressed = false;
+      }
+    }
   };
 
   private onPointerMove = (event: PointerEvent): void => {
     this.pointer = this.toStage(event.clientX, event.clientY);
+    const drag = this.dragging;
+    if (!drag) return;
+    drag.moved = true;
+    this.onDrag?.(drag.id, this.pointer.x - drag.dx, this.pointer.y - drag.dy);
   };
 
   private onPointerUp = (): void => {
     this.mouseDown = false;
+    if (this.dragging && !this.dragging.moved) this.mousePressed = true;
+    this.dragging = null;
   };
+
+  private hitSprite(point: { x: number; y: number }): { id: string; x: number; y: number } | null {
+    const ordered = [...this.lastVisuals].sort((a, b) => b.zIndex - a.zIndex);
+    for (const visual of ordered) {
+      if (!visual.visible) continue;
+      if (this.draggable.get(visual.id) === false) continue;
+      const node = this.objects.get(visual.id);
+      if (!node) continue;
+      const halfW = node.displayWidth / 2;
+      const halfH = node.displayHeight / 2;
+      if (Math.abs(point.x - visual.x) <= halfW && Math.abs(point.y - visual.y) <= halfH) {
+        return { id: visual.id, x: visual.x, y: visual.y };
+      }
+    }
+    return null;
+  }
+
+  setDraggable(spriteId: string, draggable: boolean): void {
+    this.draggable.set(spriteId, draggable);
+  }
 
   async init(
     container: HTMLElement,
     project: CompiledProject,
-    options?: { mountTouch?: boolean },
+    options?: { mountTouch?: boolean; onDrag?: (spriteId: string, x: number, y: number) => void },
   ): Promise<void> {
     this.destroy();
     this.project = project;
     this.container = container;
+    this.onDrag = options?.onDrag ?? null;
+    this.dragEnabled = (project.input?.touchMode ?? 'pad') === 'direct';
     container.innerHTML = '';
     for (const asset of project.assets) {
       if (asset.kind !== 'image' || !asset.dataUrl) continue;
@@ -130,7 +171,9 @@ export class PhaserAdapter implements EngineAdapter {
 
     this.bindInput();
     this.touch =
-      options?.mountTouch !== false && project.input ? mountTouchControls(container, project.input) : null;
+      options?.mountTouch !== false && project.input && (project.input.touchMode ?? 'pad') === 'pad'
+        ? mountTouchControls(container, project.input)
+        : null;
   }
 
   private createScene(scene: Phaser.Scene): void {
@@ -182,6 +225,7 @@ export class PhaserAdapter implements EngineAdapter {
         image.setFlipX(false);
       }
     }
+    this.lastVisuals = sprites;
   }
 
   say(spriteId: string, text: string, seconds: number): void {
@@ -255,6 +299,7 @@ export class PhaserAdapter implements EngineAdapter {
       mousePressed: this.mousePressed,
       mouseX: this.pointer.x,
       mouseY: this.pointer.y,
+      draggingId: this.dragging?.id ?? null,
     };
     this.mousePressed = false;
     return state;
@@ -274,6 +319,11 @@ export class PhaserAdapter implements EngineAdapter {
     this.unbindInput();
     this.touch?.destroy();
     this.touch = null;
+    this.dragging = null;
+    this.draggable.clear();
+    this.lastVisuals = [];
+    this.onDrag = null;
+    this.dragEnabled = false;
     this.frameCallback = null;
     for (const text of this.texts.values()) text.destroy();
     this.texts.clear();

@@ -54,8 +54,7 @@ function DialogBody({ onClose, onCreate }: { onClose: () => void; onCreate?: (te
       return;
     }
     if (!window.confirm(t('templates.confirmReplace'))) return;
-    const { project, workspaces } = template.build();
-    replaceProject(project, workspaces);
+    replaceProject(template.project(), template.workspaces());
   };
 
   return (

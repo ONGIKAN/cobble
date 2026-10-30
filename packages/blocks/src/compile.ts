@@ -65,6 +65,12 @@ function toExpr(b: Blockly.Block | null): IRExpr {
       return { kind: 'input', bindingId: String(b.getFieldValue('INPUT') ?? '') };
     case 'sensing_mousedown':
       return { kind: 'mousedown' };
+    case 'sensing_pointerx':
+      return { kind: 'pointerx' };
+    case 'sensing_pointery':
+      return { kind: 'pointery' };
+    case 'sensing_dragging':
+      return { kind: 'dragging' };
     case 'motion_xpos':
       return { kind: 'xpos' };
     case 'motion_ypos':
@@ -181,6 +187,8 @@ function compileNode(b: Blockly.Block): IRNode | null {
       return { op: 'stop', mode: String(b.getFieldValue('MODE') ?? 'all') === 'this' ? 'this' : 'all' };
     case 'event_broadcast':
       return { op: 'broadcast', message: String(b.getFieldValue('MESSAGE') ?? '') };
+    case 'control_setdraggable':
+      return { op: 'setDraggable', value: String(b.getFieldValue('VALUE') ?? 'on') === 'on' };
     case 'var_set':
       return {
         op: 'setVar',
@@ -210,6 +218,8 @@ function hatOf(b: Blockly.Block): Hat | null {
       return { kind: 'click' };
     case 'event_whenmessage':
       return { kind: 'message', message: String(b.getFieldValue('MESSAGE') ?? '') };
+    case 'event_whendrag':
+      return { kind: 'drag' };
     default:
       return null;
   }

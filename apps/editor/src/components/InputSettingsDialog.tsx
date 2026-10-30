@@ -176,23 +176,79 @@ function DialogBody({ onClose }: { onClose: () => void }) {
 
           <section className="input-section">
             <h3>{t('inputs.touch')}</h3>
-            <label className="check-row">
-              <input
-                type="checkbox"
-                data-testid="input-joystick"
-                checked={config.joystick}
-                onChange={(event) => setConfig((current) => ({ ...current, joystick: event.target.checked }))}
-              />
-              <span>{t('inputs.joystick')}</span>
-            </label>
-
             <div className="input-section-head">
-              <h4>{t('inputs.buttons')}</h4>
-              <button type="button" className="mini-btn" data-testid="add-touch-button" onClick={addButton}>
-                ＋
+              <h4>{t('inputs.touchMode')}</h4>
+            </div>
+            <div className="input-mode-row" data-testid="input-touch-mode">
+              <button
+                type="button"
+                className={`seg-btn${(config.touchMode ?? 'pad') === 'pad' ? ' is-active' : ''}`}
+                data-testid="touch-mode-pad"
+                onClick={() => setConfig((current) => ({ ...current, touchMode: 'pad' }))}
+              >
+                {t('inputs.modePad')}
+              </button>
+              <button
+                type="button"
+                className={`seg-btn${(config.touchMode ?? 'pad') === 'direct' ? ' is-active' : ''}`}
+                data-testid="touch-mode-direct"
+                onClick={() => setConfig((current) => ({ ...current, touchMode: 'direct' }))}
+              >
+                {t('inputs.modeDirect')}
               </button>
             </div>
-            <ul className="binding-list">
+
+            <div className="input-size-row">
+              <label className="check-row">
+                <span>{t('inputs.sizes')}</span>
+              </label>
+              <select
+                className="field-input"
+                data-testid="input-joystick-size"
+                value={config.joystickSize ?? 'md'}
+                onChange={(event) =>
+                  setConfig((current) => ({ ...current, joystickSize: event.target.value as InputConfig['joystickSize'] }))
+                }
+              >
+                <option value="sm">{t('inputs.sizeSm')}</option>
+                <option value="md">{t('inputs.sizeMd')}</option>
+                <option value="lg">{t('inputs.sizeLg')}</option>
+              </select>
+              <select
+                className="field-input"
+                data-testid="input-button-size"
+                value={config.buttonSize ?? 'md'}
+                onChange={(event) =>
+                  setConfig((current) => ({ ...current, buttonSize: event.target.value as InputConfig['buttonSize'] }))
+                }
+              >
+                <option value="sm">{t('inputs.sizeSm')}</option>
+                <option value="md">{t('inputs.sizeMd')}</option>
+                <option value="lg">{t('inputs.sizeLg')}</option>
+              </select>
+            </div>
+
+            {(config.touchMode ?? 'pad') === 'pad' && (
+              <label className="check-row">
+                <input
+                  type="checkbox"
+                  data-testid="input-joystick"
+                  checked={config.joystick}
+                  onChange={(event) => setConfig((current) => ({ ...current, joystick: event.target.checked }))}
+                />
+                <span>{t('inputs.joystick')}</span>
+              </label>
+            )}
+
+            {(config.touchMode ?? 'pad') === 'pad' && (
+              <>
+                <div className="input-section-head">
+                  <h4>{t('inputs.buttons')}</h4>
+                  <button type="button" className="mini-btn" data-testid="add-touch-button" onClick={addButton}>
+                    ＋
+                  </button>
+                </div>
+                <ul className="binding-list">
               {config.buttons.map((button) => (
                 <li key={button.id} className="binding-row touch-row" data-testid="touch-button-row">
                   <input
@@ -243,6 +299,8 @@ function DialogBody({ onClose }: { onClose: () => void }) {
                 </li>
               ))}
             </ul>
+              </>
+            )}
           </section>
         </div>
 
@@ -262,6 +320,9 @@ function DialogBody({ onClose }: { onClose: () => void }) {
 function cloneInput(input: InputConfig): InputConfig {
   return {
     joystick: input.joystick,
+    joystickSize: input.joystickSize ?? 'md',
+    buttonSize: input.buttonSize ?? 'md',
+    touchMode: input.touchMode ?? 'pad',
     bindings: input.bindings.map((binding) => ({ ...binding, keys: [...binding.keys] })),
     buttons: input.buttons.map((button) => ({ ...button })),
   };

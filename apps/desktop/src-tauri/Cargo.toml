@@ -1,6 +1,6 @@
 [package]
 name = "cobble-studio"
-version = "0.11.0"
+version = "0.12.0"
 description = "Cobble Studio — lightweight block-based 2D game maker"
 edition = "2021"
 

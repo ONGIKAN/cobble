@@ -25,7 +25,10 @@ export type IRExpr =
   | { kind: 'timer' }
   | { kind: 'xpos' }
   | { kind: 'ypos' }
-  | { kind: 'direction' };
+  | { kind: 'direction' }
+  | { kind: 'pointerx' }
+  | { kind: 'pointery' }
+  | { kind: 'dragging' };
 
 export type IRNode =
   | { op: 'move'; steps: IRExpr }
@@ -57,13 +60,15 @@ export type IRNode =
   | { op: 'stop'; mode: 'all' | 'this' }
   | { op: 'broadcast'; message: string }
   | { op: 'setVar'; varId: string; value: IRExpr }
-  | { op: 'changeVar'; varId: string; value: IRExpr };
+  | { op: 'changeVar'; varId: string; value: IRExpr }
+  | { op: 'setDraggable'; value: boolean };
 
 export type Hat =
   | { kind: 'flag' }
   | { kind: 'key'; key: string }
   | { kind: 'input'; bindingId: string }
   | { kind: 'click' }
+  | { kind: 'drag' }
   | { kind: 'message'; message: string };
 
 export interface CompiledScript {

@@ -44,6 +44,8 @@ try {
   // 1. 编辑器加载
   await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
   record('editor boots', true, 'blockly workspace mounted');
+  const toolboxLabels = (await page.locator('.blocklyToolboxCategory').allInnerTexts()).map((t) => t.trim());
+  record('interaction category', toolboxLabels.includes('交互'), toolboxLabels.join(','));
 
   const spriteCards = await page.locator('.sprite-card').count();
   record('sprite rail', spriteCards === 2, `${spriteCards} sprites`);
@@ -209,6 +211,28 @@ try {
   await page.click('[data-testid="input-settings-close"]');
   await page.waitForTimeout(200);
   record('input settings dialog', bindingRows === 6 && chipsAfter === chipsBefore + 1, `bindings=${bindingRows} keys ${chipsBefore}→${chipsAfter}`);
+
+  // 触屏模式/尺寸：每个工程独立保存
+  await page.click('[data-testid="input-settings"]');
+  await page.waitForTimeout(300);
+  const hasModeRow = await page.locator('[data-testid="input-touch-mode"]').isVisible();
+  await page.click('[data-testid="touch-mode-direct"]');
+  await page.waitForTimeout(150);
+  const directActive = String(await page.locator('[data-testid="touch-mode-direct"]').getAttribute('class') ?? '');
+  await page.click('[data-testid="input-settings-save"]');
+  await page.waitForTimeout(500);
+  await page.click('[data-testid="input-settings"]');
+  await page.waitForTimeout(300);
+  const savedDirect = String(await page.locator('[data-testid="touch-mode-direct"]').getAttribute('class') ?? '');
+  const joySize = await page.locator('[data-testid="input-joystick-size"]').inputValue();
+  await page.click('[data-testid="touch-mode-pad"]');
+  await page.click('[data-testid="input-settings-save"]');
+  await page.waitForTimeout(400);
+  record(
+    'touch mode per project',
+    hasModeRow && directActive.includes('is-active') && savedDirect.includes('is-active') && joySize === 'md',
+    `modeRow=${hasModeRow} saved=${savedDirect.includes('is-active')} joy=${joySize}`,
+  );
 
   page.once('dialog', (dialog) => dialog.accept());
   await page.click('[data-testid="delete-sprite"]');

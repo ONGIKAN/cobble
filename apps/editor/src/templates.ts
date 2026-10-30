@@ -1,5 +1,5 @@
 import * as Blockly from 'blockly';
-import type { AssetDef, ProjectDoc, SpriteDef } from '@cobble/project';
+import { inputConfig, type AssetDef, type InputConfig, type ProjectDoc, type SpriteDef } from '@cobble/project';
 import {
   attachStatement,
   attachValue,
@@ -936,6 +936,7 @@ function projectRpg(): ProjectDoc {
     variables: [
       { id: 'var_stars', name: '星星', value: 0 },
       { id: 'var_hp', name: 'HP', value: 5 },
+      { id: 'var_slime_hp', name: '史莱姆HP', value: 3 },
       { id: 'var_prev_x', name: '上次 X', value: 0 },
       { id: 'var_prev_y', name: '上次 Y', value: 0 },
     ],
@@ -983,7 +984,21 @@ function workspacesRpg(): Record<string, unknown> {
     const left = moveStep('left', 'x', -6, 270);
     const up = moveStep('up', 'y', 6, 0);
     const down = moveStep('down', 'y', -6, 180);
-    chain([right, left, up, down]);
+    const attack = makeBlock(ws, 'control_if');
+    attachValue(
+      attack,
+      'COND',
+      logicAnd(
+        ws,
+        makeBlock(ws, 'sensing_input', { INPUT: 'action' }),
+        makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_slime' }),
+      ),
+    );
+    const dmg = changeVar(ws, 'var_slime_hp', num(ws, -1));
+    const hitSay = makeBlock(ws, 'looks_say', { TEXT: '命中！史莱姆 HP -1' });
+    attachValue(hitSay, 'SECS', num(ws, 0.6));
+    attachStatement(attack, 'DO', seq(dmg, hitSay, waitBlock(ws, 0.25)));
+    chain([right, left, up, down, attack]);
     flagForever(ws, right);
   });
   const star = () =>
@@ -1007,8 +1022,24 @@ function workspacesRpg(): Record<string, unknown> {
     attachValue(wander, 'SECS', num(ws, 2));
     attachValue(wander, 'X', randomRange(ws, -320, 380));
     attachValue(wander, 'Y', randomRange(ws, -230, 200));
+    const checkDead = makeBlock(ws, 'control_if');
+    attachValue(checkDead, 'COND', compareBlock(ws, '<=', varGet(ws, 'var_slime_hp'), num(ws, 0)));
+    const deadSay = makeBlock(ws, 'looks_say', { TEXT: '史莱姆被打败了！' });
+    attachValue(deadSay, 'SECS', num(ws, 1.4));
+    const hideSelf = makeBlock(ws, 'looks_hide');
+    const stopSelf = makeBlock(ws, 'control_stop', { MODE: 'this' });
+    attachStatement(checkDead, 'DO', seq(deadSay, hideSelf, stopSelf));
+
     const hit = makeBlock(ws, 'control_if');
-    attachValue(hit, 'COND', makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_knight' }));
+    attachValue(
+      hit,
+      'COND',
+      logicAnd(
+        ws,
+        makeBlock(ws, 'sensing_touching', { TARGET: 'sprite_knight' }),
+        compareBlock(ws, '>', varGet(ws, 'var_slime_hp'), num(ws, 0)),
+      ),
+    );
     const hurt = changeVar(ws, 'var_hp', num(ws, -1));
     const shout = makeBlock(ws, 'looks_say', { TEXT: '史莱姆撞了你！HP -1' });
     attachValue(shout, 'SECS', num(ws, 1));
@@ -1022,8 +1053,8 @@ function workspacesRpg(): Record<string, unknown> {
     const heal = setVar(ws, 'var_hp', num(ws, 5));
     attachStatement(dead, 'DO', seq(faint, back, heal));
     attachStatement(hit, 'DO', seq(hurt, shout, dead));
-    chain([wander, hit]);
-    flagForever(ws, wander);
+    chain([wander, hit, checkDead, waitBlock(ws, 0.1)]);
+    flagForever(ws, checkDead);
   });
   const professor = serialize((ws) => {
     const greet = makeBlock(ws, 'control_if');
@@ -1199,13 +1230,51 @@ function workspacesFighting(): Record<string, unknown> {
   return { sprite_hero: hero, sprite_rival: rival };
 }
 
+/** 给模板工程写入默认触屏配置（每个工程独立保存 input） */
+function withInput(factory: () => ProjectDoc, input: Partial<InputConfig>): () => ProjectDoc {
+  return () => {
+    const project = factory();
+    return { ...project, input: { ...inputConfig(project), ...input } };
+  };
+}
+
+const PAD_JUMP: Partial<InputConfig> = {
+  touchMode: 'pad',
+  joystickSize: 'md',
+  buttonSize: 'lg',
+  buttons: [{ id: 'btn-jump', bindingId: 'jump', label: 'inputs.jumpButton' }],
+};
+
+const PAD_JOYSTICK: Partial<InputConfig> = {
+  touchMode: 'pad',
+  joystickSize: 'md',
+  buttons: [],
+};
+
+const PAD_ACTION: Partial<InputConfig> = {
+  touchMode: 'pad',
+  joystickSize: 'md',
+  buttonSize: 'md',
+  buttons: [{ id: 'btn-action', bindingId: 'action', label: 'inputs.actionButton' }],
+};
+
+const PAD_JUMP_ACTION: Partial<InputConfig> = {
+  touchMode: 'pad',
+  joystickSize: 'md',
+  buttonSize: 'md',
+  buttons: [
+    { id: 'btn-jump', bindingId: 'jump', label: 'inputs.jumpButton' },
+    { id: 'btn-action', bindingId: 'action', label: 'inputs.actionButton' },
+  ],
+};
+
 export const TEMPLATES: TemplateDefinition[] = [
   {
     id: 'blank',
     nameKey: 'templates.blank',
     taglineKey: 'templates.blankTagline',
     scriptGroups: 0,
-    project: projectBlank,
+    project: withInput(projectBlank, PAD_JUMP),
     workspaces: workspacesBlank,
     build: () => ({ project: projectBlank(), workspaces: workspacesBlank() }),
   },
@@ -1214,7 +1283,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     nameKey: 'templates.catCoin',
     taglineKey: 'templates.catCoinTagline',
     scriptGroups: 2,
-    project: projectCatCoin,
+    project: withInput(projectCatCoin, PAD_JUMP),
     workspaces: workspacesCatCoin,
     build: () => ({ project: projectCatCoin(), workspaces: workspacesCatCoin() }),
   },
@@ -1223,7 +1292,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     nameKey: 'templates.whackMole',
     taglineKey: 'templates.whackMoleTagline',
     scriptGroups: 1,
-    project: projectWhackMole,
+    project: withInput(projectWhackMole, { touchMode: 'direct', buttons: [] }),
     workspaces: workspacesWhackMole,
     build: () => ({ project: projectWhackMole(), workspaces: workspacesWhackMole() }),
   },
@@ -1232,7 +1301,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     nameKey: 'templates.catchApple',
     taglineKey: 'templates.catchAppleTagline',
     scriptGroups: 2,
-    project: projectCatchApple,
+    project: withInput(projectCatchApple, PAD_JOYSTICK),
     workspaces: workspacesCatchApple,
     build: () => ({ project: projectCatchApple(), workspaces: workspacesCatchApple() }),
   },
@@ -1241,7 +1310,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     nameKey: 'templates.platformer',
     taglineKey: 'templates.platformerTagline',
     scriptGroups: 11,
-    project: projectPlatformer,
+    project: withInput(projectPlatformer, PAD_JUMP),
     workspaces: workspacesPlatformer,
     build: () => ({ project: projectPlatformer(), workspaces: workspacesPlatformer() }),
   },
@@ -1250,7 +1319,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     nameKey: 'templates.dotMaze',
     taglineKey: 'templates.dotMazeTagline',
     scriptGroups: 8,
-    project: projectDotMaze,
+    project: withInput(projectDotMaze, PAD_JOYSTICK),
     workspaces: workspacesDotMaze,
     build: () => ({ project: projectDotMaze(), workspaces: workspacesDotMaze() }),
   },
@@ -1259,7 +1328,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     nameKey: 'templates.rpg',
     taglineKey: 'templates.rpgTagline',
     scriptGroups: 7,
-    project: projectRpg,
+    project: withInput(projectRpg, PAD_ACTION),
     workspaces: workspacesRpg,
     build: () => ({ project: projectRpg(), workspaces: workspacesRpg() }),
   },
@@ -1268,7 +1337,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     nameKey: 'templates.fighting',
     taglineKey: 'templates.fightingTagline',
     scriptGroups: 2,
-    project: projectFighting,
+    project: withInput(projectFighting, PAD_JUMP_ACTION),
     workspaces: workspacesFighting,
     build: () => ({ project: projectFighting(), workspaces: workspacesFighting() }),
   },

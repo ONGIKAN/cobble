@@ -58,6 +58,28 @@ const CSS = `
   font: 600 15px/1 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   touch-action: none;
 }
+.cobble-touch-joy-sm .cobble-touch-joystick {
+  width: 72px;
+  height: 72px;
+}
+
+.cobble-touch-joy-lg .cobble-touch-joystick {
+  width: 120px;
+  height: 120px;
+}
+
+.cobble-touch-btn-sm .cobble-touch-btn {
+  width: 52px;
+  height: 52px;
+  font-size: 12px;
+}
+
+.cobble-touch-btn-lg .cobble-touch-btn {
+  width: 84px;
+  height: 84px;
+  font-size: 16px;
+}
+
 .cobble-touch-btn.is-active {
   background: rgba(255, 107, 53, 0.8);
 }
@@ -82,6 +104,7 @@ function ensureStyle(doc: Document): void {
 /** 触屏按钮默认标签以 i18n key 存储，运行时按页面语言解析（引擎包不依赖 i18next） */
 const TOUCH_LABELS: Record<string, { zh: string; en: string }> = {
   'inputs.jumpButton': { zh: '跳', en: 'Jump' },
+  'inputs.actionButton': { zh: '攻击', en: 'Attack' },
 };
 
 function localizeLabel(label: string): string {
@@ -102,7 +125,9 @@ export function mountTouchControls(container: HTMLElement, input: InputConfig): 
   if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
 
   const root = doc.createElement('div');
-  root.className = 'cobble-touch';
+  const sizeClass = input.joystickSize ?? 'md';
+  const buttonSizeClass = input.buttonSize ?? 'md';
+  root.className = `cobble-touch cobble-touch-joy-${sizeClass} cobble-touch-btn-${buttonSizeClass}`;
   root.dataset.testid = 'touch-controls';
   const active = new Set<string>();
 

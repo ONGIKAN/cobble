@@ -72,8 +72,11 @@ export class Runtime {
     mousePressed: false,
     mouseX: 0,
     mouseY: 0,
+    draggingId: null,
   };
   private prevKeys = new Set<string>();
+  /** 上一帧被拖动的角色 id（拖动 hat 的边沿触发用） */
+  private prevDraggingId: string | null = null;
   /** 输入事件 id -> 绑定的按键 code 列表 */
   private bindingKeys = new Map<string, string[]>();
   private prevBindings = new Set<string>();
@@ -129,6 +132,14 @@ export class Runtime {
     return s ? { ...s } : undefined;
   }
 
+  /** 直接触摸模式下由引擎把角色拖到舞台坐标 */
+  setSpritePosition(spriteId: string, x: number, y: number): void {
+    const sprite = this.sprites.get(spriteId);
+    if (!sprite) return;
+    sprite.x = x;
+    sprite.y = y;
+  }
+
   getVariables(): Array<{ id: string; name: string; value: number | string }> {
     return this.project.variables.map((v) => ({
       id: v.id,
@@ -162,6 +173,7 @@ export class Runtime {
     this.render();
     this.prevKeys = new Set(input.keysDown);
     this.prevBindings = new Set(this.bindingIdsDown());
+    this.prevDraggingId = input.draggingId;
   }
 
   private bindingIdsDown(): string[] {
@@ -203,6 +215,12 @@ export class Runtime {
         if (this.containsPoint(script.spriteId, input.mouseX, input.mouseY)) {
           this.startThread(script);
         }
+      }
+    }
+    if (input.draggingId && input.draggingId !== this.prevDraggingId) {
+      for (const script of this.project.scripts) {
+        if (script.hat.kind !== 'drag') continue;
+        if (script.spriteId === input.draggingId) this.startThread(script);
       }
     }
   }
@@ -407,6 +425,9 @@ export class Runtime {
         this.variables.set(node.varId, current + num(node.value));
         return;
       }
+      case 'setDraggable':
+        this.adapter.setDraggable(spriteId, node.value);
+        return;
       default:
         return;
     }
@@ -551,6 +572,12 @@ export class Runtime {
         return this.sprites.get(spriteId)?.y ?? 0;
       case 'direction':
         return this.sprites.get(spriteId)?.direction ?? 90;
+      case 'pointerx':
+        return this.input.mouseX;
+      case 'pointery':
+        return this.input.mouseY;
+      case 'dragging':
+        return this.input.draggingId === spriteId ? 1 : 0;
       default:
         return 0;
     }

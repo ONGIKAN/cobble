@@ -192,6 +192,30 @@ async function runTablet() {
   await page.locator('.modal-close').tap();
   await page.waitForTimeout(300);
 
+  // 每个工程独立的触屏配置：打地鼠=直接触摸，平台跳跃=大号按钮
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.locator('[data-testid="m-new-project"]').tap();
+  await page.waitForTimeout(400);
+  await page.locator('[data-testid="template-whack-mole"]').tap();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(1500);
+  const directPad = await page.locator('[data-testid="stage-pad"]').count();
+  const directHint = await page.locator('[data-testid="stage-direct-hint"]').count();
+  check('direct touch template', directPad === 0 && directHint === 1, `pad=${directPad} hint=${directHint}`);
+
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.locator('[data-testid="m-new-project"]').tap();
+  await page.waitForTimeout(400);
+  await page.locator('[data-testid="template-platformer"]').tap();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(1600);
+  const padBtn = await page.locator('[data-testid^="pad-btn-"]').first().boundingBox();
+  check('large pad button', (padBtn?.width ?? 0) >= 80, `w=${padBtn?.width ?? 0}`);
+
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.locator('[data-testid="reset-project"]').tap().catch(() => {});
+  await page.waitForTimeout(800);
+
   check('tablet no console errors', errors.length === 0, errors.slice(0, 2).join(' | '));
   await context.close();
 }

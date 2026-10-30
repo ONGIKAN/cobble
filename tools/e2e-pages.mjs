@@ -46,6 +46,10 @@ const demoHref = await sitePage.locator('a[href="./demo/"]').first().getAttribut
 check('site: links to demo', demoHref === './demo/', String(demoHref));
 check('site: links to repo', (await sitePage.locator(`a[href="${REPO}"]`).count()) > 0);
 check('site: beta demo link', (await sitePage.locator('a[href="./demo-beta/"]').count()) >= 2);
+const versionLogNav = await sitePage.locator('a[href="#changelog"]').first().innerText();
+check('site: version log wording', versionLogNav.includes('版本日志'), versionLogNav);
+check('site: stable tags', (await sitePage.locator('.release-tag.is-stable').count()) >= 5);
+check('site: experimental tag', (await sitePage.locator('.release-tag.is-beta').count()) >= 1);
 
 {
   const betaPage = await site.newPage();
@@ -61,6 +65,7 @@ check('site: beta demo link', (await sitePage.locator('a[href="./demo-beta/"]').
   check('beta: runtime running', Boolean(frame), betaPage.url());
   const status = await betaPage.locator('[data-testid="status-changelog-link"]').innerText();
   check('beta: status shows beta', status.includes('beta'), status);
+  check('beta: status version v0.12', status.includes('v0.12'), status);
   await betaPage.screenshot({ path: `${SHOTS}/pages-beta.png` });
   await betaPage.close();
 }
@@ -104,6 +109,8 @@ await sitePage.locator('[data-testid="run"]').click();
 await sitePage.waitForTimeout(1200);
 const state = await runtimeState(sitePage);
 check('demo: runtime running', state?.running === true, JSON.stringify(state));
+const stableStatus = await sitePage.locator('[data-testid="status-changelog-link"]').innerText();
+check('demo: stable version v0.11', stableStatus.includes('v0.11') && !stableStatus.includes('beta'), stableStatus);
 await sitePage.screenshot({ path: `${SHOTS}/pages-demo.png` });
 
 // 演示 -> 官网（链接存在且可点）

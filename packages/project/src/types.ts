@@ -66,10 +66,21 @@ export interface TouchButtonDef {
   label: string;
 }
 
+export type PadSize = 'sm' | 'md' | 'lg';
+
+/** 触屏互动模式：pad = 摇杆 + 按钮手柄；direct = 直接触摸舞台（点击互动 / 拖动角色） */
+export type TouchMode = 'pad' | 'direct';
+
 export interface InputConfig {
   bindings: InputBinding[];
   /** 显示原生虚拟摇杆（绑定 left/right/up/down 四个输入事件） */
   joystick: boolean;
+  /** 摇杆尺寸（每个工程独立配置，默认 md） */
+  joystickSize?: PadSize;
+  /** 屏幕按钮尺寸（每个工程独立配置，默认 md） */
+  buttonSize?: PadSize;
+  /** 触屏互动模式（默认 pad） */
+  touchMode?: TouchMode;
   buttons: TouchButtonDef[];
 }
 

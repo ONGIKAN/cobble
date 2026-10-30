@@ -36,6 +36,9 @@ export function StageView({ compact = false }: Props) {
   const joyActiveRef = useRef(false);
   const [knob, setKnob] = useState({ x: 0, y: 0 });
   const input = inputConfig(project);
+  const mode = input.touchMode ?? 'pad';
+  const joystickSize = input.joystickSize ?? 'md';
+  const buttonSize = input.buttonSize ?? 'md';
   const padButtons: TouchButtonDef[] =
     input.buttons.length > 0 ? input.buttons : [{ id: 'btn-jump', bindingId: 'jump', label: 'inputs.jumpButton' }];
   const padDirections = ['left', 'right', 'up', 'down'] as const;
@@ -240,11 +243,11 @@ export function StageView({ compact = false }: Props) {
         />
           {!playerReady && <div className="stage-loading">{t('stage.loading')}</div>}
         </div>
-        {coarse && (
+        {coarse && mode === 'pad' && (
           <div className={`stage-pad${fullscreen ? ' is-overlay' : ''}`} data-testid="stage-pad">
             <div
               ref={joystickRef}
-              className="pad-joystick"
+              className={`pad-joystick pad-size-${joystickSize}`}
               data-testid="pad-joystick"
               onPointerDown={joystickDown}
               onPointerMove={joystickMove}
@@ -260,7 +263,7 @@ export function StageView({ compact = false }: Props) {
                 <button
                   key={button.id}
                   type="button"
-                  className="pad-btn"
+                  className={`pad-btn pad-btn-size-${buttonSize}`}
                   data-testid={`pad-btn-${button.bindingId}`}
                   onPointerDown={pressBinding(button.bindingId)}
                   onPointerUp={releaseBinding(button.bindingId)}
@@ -272,6 +275,11 @@ export function StageView({ compact = false }: Props) {
                 </button>
               ))}
             </div>
+          </div>
+        )}
+        {coarse && mode === 'direct' && (
+          <div className="stage-direct-hint" data-testid="stage-direct-hint">
+            {t('stage.directHint')}
           </div>
         )}
       </div>

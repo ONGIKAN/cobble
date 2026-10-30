@@ -1906,8 +1906,8 @@ button {
   justify-content: space-between;
   gap: 18px;
   padding: 10px 18px;
-  border-top: 1px solid var(--line);
-  background: var(--bg-1);
+  border-top: 1px solid var(--border);
+  background: var(--panel);
 }
 
 .pad-joystick {
@@ -1915,8 +1915,8 @@ button {
   width: 96px;
   height: 96px;
   flex: none;
-  border: 1px solid var(--line-strong, var(--line));
-  background: var(--bg-2);
+  border: 1px solid var(--border-strong);
+  background: var(--panel-2);
   touch-action: none;
   user-select: none;
 }
@@ -1942,8 +1942,8 @@ button {
 .pad-btn {
   width: 68px;
   height: 68px;
-  border: 1px solid var(--line-strong, var(--line));
-  background: var(--bg-2);
+  border: 1px solid var(--border-strong);
+  background: var(--panel-2);
   color: var(--text);
   font-size: 16px;
   font-weight: 700;
@@ -1997,4 +1997,93 @@ button {
 /* wider template dialog: 4 columns on large screens */
 @media (min-width: 1000px) {
   .modal .template-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ── 触屏手柄尺寸 ─────────────────────────────────────── */
+.pad-joystick.pad-size-sm {
+  width: 72px;
+  height: 72px;
+}
+
+.pad-joystick.pad-size-lg {
+  width: 120px;
+  height: 120px;
+}
+
+.pad-joystick.pad-size-sm .pad-knob {
+  width: 32px;
+  height: 32px;
+}
+
+.pad-joystick.pad-size-lg .pad-knob {
+  width: 52px;
+  height: 52px;
+}
+
+.pad-btn.pad-btn-size-sm {
+  width: 52px;
+  height: 52px;
+  font-size: 12px;
+}
+
+.pad-btn.pad-btn-size-lg {
+  width: 84px;
+  height: 84px;
+  font-size: 15px;
+}
+
+/* ── 直接触摸模式提示 ─────────────────────────────────── */
+.stage-direct-hint {
+  margin: 8px auto 0;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text-dim);
+  font-size: 12px;
+  text-align: center;
+}
+
+.stage-body.is-fullscreen .stage-direct-hint {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  background: rgba(10, 8, 18, 0.72);
+  color: #e8e4f5;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* ── 输入设置：模式与尺寸 ─────────────────────────────── */
+.input-mode-row {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.seg-btn {
+  flex: 1 1 0;
+  min-height: 34px;
+  border: 1px solid var(--border-strong);
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.seg-btn.is-active {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+.input-size-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 10px;
+}
+
+.input-size-row .field-input {
+  width: 92px;
 }
