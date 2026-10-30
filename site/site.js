@@ -27,3 +27,33 @@ document.getElementById('lang-toggle')?.addEventListener('click', () => {
   localStorage.setItem(STORAGE_KEY, current);
   apply(current);
 });
+
+// 官网深浅主题：默认浅色，选择持久化到 localStorage。
+const THEME_KEY = 'gf.theme';
+const themeMedia = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
+
+const detectTheme = () => {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === 'light' || saved === 'dark') return saved;
+  return 'light';
+};
+
+const applyTheme = (theme) => {
+  document.documentElement.dataset.theme = theme;
+  const button = document.getElementById('theme-toggle');
+  if (button) {
+    const zh = button.querySelector('.zh');
+    const en = button.querySelector('.en');
+    if (zh) zh.textContent = theme === 'dark' ? '浅色' : '深色';
+    if (en) en.textContent = theme === 'dark' ? 'Light' : 'Dark';
+  }
+};
+
+let currentTheme = detectTheme();
+applyTheme(currentTheme);
+
+document.getElementById('theme-toggle')?.addEventListener('click', () => {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, currentTheme);
+  applyTheme(currentTheme);
+});

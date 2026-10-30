@@ -3,7 +3,7 @@ import os
 
 SRC = 'site/assets/logo-512.png'
 RES = 'apps/mobile/android/app/src/main/res'
-BG = (20, 16, 31, 255)
+BG = (255, 255, 255, 255)
 
 logo = Image.open(SRC).convert('RGBA')
 
@@ -49,7 +49,7 @@ if os.path.exists(colors):
     with open(colors, 'w', encoding='utf-8', newline='\n') as fh:
         fh.write('''<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#14101F</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
 </resources>
 ''')
     print('background color set')
