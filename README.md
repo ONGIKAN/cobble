@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/logo.png" width="88" height="88" alt="Cobble Studio logo" /></p>
+
 # Cobble Studio · 轻量 2D 积木游戏创作平台
 
 用积木拼逻辑，一键运行 2D 小游戏。当前是 **P0 的可运行原型（M0）**：积木编辑 → 编译 IR → iframe 内 Phaser 运行时跑起来的完整链路已经打通，支持深浅主题、中英双语界面，以及手机 / 平板的触屏布局；积木是低饱和、直角、方正的外观。

@@ -1,0 +1,27 @@
+{
+  "name": "@cobble/desktop",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Cobble Studio desktop shell (Electron)",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --win portable --x64"
+  },
+  "build": {
+    "appId": "studio.cobble.app",
+    "productName": "Cobble Studio",
+    "directories": { "output": "release" },
+    "files": ["main.cjs", "editor-dist/**/*"],
+    "win": {
+      "target": [{ "target": "portable", "arch": ["x64"] }]
+    },
+    "portable": {
+      "artifactName": "CobbleStudio-${version}-portable.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.1.0",
+    "electron-builder": "^26.18.0"
+  }
+}

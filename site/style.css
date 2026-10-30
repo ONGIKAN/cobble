@@ -96,6 +96,18 @@ html[lang='en'] .zh {
   font-size: 13px;
 }
 
+.brand-logo {
+  display: block;
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+
+.foot-brand .brand-logo {
+  width: 30px;
+  height: 30px;
+}
+
 .brand-name {
   font-weight: 600;
   letter-spacing: 0.01em;

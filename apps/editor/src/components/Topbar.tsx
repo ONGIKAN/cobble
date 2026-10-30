@@ -35,7 +35,7 @@ export function Topbar() {
   return (
     <header className="topbar">
       <div className="brand">
-        <span className="brand-mark">CB</span>
+        <img className="brand-logo" src={`${import.meta.env.BASE_URL}logo.svg`} alt="" />
         <div className="brand-text">
           <strong>{t('app.name')}</strong>
           <span className="brand-sub">{t('app.tagline')}</span>
