@@ -55,6 +55,8 @@ interface EditorState {
   setWorkspace: (spriteId: string, state: unknown) => void;
   updateSprite: (spriteId: string, patch: Partial<SpriteDef>) => void;
   addSprite: () => string;
+  /** 从资源库素材创建角色（x/y 为舞台坐标） */
+  addSpriteFromAsset: (input: { name: string; dataUrl: string; x: number; y: number }) => string;
   removeSprite: (spriteId: string) => void;
   addCostume: (spriteId: string, asset: NewAsset) => void;
   renameCostume: (spriteId: string, index: number, name: string) => void;
@@ -110,6 +112,35 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
       zIndex: order + 1,
       rotationStyle: 'all-around',
       costumes: [{ name: '造型 1', assetId }],
+      sounds: [],
+    };
+    set({
+      project: touched({
+        ...current.project,
+        assets: [...current.project.assets, asset],
+        sprites: [...current.project.sprites, sprite],
+      }),
+      selectedSpriteId: spriteId,
+    });
+    return spriteId;
+  },
+  addSpriteFromAsset: ({ name, dataUrl, x, y }) => {
+    const current = get();
+    const order = current.project.sprites.length;
+    const spriteId = uniqueId('sprite', current.project.sprites.map((sprite) => sprite.id));
+    const assetId = uniqueId('asset', current.project.assets.map((asset) => asset.id));
+    const asset: AssetDef = { id: assetId, name, kind: 'image', dataUrl };
+    const sprite: SpriteDef = {
+      id: spriteId,
+      name,
+      x,
+      y,
+      rotation: 90,
+      size: 100,
+      visible: true,
+      zIndex: order + 1,
+      rotationStyle: 'all-around',
+      costumes: [{ name, assetId }],
       sounds: [],
     };
     set({

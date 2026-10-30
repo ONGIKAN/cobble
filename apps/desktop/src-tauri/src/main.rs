@@ -64,6 +64,8 @@ fn projects_location(app: tauri::AppHandle) -> Result<String, String> {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .invoke_handler(tauri::generate_handler![
             list_projects,
             read_project,

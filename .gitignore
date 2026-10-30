@@ -12,5 +12,6 @@ tools/shots/
 apps/desktop/src-tauri/gen/
 apps/editor/dist-standalone/
 dist-release/
+.keys/
 .pages-demo-backup/
 .pages-demo-beta-backup/

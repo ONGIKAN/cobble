@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AssetDef } from '@cobble/project';
 import { useEditorStore } from '../store';
+import { NumberInput } from './NumberInput';
 import { uploadToAsset, type UploadAsset } from '../uploads';
 
 export function Inspector() {
@@ -75,47 +76,52 @@ export function Inspector() {
       <div className="field-grid">
         <label className="field">
           <span className="field-label">{t('inspector.x')}</span>
-          <input
+          <NumberInput
             className="field-input mono"
-            type="number"
             value={sprite.x}
-            onChange={(event) => updateSprite(sprite.id, { x: Number(event.target.value) || 0 })}
+            min={-10000}
+            max={10000}
+            onCommit={(value) => updateSprite(sprite.id, { x: value })}
           />
         </label>
         <label className="field">
           <span className="field-label">{t('inspector.y')}</span>
-          <input
+          <NumberInput
             className="field-input mono"
-            type="number"
             value={sprite.y}
-            onChange={(event) => updateSprite(sprite.id, { y: Number(event.target.value) || 0 })}
+            min={-10000}
+            max={10000}
+            onCommit={(value) => updateSprite(sprite.id, { y: value })}
           />
         </label>
         <label className="field">
           <span className="field-label">{t('inspector.rotation')}</span>
-          <input
+          <NumberInput
             className="field-input mono"
-            type="number"
             value={sprite.rotation}
-            onChange={(event) => updateSprite(sprite.id, { rotation: Number(event.target.value) || 0 })}
+            min={-3600}
+            max={3600}
+            onCommit={(value) => updateSprite(sprite.id, { rotation: value })}
           />
         </label>
         <label className="field">
           <span className="field-label">{t('inspector.size')}</span>
-          <input
+          <NumberInput
             className="field-input mono"
-            type="number"
             value={sprite.size}
-            onChange={(event) => updateSprite(sprite.id, { size: Number(event.target.value) || 100 })}
+            min={1}
+            max={1000}
+            onCommit={(value) => updateSprite(sprite.id, { size: value })}
           />
         </label>
         <label className="field">
           <span className="field-label">{t('inspector.zIndex')}</span>
-          <input
+          <NumberInput
             className="field-input mono"
-            type="number"
             value={sprite.zIndex}
-            onChange={(event) => updateSprite(sprite.id, { zIndex: Number(event.target.value) || 0 })}
+            min={0}
+            max={10000}
+            onCommit={(value) => updateSprite(sprite.id, { zIndex: value })}
           />
         </label>
         <label className="field field-inline">

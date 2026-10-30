@@ -5,6 +5,7 @@ import { switchLocale, type Locale } from '@cobble/i18n';
 import { sendRun, sendStop } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';
+import { openAssetLibrary } from './AssetLibrary';
 import { updateEntry } from '../library';
 import { routeToProjects } from '../routes';
 import { IS_BETA } from '../version';
@@ -87,6 +88,15 @@ export function Topbar() {
           onClick={openInputSettings}
         >
           {t('toolbar.controls')}
+        </button>
+
+        <button
+          type="button"
+          className="btn ghost topbar-controls"
+          data-testid="asset-library-toggle"
+          onClick={openAssetLibrary}
+        >
+          {t('toolbar.assets')}
         </button>
 
         <div className="segmented" role="group" aria-label={t('toolbar.language')}>

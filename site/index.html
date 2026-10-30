@@ -28,7 +28,7 @@
       <a class="brand" href="./">
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <span class="brand-name">Cobble Studio</span>
-        <span class="brand-ver" title="当前版本">v0.12.3</span>
+        <span class="brand-ver" title="当前版本">v0.12.4</span>
       </a>
       <nav class="site-nav">
         <a href="#features"><span class="zh">功能</span><span class="en">Features</span></a>
@@ -218,7 +218,7 @@
         <p class="eyebrow">Download</p>
         <h2><span class="zh">下载安装包</span><span class="en">Get the apps</span></h2>
         <p class="section-sub">
-          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.12.3 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
+          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.12.4 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
           <span class="en">Windows and Android builds ship through GitHub Releases, both from the v0.11.0 stable build. Projects live on your machine and desktop installs store them as .gproj files — fully offline.</span>
         </p>
         <div class="download-grid">
@@ -434,11 +434,22 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <p class="eyebrow">Release log</p>
         <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
         <p class="section-sub">
-          <span class="zh">当前稳定版 <strong>v0.12.3</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
-          <span class="en">Current stable release <strong>v0.12.3</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
+          <span class="zh">当前稳定版 <strong>v0.12.4</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
+          <span class="en">Current stable release <strong>v0.12.4</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
         </p>
         <ol class="release-list">
           <li class="release is-current">
+            <div class="release-head"><span class="release-ver">v0.12.4</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">资源库 + 可拖动分栏</span><span class="en">Asset library + resizable panes</span></div>
+            <ul>
+              <li><span class="zh">新增「资源库」：18 个内置素材（英雄、金币、地鼠、幽灵、平台、药水等）可以直接拖到舞台上创建角色；手机端点击素材即添加到舞台中央，工程里已有的图片素材也会列出。</span><span class="en">New asset library: drag any of 18 built-in assets (hero, coin, mole, ghost, platform, potion…) onto the stage to create a sprite; on touch devices tap an asset to add it at the center. Project images are listed too.</span></li>
+              <li><span class="zh">全屏运行时右上角新增「退出全屏」按钮；安卓返回键改为先回工程管理页、再按才退出应用，不再直接退到桌面。</span><span class="en">A visible “Exit fullscreen” button while running fullscreen; the Android back button now returns to the project hub first, and only exits the app on a second press.</span></li>
+              <li><span class="zh">PC 与平板横屏支持拖动分栏：左右面板之间、舞台与积木之间各有一条可拖动的小白条，尺寸自动记在本地；平板默认加宽侧栏与舞台区，解决内容太挤的问题。</span><span class="en">Drag-resizable panes on desktop and tablet: thin handles between the side panels and between stage and blocks, sizes remembered locally; tablet defaults give the stage and sidebars more room.</span></li>
+              <li><span class="zh">修复数字输入框清空后继续输入会变成「0100」的问题（X/Y、方向、大小、层级、变量值等）。</span><span class="en">Fixed numeric inputs turning typed values into “0100” after clearing (X/Y, direction, size, layer, variable values).</span></li>
+              <li><span class="zh">桌面冒烟 39/39、手机/平板 39/39。</span><span class="en">Desktop smoke 39/39, mobile 39/39.</span></li>
+            </ul>
+          </li>
+          <li class="release">
             <div class="release-head"><span class="release-ver">v0.12.3</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <div class="release-tagline"><span class="zh">预览隔离 + 快捷键</span><span class="en">Preview sandbox + shortcuts</span></div>
             <ul>
@@ -591,7 +602,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <div>
           <strong>Cobble Studio</strong>
-          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.12.3</span><span class="en">A lightweight 2D block game maker · v0.12.0</span></p>
+          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.12.4</span><span class="en">A lightweight 2D block game maker · v0.12.4</span></p>
         </div>
       </div>
       <nav class="foot-links">

@@ -3,6 +3,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type DragEvent as ReactDragEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +13,7 @@ import { sendRun, sendTouch, setPlayerFrame } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';
 import { StageSettings } from './StageSettings';
+import { ASSET_MIME, openAssetLibrary } from './AssetLibrary';
 import { useEditorStore } from '../store';
 import { useCoarsePointer } from '../useCompact';
 
@@ -30,6 +32,7 @@ export function StageView({ compact = false }: Props) {
   const setRunning = useEditorStore((state) => state.setRunning);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const stageBodyRef = useRef<HTMLDivElement | null>(null);
+  const stageFrameRef = useRef<HTMLDivElement | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
   const touchSetRef = useRef<Set<string>>(new Set());
   const joystickRef = useRef<HTMLDivElement | null>(null);
@@ -184,6 +187,30 @@ export function StageView({ compact = false }: Props) {
   const buttonLabel = (button: TouchButtonDef): string =>
     button.label.startsWith('inputs.') ? t(button.label) : button.label;
 
+  /** 从资源库拖入素材：按落点在舞台上创建角色 */
+  const dropFromLibrary = (event: ReactDragEvent<HTMLDivElement>): void => {
+    event.preventDefault();
+    const raw = event.dataTransfer.getData(ASSET_MIME) || event.dataTransfer.getData('text/plain');
+    if (!raw) return;
+    let payload: { name?: string; dataUrl?: string };
+    try {
+      payload = JSON.parse(raw) as { name?: string; dataUrl?: string };
+    } catch {
+      return;
+    }
+    if (!payload?.dataUrl) return;
+    const rect = stageFrameRef.current?.getBoundingClientRect();
+    if (!rect || rect.width === 0 || rect.height === 0) return;
+    const stage = useEditorStore.getState().project.stage;
+    const x = Math.round(((event.clientX - rect.left) / rect.width - 0.5) * stage.width);
+    const y = Math.round((0.5 - (event.clientY - rect.top) / rect.height) * stage.height);
+    useEditorStore.getState().addSpriteFromAsset({ name: payload.name ?? 'Sprite', dataUrl: payload.dataUrl, x, y });
+    if (useEditorStore.getState().running) {
+      const state = useEditorStore.getState();
+      sendRun(compileProject(state.project, state.workspaces));
+    }
+  };
+
   const toggleFullscreen = useCallback(async () => {
     const element = stageBodyRef.current;
     if (!element) return;
@@ -228,12 +255,30 @@ export function StageView({ compact = false }: Props) {
             {t('toolbar.controls')}
           </button>
         )}
+        {compact && (
+          <button
+            type="button"
+            className="mini-btn stage-inputs-btn"
+            data-testid="m-asset-library"
+            onClick={openAssetLibrary}
+          >
+            {t('library.short')}
+          </button>
+        )}
       </div>
       <div
         ref={stageBodyRef}
         className={`stage-body${fullscreen ? ' is-fullscreen' : ''}${rotation !== 0 ? ' is-rotated' : ''}`}
       >
-        <div className="stage-frame">
+        <div
+          className="stage-frame"
+          ref={stageFrameRef}
+          onDragOver={(event) => {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+          }}
+          onDrop={dropFromLibrary}
+        >
           <iframe
           ref={iframeRef}
           className="stage-iframe"
@@ -244,6 +289,11 @@ export function StageView({ compact = false }: Props) {
         />
           {!playerReady && <div className="stage-loading">{t('stage.loading')}</div>}
         </div>
+        {fullscreen && (
+          <button type="button" className="fs-exit-btn" data-testid="stage-exit-fullscreen" onClick={toggleFullscreen}>
+            {t('stage.exitFullscreen')}
+          </button>
+        )}
         {coarse && mode === 'pad' && (
           <div className={`stage-pad${fullscreen ? ' is-overlay' : ''}`} data-testid="stage-pad">
             <div

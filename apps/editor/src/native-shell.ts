@@ -20,4 +20,21 @@ export async function setupNativeShell(): Promise<void> {
   } catch {
     // 忽略：未安装插件或当前平台不支持
   }
+
+  // 系统返回键：编辑器内先回到工程管理页，工程管理页再退出应用
+  try {
+    const { App } = await import('@capacitor/app');
+    await App.addListener('backButton', () => {
+      const event = new CustomEvent('cobble:native-back', { cancelable: true });
+      const handled = !window.dispatchEvent(event);
+      if (handled) return;
+      if (location.hash.startsWith('#/editor/')) {
+        location.hash = '#/projects';
+      } else {
+        void App.exitApp();
+      }
+    });
+  } catch {
+    // 忽略：未安装插件
+  }
 }

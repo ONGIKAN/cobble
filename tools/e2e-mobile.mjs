@@ -159,6 +159,32 @@ async function runPhone() {
   check('theme toggles on phone', (await page.evaluate(() => document.documentElement.dataset.theme)) === 'light');
   await page.screenshot({ path: 'tools/shots/m-phone-light.png' });
 
+  await page.locator('[data-testid="tab-sprites"]').tap();
+  await page.waitForTimeout(400);
+  const spritesBeforeAsset = await page.locator('.sprite-card').count();
+  await page.locator('[data-testid="tab-stage"]').tap();
+  await page.waitForTimeout(300);
+  const libraryButton = await page.locator('[data-testid="m-asset-library"]').isVisible();
+  await page.locator('[data-testid="m-asset-library"]').tap();
+  await page.waitForTimeout(500);
+  const librarySheet = await page.locator('[data-testid="asset-library"]').isVisible();
+  await page.screenshot({ path: 'tools/shots/m-phone-asset-library.png' });
+  await page.locator('[data-testid="asset-card-star"]').tap();
+  await page.waitForTimeout(600);
+  await page.locator('[data-testid="asset-library-close"]').tap();
+  await page.waitForTimeout(300);
+  await page.locator('[data-testid="tab-sprites"]').tap();
+  await page.waitForTimeout(400);
+  const spritesAfterAsset = await page.locator('.sprite-card').count();
+  check(
+    'phone asset library adds sprite',
+    libraryButton && librarySheet && spritesAfterAsset === spritesBeforeAsset + 1,
+    `btn=${libraryButton} sheet=${librarySheet} ${spritesBeforeAsset}->${spritesAfterAsset}`,
+  );
+  await page.locator('[data-testid="tab-stage"]').tap();
+  await page.waitForTimeout(300);
+
+  check('phone uses compact tabs without splitters', (await page.locator('.pane-splitter').count()) === 0);
   check('phone no console errors', errors.length === 0, errors.slice(0, 2).join(' | '));
   await context.close();
 }
@@ -197,6 +223,7 @@ async function runTablet() {
   await page.locator('[data-testid="tab-stage"]').tap();
   await page.waitForTimeout(300);
   check('tablet new project entry', await page.locator('[data-testid="m-new-project"]').isVisible());
+  check('tablet asset library entry', await page.locator('[data-testid="m-asset-library"]').isVisible());
   await page.locator('[data-testid="m-new-project"]').tap();
   await page.waitForTimeout(600);
   check('tablet template dialog', await page.locator('[data-testid="new-project-dialog"]').isVisible());

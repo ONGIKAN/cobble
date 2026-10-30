@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { AssetDef } from '@cobble/project';
 import { useEditorStore } from '../store';
+import { NumberInput } from './NumberInput';
 
 function thumbUrl(asset: AssetDef | undefined): string | undefined {
   if (!asset) return undefined;
@@ -86,13 +87,12 @@ export function SpriteRail() {
                 data-testid={`var-name-${variable.id}`}
                 onChange={(event) => renameVariable(variable.id, event.target.value)}
               />
-              <input
+              <NumberInput
                 className="field-input mono var-value-input"
-                type="number"
-                value={variable.value}
-                aria-label={t('variables.value')}
-                data-testid={`var-value-${variable.id}`}
-                onChange={(event) => setVariableValue(variable.id, Number(event.target.value) || 0)}
+                value={typeof variable.value === 'number' ? variable.value : Number(variable.value) || 0}
+                ariaLabel={t('variables.value')}
+                testId={`var-value-${variable.id}`}
+                onCommit={(value) => setVariableValue(variable.id, value)}
               />
               <button
                 type="button"

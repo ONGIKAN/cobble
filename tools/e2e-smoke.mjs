@@ -246,10 +246,104 @@ try {
     `modeRow=${hasModeRow} saved=${savedDirect.includes('is-active')} joy=${joySize}`,
   );
 
+
+
+  // 数字输入框：清空后继续输入不应变成 0100 (v0.12.4)
+  const numField = page.locator('.inspector .field-grid input').first();
+  await numField.click();
+  await page.keyboard.press('Control+a');
+  await page.keyboard.press('Delete');
+  await page.keyboard.type('100', { delay: 40 });
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(300);
+  const numValue = await numField.inputValue();
+  record('number input clearing', numValue === '100', `value=${numValue}`);
+
   page.once('dialog', (dialog) => dialog.accept());
   await page.click('[data-testid="delete-sprite"]');
   await page.waitForTimeout(500);
   record('delete sprite', (await spriteCount()) === before, `sprites back to ${before}`);
+
+  // 资源库：点击 / 拖拽创建角色，全屏退出按钮 (v0.13.0)
+  await page.click('[data-testid="asset-library-toggle"]');
+  await page.waitForTimeout(400);
+  const libraryVisible = await page.locator('[data-testid="asset-library"]').isVisible();
+  const assetsInLibrary = await page.locator('[data-testid^="asset-card-"]').count();
+  await page.screenshot({ path: `${shotDir}/06-asset-library.png` });
+  await page.locator('[data-testid="asset-card-coin"]').click();
+  await page.waitForTimeout(600);
+  await page.click('[data-testid="asset-library-close"]');
+  await page.waitForTimeout(300);
+  const afterAssetClick = await spriteCount();
+  record(
+    'asset library click adds sprite',
+    libraryVisible && assetsInLibrary > 10 && afterAssetClick === before + 1,
+    `assets=${assetsInLibrary} sprites ${before}->${afterAssetClick}`,
+  );
+
+  const stageBox = await page.evaluate(() => {
+    const frame = document.querySelector('.stage-frame');
+    const rect = frame.getBoundingClientRect();
+    const dt = new DataTransfer();
+    dt.setData(
+      'application/x-cobble-asset',
+      JSON.stringify({
+        name: '拖入星星',
+        dataUrl:
+          'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><polygon points="20,2 25,15 39,15 28,24 32,38 20,30 8,38 12,24 1,15 15,15" fill="%23ffd166"/></svg>',
+      }),
+    );
+    const clientX = rect.left + rect.width * 0.25;
+    const clientY = rect.top + rect.height * 0.75;
+    frame.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer: dt, clientX, clientY }));
+    frame.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt, clientX, clientY }));
+    return { w: Math.round(rect.width), h: Math.round(rect.height) };
+  });
+  await page.waitForTimeout(700);
+  const afterDrag = await spriteCount();
+  record('asset library drag drop', afterDrag === afterAssetClick + 1, `sprites ${afterAssetClick}->${afterDrag} stage=${stageBox.w}x${stageBox.h}`);
+
+  await page.click('[data-testid="stage-fullscreen"]');
+  await page.waitForTimeout(600);
+  const fsExitVisible = await page.locator('[data-testid="stage-exit-fullscreen"]').isVisible();
+  const fsOn = await page.evaluate(() => Boolean(document.fullscreenElement));
+  await page.click('[data-testid="stage-exit-fullscreen"]');
+  await page.waitForTimeout(500);
+  const fsOff = await page.evaluate(() => Boolean(document.fullscreenElement));
+  record('fullscreen exit button', fsOn && fsExitVisible && !fsOff, `on=${fsOn} btn=${fsExitVisible} off=${!fsOff}`);
+
+  // 可拖动分栏：左右面板 + 上下区域 (v0.13.0)
+  const splitterCount = await page.locator('.pane-splitter').count();
+  const railWidth = async () =>
+    page.evaluate(() => {
+      const layout = document.querySelector('.layout');
+      return layout ? parseFloat(getComputedStyle(layout).gridTemplateColumns.split(' ')[0]) : 0;
+    });
+  const stageHeight = async () =>
+    page.evaluate(() => {
+      const el = document.querySelector('.center-stage');
+      return el ? Math.round(el.getBoundingClientRect().height) : 0;
+    });
+  const railStart = await railWidth();
+  const railSplitter = await page.locator('[data-testid="splitter-rail"]').boundingBox();
+  await page.mouse.move(railSplitter.x + 3, railSplitter.y + railSplitter.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(railSplitter.x + 73, railSplitter.y + railSplitter.height / 2, { steps: 6 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  const railEnd = await railWidth();
+  record('pane splitter rail', splitterCount === 3 && railEnd > railStart + 40, `count=${splitterCount} rail ${Math.round(railStart)}->${Math.round(railEnd)}`);
+
+  const stageStart = await stageHeight();
+  const stageSplitter = await page.locator('[data-testid="splitter-stage"]').boundingBox();
+  await page.mouse.move(stageSplitter.x + stageSplitter.width / 2, stageSplitter.y + 3);
+  await page.mouse.down();
+  await page.mouse.move(stageSplitter.x + stageSplitter.width / 2, stageSplitter.y - 77, { steps: 6 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  const stageEnd = await stageHeight();
+  record('pane splitter stage', stageEnd < stageStart - 40, `stage ${stageStart}->${stageEnd}`);
+
 
   await page.click('[data-testid="reset-project"]');
   await page.waitForLoadState('networkidle');

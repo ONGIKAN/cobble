@@ -1176,6 +1176,11 @@ button {
   display: none;
 }
 
+/* 手机端「输入 / 资源库」入口在舞台面板头里，顶栏不再重复 */
+.app-compact .topbar-controls {
+  display: none;
+}
+
 /* 素材与角色管理：小按钮、资产行、变量行、舞台设置 */
 .mini-btn {
   display: inline-flex;
@@ -2216,4 +2221,162 @@ button {
   min-height: 0;
   position: relative;
   overflow: hidden;
+}
+
+/* ── 全屏退出按钮（全屏时悬浮在右上角） ── */
+.fs-exit-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 65;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(13, 15, 18, 0.78);
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+.fs-exit-btn:hover { background: var(--accent); color: var(--accent-text); }
+
+/* ── 资源库抽屉 ── */
+.asset-library-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  background: rgba(5, 6, 10, 0.42);
+}
+.asset-library {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(360px, 92vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 16px;
+  overflow-y: auto;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  box-shadow: -18px 0 40px rgba(0, 0, 0, 0.32);
+  animation: asset-slide-in 0.18s ease-out;
+}
+@keyframes asset-slide-in {
+  from { transform: translateX(24px); opacity: 0.4; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.asset-library-head { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
+.asset-library-head h2 { margin: 0 0 4px; font-size: 18px; }
+.asset-library-head p { margin: 0; font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+.asset-library h3 { margin: 0 0 8px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+.asset-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.asset-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: grab;
+  text-align: center;
+}
+.asset-card:hover { border-color: var(--accent); }
+.asset-card:active { cursor: grabbing; }
+.asset-card-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+}
+.asset-card-name { font-size: 11px; color: var(--text-dim); pointer-events: none; }
+.asset-library-foot { margin: 0; font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+@media (max-width: 720px) {
+  .asset-library { width: 100vw; border-left: 0; }
+  .asset-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ---------- 可拖动分栏（桌面/平板横屏） ---------- */
+
+.layout {
+  grid-template-columns: var(--rail-w, 216px) 6px minmax(0, 1fr) 6px var(--inspector-w, 268px);
+}
+
+.pane-splitter {
+  position: relative;
+  background: var(--border);
+  touch-action: none;
+  z-index: 2;
+}
+
+.pane-splitter-vertical {
+  cursor: col-resize;
+}
+
+.pane-splitter-horizontal {
+  height: 6px;
+  flex: 0 0 6px;
+  cursor: row-resize;
+}
+
+.pane-splitter:hover,
+.pane-splitter:active {
+  background: var(--accent);
+}
+
+/* 视觉上是一条小白条，热区比视觉宽度大一些 */
+.pane-splitter::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+}
+
+.center-stage {
+  flex: 0 0 auto;
+  height: var(--stage-h, 380px);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.center-stage .stage-zone {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 0;
+}
+
+.center-stage .stage-zone .panel-head {
+  flex: 0 0 auto;
+}
+
+.center-stage .stage-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.center-stage .stage-frame {
+  height: 100%;
+  max-height: 100%;
+  width: auto;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+}
+
+.center-stage .stage-pad {
+  flex: 0 0 auto;
+}
+
+.center > .pane-splitter-horizontal {
+  border-top: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border-strong);
 }
