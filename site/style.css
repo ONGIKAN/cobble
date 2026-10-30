@@ -9,8 +9,8 @@
   --text: #e9ecf1;
   --text-dim: #9aa2ae;
   --text-faint: #6b7480;
-  --accent: #ff6b35;
-  --accent-soft: rgba(255, 107, 53, 0.12);
+  --accent: #9d7bff;
+  --accent-soft: rgba(157, 123, 255, 0.12);
   --mono: 'JetBrains Mono', 'Cascadia Mono', 'SFMono-Regular', Consolas, monospace;
   --sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', ui-sans-serif, sans-serif;
 }

@@ -31,10 +31,10 @@ const DARK_COMPONENTS = {
   flyoutOpacity: 1,
   scrollbarColour: '#33373e',
   scrollbarOpacity: 0.5,
-  insertionMarkerColour: '#ff6b35',
+  insertionMarkerColour: '#9d7bff',
   insertionMarkerOpacity: 0.3,
-  markerColour: '#ff6b35',
-  cursorColour: '#ff6b35',
+  markerColour: '#9d7bff',
+  cursorColour: '#9d7bff',
 };
 
 const LIGHT_COMPONENTS = {
@@ -46,10 +46,10 @@ const LIGHT_COMPONENTS = {
   flyoutOpacity: 1,
   scrollbarColour: '#c2c2b8',
   scrollbarOpacity: 0.8,
-  insertionMarkerColour: '#e8501e',
+  insertionMarkerColour: '#6b46e5',
   insertionMarkerOpacity: 0.28,
-  markerColour: '#e8501e',
-  cursorColour: '#e8501e',
+  markerColour: '#6b46e5',
+  cursorColour: '#6b46e5',
 };
 
 let squareRendererRegistered = false;

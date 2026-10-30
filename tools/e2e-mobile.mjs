@@ -55,6 +55,12 @@ async function runPhone() {
   await page.goto(BASE, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1600);
 
+  await page.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
+  check('phone hub visible', (await page.locator('[data-testid^="project-card-"]').count()) >= 1);
+  await page.screenshot({ path: 'tools/shots/m-phone-hub.png' });
+  await page.locator('[data-testid^="project-open-"]').first().click();
+  await page.waitForTimeout(2200);
+
   check('phone boots', (await page.locator('[data-testid="stage-iframe"]').count()) === 1);
   check('compact layout', (await page.locator('.layout-compact').count()) === 1);
   check('4 bottom tabs', (await page.locator('.mobile-tab').count()) === 4);
@@ -172,6 +178,9 @@ async function runTablet() {
 
   await page.goto(BASE, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1600);
+  await page.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
+  await page.locator('[data-testid^="project-open-"]').first().click();
+  await page.waitForTimeout(2200);
 
   check('tablet compact layout', (await page.locator('.layout-compact').count()) === 1);
   check('tablet stage running', Boolean(await runtimeState(page)));

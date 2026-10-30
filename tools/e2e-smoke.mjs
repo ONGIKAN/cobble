@@ -26,6 +26,21 @@ try {
   await page.goto(url, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1200);
 
+  // 0. 工程管理页（启动首页）
+  await page.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
+  const hubCount = await page.locator('[data-testid^="project-card-"]').count();
+  record('hub lists projects', hubCount >= 1, `${hubCount} project(s)`);
+  await page.screenshot({ path: `${shotDir}/00-hub.png` });
+  await page.getByTestId('hub-new').click();
+  await page.waitForSelector('[data-testid="new-project-dialog"]', { timeout: 8000 });
+  record('hub new-project dialog opens', true);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(250);
+  await page.locator('[data-testid^="project-open-"]').first().click();
+  await page.waitForTimeout(1500);
+  record('open project from hub', page.url().includes('#/editor/'), page.url());
+  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 20000 });
+
   // 1. 编辑器加载
   await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
   record('editor boots', true, 'blockly workspace mounted');
@@ -124,6 +139,9 @@ try {
   // 恢复演示工程，后续截图仍用标准示例
   await page.click('[data-testid="reset-project"]');
   await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
+  await page.locator('[data-testid^="project-open-"]').first().click();
+  await page.waitForTimeout(1500);
   await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
   await page.waitForTimeout(1200);
 
@@ -199,6 +217,9 @@ try {
 
   await page.click('[data-testid="reset-project"]');
   await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
+  await page.locator('[data-testid^="project-open-"]').first().click();
+  await page.waitForTimeout(2500);
   await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
   await page.waitForTimeout(1200);
 
@@ -259,12 +280,13 @@ try {
   const tmplBlocks = await page.locator('.blocklyBlockCanvas .blocklyDraggable').count();
   record('new project template', templateCards === 4 && tmplSprites === 1 && tmplName.includes('地鼠') && tmplBlocks > 10, `cards=${templateCards} sprites=${tmplSprites} name=${tmplName} blocks=${tmplBlocks}`);
 
-  // 恢复演示工程，避免影响下次运行
+  // 回到工程管理页，避免模板工程影响下次运行
   page.once('dialog', (dialog) => void dialog.accept());
   await page.click('[data-testid="reset-project"]');
   await page.waitForLoadState('networkidle');
-  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
+  await page.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
   await page.waitForTimeout(600);
+  await page.screenshot({ path: `${shotDir}/06-hub-light.png` });
 
   record('no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 } catch (error) {

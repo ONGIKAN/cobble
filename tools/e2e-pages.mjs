@@ -56,6 +56,10 @@ await sitePage.screenshot({ path: `${SHOTS}/site-en.png` });
 await sitePage.locator('a[href="./demo/"]').first().click();
 await sitePage.waitForLoadState('networkidle');
 check('site -> demo navigation', sitePage.url().startsWith(DEMO), sitePage.url());
+await sitePage.waitForSelector('[data-testid="hub-new"]', { timeout: 15000 });
+check('demo: project hub visible', (await sitePage.locator('[data-testid^="project-card-"]').count()) >= 1);
+await sitePage.locator('[data-testid^="project-open-"]').first().click();
+await sitePage.waitForTimeout(2200);
 await sitePage.waitForSelector('[data-testid="run"]');
 check('demo: editor boots from site', true);
 
@@ -100,6 +104,9 @@ const overflow = await phone.evaluate(() => document.documentElement.scrollWidth
 check('mobile site: no horizontal overflow', overflow);
 await phone.screenshot({ path: `${SHOTS}/site-phone.png`, fullPage: false });
 await phone.goto(DEMO, { waitUntil: 'networkidle' });
+await phone.waitForTimeout(1600);
+await phone.locator('[data-testid^="project-open-"]').first().click();
+await phone.waitForTimeout(2200);
 await phone.waitForSelector('[data-testid="run"]');
 check('mobile demo: compact tabs', (await phone.locator('[data-testid="tab-blocks"]').count()) > 0);
 await phone.locator('[data-testid="run"]').click();

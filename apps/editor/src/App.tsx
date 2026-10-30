@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AUTOSAVE_KEY, useEditorStore } from './store';
+import { useEditorStore } from './store';
+import { findEntry, updateEntry } from './library';
+import { routeToProjects } from './routes';
 import { bootstrapBlocks, refreshAssetBlocks } from './block-defs';
+import { TEMPLATES } from './templates';
 import { Topbar } from './components/Topbar';
 import { SpriteRail } from './components/SpriteRail';
 import { StageView } from './components/StageView';
@@ -56,7 +59,7 @@ function CompactSpriteStrip() {
   );
 }
 
-export function App() {
+export function App({ projectId }: { projectId: string }) {
   const { t } = useTranslation();
   const compact = useCompact();
   const [tab, setTab] = useState<MobileTab>('stage');
@@ -68,9 +71,24 @@ export function App() {
   useEffect(() => onInputSettings(() => setInputOpen(true)), []);
 
   useEffect(() => {
+    const loaded = useEditorStore.getState().loadProject(projectId);
+    if (!loaded) {
+      routeToProjects();
+      return;
+    }
     bootstrap();
+    // 从模板新建的工程：首次打开时按模板生成积木脚本（此时积木已按该工程注册）
+    const entry = findEntry(projectId);
+    if (entry?.templateId && Object.keys(useEditorStore.getState().workspaces).length === 0) {
+      const template = TEMPLATES.find((item) => item.id === entry.templateId);
+      if (template) {
+        for (const [spriteId, state] of Object.entries(template.workspaces())) {
+          useEditorStore.getState().setWorkspace(spriteId, state);
+        }
+      }
+    }
     setReady(true);
-  }, []);
+  }, [projectId]);
 
   useEffect(() => {
     let timer: number | undefined;
@@ -79,10 +97,7 @@ export function App() {
       window.clearTimeout(timer);
       timer = window.setTimeout(() => {
         try {
-          localStorage.setItem(
-            AUTOSAVE_KEY,
-            JSON.stringify({ project: state.project, workspaces: state.workspaces }),
-          );
+          updateEntry(projectId, state.project, state.workspaces);
           useEditorStore.getState().markSaved();
         } catch {
           // 存储配额不足时静默失败，不影响编辑
@@ -93,7 +108,7 @@ export function App() {
       unsubscribe();
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [projectId]);
 
   useEffect(() => {
     let timer: number | undefined;

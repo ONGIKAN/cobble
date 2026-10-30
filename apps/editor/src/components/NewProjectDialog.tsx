@@ -6,6 +6,8 @@ import { useEditorStore } from '../store';
 interface Props {
   open: boolean;
   onClose: () => void;
+  /** 传入后由调用方负责创建工程（工程管理页用）；否则替换当前工程 */
+  onCreate?: (template: TemplateDefinition) => void;
 }
 
 interface Preview {
@@ -15,24 +17,25 @@ interface Preview {
   blocks: number;
 }
 
-export function NewProjectDialog({ open, onClose }: Props) {
+export function NewProjectDialog({ open, onClose, onCreate }: Props) {
   if (!open) return null;
-  return <DialogBody onClose={onClose} />;
+  return <DialogBody onClose={onClose} onCreate={onCreate} />;
 }
 
-function DialogBody({ onClose }: { onClose: () => void }) {
+function DialogBody({ onClose, onCreate }: { onClose: () => void; onCreate?: (template: TemplateDefinition) => void }) {
   const { t } = useTranslation();
   const replaceProject = useEditorStore((state) => state.replaceProject);
 
   const previews = useMemo<Preview[]>(
     () =>
       TEMPLATES.map((template) => {
-        const { project, workspaces } = template.build();
-        const blocks = Object.values(workspaces).reduce<number>((sum, state) => {
-          const serialized = state as { blocks?: { blocks?: unknown[] } };
-          return sum + (serialized.blocks?.blocks?.length ?? 0);
-        }, 0);
-        return { template, thumb: templateThumb(project), sprites: project.sprites.length, blocks };
+        const project = template.project();
+        return {
+          template,
+          thumb: templateThumb(project),
+          sprites: project.sprites.length,
+          blocks: template.scriptGroups,
+        };
       }),
     [],
   );
@@ -46,6 +49,10 @@ function DialogBody({ onClose }: { onClose: () => void }) {
   }, [onClose]);
 
   const pick = (template: TemplateDefinition): void => {
+    if (onCreate) {
+      onCreate(template);
+      return;
+    }
     if (!window.confirm(t('templates.confirmReplace'))) return;
     const { project, workspaces } = template.build();
     replaceProject(project, workspaces);

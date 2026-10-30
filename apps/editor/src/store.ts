@@ -8,30 +8,11 @@ import {
   type StageDef,
 } from '@cobble/project';
 import { spritePlaceholderSvg } from './sprite-assets';
+import { createEntry, deleteEntry, findEntry } from './library';
 
 export type ThemeMode = 'dark' | 'light';
 
-export const AUTOSAVE_KEY = 'cobble.autosave';
 export const THEME_KEY = 'cobble.theme';
-
-interface Snapshot {
-  project: ProjectDoc;
-  workspaces: Record<string, unknown>;
-}
-
-function loadAutosave(): Snapshot | null {
-  try {
-    const raw = localStorage.getItem(AUTOSAVE_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw) as Partial<Snapshot>;
-    if (data.project && data.project.schemaVersion === 1) {
-      return { project: data.project, workspaces: data.workspaces ?? {} };
-    }
-  } catch {
-    // 数据损坏时回退到演示工程
-  }
-  return null;
-}
 
 function initialTheme(): ThemeMode {
   return localStorage.getItem(THEME_KEY) === 'light' ? 'light' : 'dark';
@@ -63,6 +44,7 @@ export interface NewAsset {
 }
 
 interface EditorState {
+  projectId: string;
   project: ProjectDoc;
   selectedSpriteId: string;
   workspaces: Record<string, unknown>;
@@ -91,16 +73,17 @@ interface EditorState {
   setTheme: (theme: ThemeMode) => void;
   markSaved: () => void;
   resetProject: () => void;
+  loadProject: (projectId: string) => boolean;
   replaceProject: (project: ProjectDoc, workspaces: Record<string, unknown>) => void;
 }
 
-const snapshot = loadAutosave();
-const initialProject = snapshot?.project ?? createDemoProject();
+const initialProject = createDemoProject();
 
 export const useEditorStore = create<EditorState>()((set, get) => ({
+  projectId: '',
   project: initialProject,
   selectedSpriteId: initialProject.sprites[0]?.id ?? '',
-  workspaces: snapshot?.workspaces ?? {},
+  workspaces: {},
   running: false,
   theme: initialTheme(),
   savedAt: null,
@@ -273,16 +256,27 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
   },
   markSaved: () => set({ savedAt: Date.now() }),
   resetProject: () => {
-    localStorage.removeItem(AUTOSAVE_KEY);
+    const current = get();
+    if (current.projectId) deleteEntry(current.projectId);
+    location.hash = '/projects';
     location.reload();
   },
+  loadProject: (projectId) => {
+    const entry = findEntry(projectId);
+    if (!entry) return false;
+    set({
+      projectId,
+      project: entry.project,
+      workspaces: entry.workspaces,
+      selectedSpriteId: entry.project.sprites[0]?.id ?? '',
+      running: false,
+    });
+    return true;
+  },
   replaceProject: (project, workspaces) => {
-    // 积木定义（下拉选项）依赖工程内容，因此打开新工程后整页重载最稳
-    try {
-      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({ project, workspaces }));
-    } catch {
-      // 配额不足时仍然重载，至少本次会话能看到新工程
-    }
+    // 新建工程写入工程库后整页重载，保证积木下拉选项按新工程重新生成
+    const entry = createEntry(project, workspaces);
+    location.hash = `/editor/${entry.id}`;
     location.reload();
   },
 }));

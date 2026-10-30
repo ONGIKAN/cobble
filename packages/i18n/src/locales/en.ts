@@ -2,6 +2,24 @@ import type { Messages } from './zh-CN';
 
 export const en: Messages = {
   app: { name: 'Cobble Studio', tagline: 'Block-based game maker' },
+  hub: {
+    title: 'Projects',
+    subtitle: '{{count}} project(s), all stored locally in this browser',
+    search: 'Search projects',
+    new: 'New project',
+    open: 'Open project',
+    empty: 'No projects yet — start from a template',
+    noMatch: 'No matching projects',
+    meta: '{{sprites}} sprite(s) · {{blocks}} script(s)',
+    metaSprites: '{{sprites}} sprite(s)',
+    rename: 'Rename',
+    duplicate: 'Duplicate',
+    export: 'Export .gproj',
+    delete: 'Delete',
+    confirmDelete: 'Delete “{{name}}”? This cannot be undone.',
+    back: 'Projects',
+    footNote: 'Projects live only in this browser. Export .gproj files as backups.',
+  },
   toolbar: {
     run: 'Run',
     stop: 'Stop',

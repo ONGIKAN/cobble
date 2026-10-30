@@ -1,5 +1,23 @@
 export const zhCN = {
   app: { name: 'Cobble Studio', tagline: '轻量积木游戏创作' },
+  hub: {
+    title: '我的工程',
+    subtitle: '共 {{count}} 个工程，全部保存在浏览器本地',
+    search: '搜索工程',
+    new: '新建工程',
+    open: '打开工程',
+    empty: '还没有工程，从一个模板开始吧',
+    noMatch: '没有匹配的工程',
+    meta: '{{sprites}} 个角色 · {{blocks}} 组脚本',
+    metaSprites: '{{sprites}} 个角色',
+    rename: '重命名',
+    duplicate: '复制',
+    export: '导出 .gproj',
+    delete: '删除',
+    confirmDelete: '删除「{{name}}」？此操作不可撤销。',
+    back: '工程',
+    footNote: '工程只保存在这台设备的浏览器里，建议定期导出 .gproj 备份',
+  },
   toolbar: {
     run: '运行',
     stop: '停止',

@@ -12,6 +12,10 @@
 | --- | --- |
 | ![桌面](docs/screenshots/01-editor-dark.png) | ![手机舞台页](docs/screenshots/m-phone-stage.png) |
 
+| 工程管理页（启动首页） | 手机上的工程管理页 |
+| --- | --- |
+| ![工程管理页](docs/screenshots/hub-dark.png) | ![手机工程管理页](docs/screenshots/m-phone-hub.png) |
+
 | 手机积木页 | 运行中（分数 +2） |
 | --- | --- |
 | ![手机积木页](docs/screenshots/m-phone-blocks.png) | ![运行中](docs/screenshots/03-playing.png) |
@@ -80,6 +84,7 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 | 模板与新建工程 | 新建工程弹层：空白工程 + 小猫吃金币 / 打地鼠 / 接苹果三个可玩模板；选择后替换当前工程并重载，脚本随模板一起生成 |
 | 触屏适配 | 窗口 ≤1119px 自动切换紧凑布局：底部 4 标签（舞台/积木/角色/属性）、舞台页屏幕方向键、角色快捷条；粗指针设备（pointer: coarse）才显示方向键 |
 | 积木外观 | 自定义 `square` 渲染器（thrasos 派生）：圆角半径 0、字段边框为直角、事件积木顶部压平；低饱和 8 类配色 |
+| 工程管理页 | 启动即进入工程库：多工程卡片（缩略图 / 角色数 / 脚本数 / 更新时间）、搜索、新建、`.gproj` 导入、重命名 / 复制 / 导出 / 删除；hash 路由 `#/projects` 与 `#/editor/<id>`，工程存 localStorage `cobble.library`（旧版单工程自动迁移） |
 | 官网 | `site/`：落地页（中英切换、截图、路线图、快速开始），直角深色设计，与演示页/仓库互链 |
 
 ## 还没做（P0 后续 / P1）
@@ -132,6 +137,8 @@ cobble/
 - **相对路径发布**：编辑器与演示构建使用 `base: './'`，可直接放在 Pages 的 `/demo/` 子路径下运行。
 
 ## 已知限制
+
+- 工程库只保存在当前浏览器的 localStorage：换设备、换浏览器或清缓存会丢失，重要作品请导出 `.gproj` 备份。
 
 - 积木区首次加载会自动缩放并回到脚本顶部；脚本很长时需要滚动查看。
 - 触屏布局是单栏切换式（同一时刻只显示舞台或积木），不是分栏；横屏手机会比竖屏更接近桌面布局。

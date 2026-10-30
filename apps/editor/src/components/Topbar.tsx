@@ -5,6 +5,8 @@ import { switchLocale, type Locale } from '@cobble/i18n';
 import { sendRun, sendStop } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';
+import { updateEntry } from '../library';
+import { routeToProjects } from '../routes';
 import { useEditorStore } from '../store';
 import { REPO_URL, SITE_URL } from '../links';
 
@@ -33,6 +35,12 @@ export function Topbar() {
     setRunning(false);
   };
 
+  const leaveToProjects = (): void => {
+    const state = useEditorStore.getState();
+    if (state.projectId) updateEntry(state.projectId, state.project, state.workspaces);
+    routeToProjects();
+  };
+
   return (
     <header className="topbar">
       <div className="brand">
@@ -58,6 +66,15 @@ export function Topbar() {
       </nav>
 
       <div className="topbar-actions">
+        <button
+          type="button"
+          className="btn ghost topbar-projects"
+          data-testid="back-to-projects"
+          onClick={leaveToProjects}
+        >
+          {t('hub.back')}
+        </button>
+
         <div className="topbar-files">
           <ProjectFileButtons />
         </div>

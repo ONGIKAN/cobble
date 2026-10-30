@@ -10,9 +10,9 @@
   --text: #e7e8ea;
   --text-dim: #b6b9c0;
   --muted: #868b94;
-  --accent: #ff6b35;
-  --accent-soft: rgba(255, 107, 53, 0.14);
-  --accent-text: #1a0b04;
+  --accent: #9d7bff;
+  --accent-soft: rgba(157, 123, 255, 0.16);
+  --accent-text: #140a2b;
   --blue: #4b8bf5;
   --good: #4cbf56;
   --mono: ui-monospace, 'Cascadia Mono', 'JetBrains Mono', Consolas, monospace;
@@ -30,9 +30,9 @@
   --text: #1c1e22;
   --text-dim: #3d4046;
   --muted: #6a6d73;
-  --accent: #e8501e;
-  --accent-soft: rgba(232, 80, 30, 0.12);
-  --accent-text: #fff5f0;
+  --accent: #6b46e5;
+  --accent-soft: rgba(107, 70, 229, 0.12);
+  --accent-text: #ffffff;
   color-scheme: light;
 }
 
@@ -1617,5 +1617,206 @@ button {
 
   .binding-name {
     width: 100%;
+  }
+}
+
+
+/* ── 工程管理页（启动首页） ───────────────────────────── */
+.hub {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.hub-topbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 18px;
+  min-height: 56px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.hub-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.hub-main {
+  flex: 1;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 34px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hub-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.hub-head h1 {
+  margin: 0 0 6px;
+  font-size: 26px;
+  letter-spacing: 0.01em;
+}
+
+.hub-sub {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.hub-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hub-search {
+  width: 200px;
+}
+
+.hub-empty {
+  border: 1px dashed var(--border-strong);
+  padding: 48px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  color: var(--text-dim);
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.project-card:hover {
+  border-color: var(--accent);
+}
+
+.project-open {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.project-thumb {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 10px, rgba(255, 255, 255, 0.035) 10px 11px),
+    var(--bg);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.project-thumb img {
+  max-width: 84%;
+  max-height: 84%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.project-thumb-mark {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.project-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 12px 12px;
+}
+
+.project-title {
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-meta {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.project-tools {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 4px 8px;
+  border-top: 1px solid var(--border);
+  background: var(--panel-2);
+}
+
+.hub-foot {
+  margin-top: auto;
+  padding: 18px 2px 6px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 11px;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 720px) {
+  .hub-topbar {
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .hub-main {
+    padding: 20px 12px 18px;
+  }
+
+  .hub-head h1 {
+    font-size: 22px;
+  }
+
+  .hub-search {
+    width: 100%;
+  }
+
+  .hub-actions .btn {
+    flex: 1;
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
   }
 }

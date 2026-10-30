@@ -1,71 +1,128 @@
-"""生成 Cobble Studio 品牌图标：块状字母 C（Cobble 的首字母）+ 品牌橙。
+"""Cobble Studio 品牌标：方块豹猫头像（16×16 像素网格 + 矢量矩形输出）。
 
-形状：1024 画布上由「上、左、下」三根 200 厚的方条拼成 C，无圆角。
-- 透明底版本用于官网 header 与 favicon；
-- 深色方底版本用于 EXE / APK / 社交图。
-
-输出：
-- site/assets/logo.svg（透明底）、logo-512.png、logo-256.png
-- site/assets/favicon.ico、favicon-32.png、apple-touch-icon.png
-- apps/editor/public/logo.svg（编辑器 favicon / 顶栏）
-- apps/desktop/build/icon.ico（Electron 打包）
-- docs/logo.png（README）
+豹猫元素：尖耳、脸颊/额头上的深色斑点（rosette 简化成方块）、鼻子。
+配色跟主题走：紫色主色 + 米白面部 + 深色眼睛。
 """
 
-from pathlib import Path
+import io
+import os
+
 from PIL import Image, ImageDraw
 
-BG = (13, 15, 18)
-ACCENT = (255, 107, 53)
+ROOT = r"F:/创想/game-creator"
 
-ROOT = Path(__file__).resolve().parent.parent
+PURPLE = "#8b5cf6"
+PURPLE_DEEP = "#6d3ff0"
+CREAM = "#f2efe6"
+DARK = "#14101f"
+SPOT = "#3a2370"
 
-# 三根方条：(x0, y0, x1, y1)
-BARS = ((88, 88, 936, 288), (88, 288, 288, 736), (88, 736, 936, 936))
+# 16×16 像素：P 紫色、C 米白、D 深色、S 斑点深紫
+GRID = [
+    "................",
+    "...PP......PP...",
+    "..PPPP....PPPP..",
+    "..PPPPPPPPPPPP..",
+    "..PPPPPPPPPPPP..",
+    "..PCSCCCCCCSCP..",
+    "..PCCCCCCCCCCP..",
+    "..PCDDCCCCDDCP..",
+    "..PCCCCCCCCCCP..",
+    "..PCCCCSPPSCCP..",
+    "..PSCCCCCCCCSP..",
+    "..PCCCCCCCCCCP..",
+    "..PCCCCCCCCCCP..",
+    "...PCCCCCCCCP...",
+    "....PCCCCCCP....",
+    "......PPPP......",
+]
 
-SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Cobble Studio">
-  <rect x="88" y="88" width="848" height="200" fill="#ff6b35"/>
-  <rect x="88" y="288" width="200" height="448" fill="#ff6b35"/>
-  <rect x="88" y="736" width="848" height="200" fill="#ff6b35"/>
-</svg>
-"""
+COLORS = {
+    "P": PURPLE,
+    "C": CREAM,
+    "D": DARK,
+    "S": SPOT,
+}
 
 
-def render(size: int, background: bool) -> Image.Image:
-    mode = 'RGBA'
-    image = Image.new(mode, (size, size), BG + (255,) if background else (0, 0, 0, 0))
+def runs(row):
+    """把一行像素合并成连续同色段。"""
+    out = []
+    start = 0
+    for i in range(1, len(row) + 1):
+        if i == len(row) or row[i] != row[start]:
+            out.append((start, row[start], i - start))
+            start = i
+    return out
+
+
+def svg_markup(size=1024):
+    cell = size / 16
+    parts = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {size} {size}" width="{size}" height="{size}">',
+    ]
+    for y, row in enumerate(GRID):
+        for x, ch, width in runs(row):
+            if ch == ".":
+                continue
+            parts.append(
+                f'<rect x="{x * cell:g}" y="{y * cell:g}" width="{width * cell:g}" '
+                f'height="{cell:g}" fill="{COLORS[ch]}"/>'
+            )
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+def render(size):
+    cell = size / 16
+    image = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
-    unit = size / 1024
-    for x0, y0, x1, y1 in BARS:
-        draw.rectangle(
-            [round(x0 * unit), round(y0 * unit), round(x1 * unit) - 1, round(y1 * unit) - 1],
-            fill=ACCENT + (255,),
-        )
+    for y, row in enumerate(GRID):
+        for x, ch, width in runs(row):
+            if ch == ".":
+                continue
+            draw.rectangle(
+                [x * cell, y * cell, (x + width) * cell - 1, (y + 1) * cell - 1],
+                fill=COLORS[ch],
+            )
     return image
 
 
-def main() -> None:
-    site = ROOT / 'site' / 'assets'
-    editor_public = ROOT / 'apps' / 'editor' / 'public'
-    desktop_build = ROOT / 'apps' / 'desktop' / 'build'
-    docs = ROOT / 'docs'
-    for directory in (site, editor_public, desktop_build, docs):
-        directory.mkdir(parents=True, exist_ok=True)
+def main():
+    os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
 
-    (site / 'logo.svg').write_text(SVG, encoding='utf-8')
-    (editor_public / 'logo.svg').write_text(SVG, encoding='utf-8')
+    outputs = {
+        "site/assets/logo.svg": None,
+        "apps/editor/public/logo.svg": None,
+    }
+    svg = svg_markup()
+    for rel in outputs:
+        path = os.path.join(ROOT, rel)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with io.open(path, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(svg)
 
-    render(512, background=False).save(site / 'logo-512.png')
-    render(256, background=True).save(site / 'logo-256.png')
-    render(180, background=True).save(site / 'apple-touch-icon.png')
-    render(1024, background=True).save(docs / 'logo.png')
+    png_targets = {
+        "site/assets/logo-512.png": 512,
+        "site/assets/logo-256.png": 256,
+        "site/assets/favicon-32.png": 32,
+        "site/assets/apple-touch-icon.png": 180,
+        "docs/logo.png": 512,
+    }
+    for rel, size in png_targets.items():
+        path = os.path.join(ROOT, rel)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        render(size).save(path)
 
-    ico_sizes = [(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
-    render(256, background=True).save(desktop_build / 'icon.ico', sizes=ico_sizes)
-    render(256, background=True).save(site / 'favicon.ico', sizes=ico_sizes)
-    render(32, background=True).save(site / 'favicon-32.png')
-    print('logo assets written')
+    icon_sizes = [16, 24, 32, 48, 64, 128, 256]
+    for rel in ["site/assets/favicon.ico", "apps/desktop/build/icon.ico"]:
+        path = os.path.join(ROOT, rel)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        images = [render(size) for size in icon_sizes]
+        images[-1].save(path, format="ICO", sizes=[(s, s) for s in icon_sizes])
+
+    print("logo assets written")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

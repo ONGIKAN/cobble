@@ -15,6 +15,12 @@ export interface TemplateDefinition {
   id: string;
   nameKey: string;
   taglineKey: string;
+  /** 只构造工程数据（不依赖 Blockly 积木是否已注册） */
+  project: () => ProjectDoc;
+  /** 模板自带的脚本组数（用于弹层预览，不依赖 Blockly） */
+  scriptGroups: number;
+  /** 构造积木脚本；需先以该工程调用 defineGameBlocks 注册积木 */
+  workspaces: () => Record<string, unknown>;
   build: () => { project: ProjectDoc; workspaces: Record<string, unknown> };
 }
 
@@ -133,7 +139,7 @@ function randomWait(ws: Blockly.Workspace, min: number, max: number): Blockly.Bl
 }
 
 // ── 空白工程 ────────────────────────────────────────────────
-function buildBlank(): { project: ProjectDoc; workspaces: Record<string, unknown> } {
+function projectBlank(): ProjectDoc {
   const project: ProjectDoc = {
     schemaVersion: 1,
     meta: nowMeta('blank', '未命名工程'),
@@ -143,11 +149,15 @@ function buildBlank(): { project: ProjectDoc; workspaces: Record<string, unknown
     sprites: [sprite({ id: 'sprite_1', name: '角色 1', costumes: [{ name: '造型 1', assetId: 'asset_blank_1' }] })],
     scripts: {},
   };
-  return { project, workspaces: {} };
+  return project;
+}
+
+function workspacesBlank(): Record<string, unknown> {
+  return {};
 }
 
 // ── 小猫吃金币 ──────────────────────────────────────────────
-function buildCatCoin(): { project: ProjectDoc; workspaces: Record<string, unknown> } {
+function projectCatCoin(): ProjectDoc {
   const catId = 'sprite_cat';
   const coinId = 'sprite_coin';
   const score = 'var_score';
@@ -175,6 +185,13 @@ function buildCatCoin(): { project: ProjectDoc; workspaces: Record<string, unkno
     scripts: {},
   };
 
+  return project;
+}
+
+function workspacesCatCoin(): Record<string, unknown> {
+  const catId = 'sprite_cat';
+  const coinId = 'sprite_coin';
+  const score = 'var_score';
   const cat = serialize((ws) => {
     const right = keyIf(ws, 'right', 'motion_changex', 7);
     const left = keyIf(ws, 'left', 'motion_changex', -7);
@@ -202,11 +219,11 @@ function buildCatCoin(): { project: ProjectDoc; workspaces: Record<string, unkno
     connectNext(hat, hide);
   });
 
-  return { project, workspaces: { [catId]: cat, [coinId]: coin } };
+  return { [catId]: cat, [coinId]: coin };
 }
 
 // ── 打地鼠 ─────────────────────────────────────────────────
-function buildWhackMole(): { project: ProjectDoc; workspaces: Record<string, unknown> } {
+function projectWhackMole(): ProjectDoc {
   const moleId = 'sprite_mole';
   const score = 'var_score';
   const project: ProjectDoc = {
@@ -228,6 +245,12 @@ function buildWhackMole(): { project: ProjectDoc; workspaces: Record<string, unk
     scripts: {},
   };
 
+  return project;
+}
+
+function workspacesWhackMole(): Record<string, unknown> {
+  const moleId = 'sprite_mole';
+  const score = 'var_score';
   const mole = serialize((ws) => {
     const goTo = makeBlock(ws, 'motion_gotoxy');
     attachValue(goTo, 'X', randomRange(ws, -320, 320));
@@ -245,11 +268,11 @@ function buildWhackMole(): { project: ProjectDoc; workspaces: Record<string, unk
     connectNext(change, hideOnHit);
   });
 
-  return { project, workspaces: { [moleId]: mole } };
+  return { [moleId]: mole };
 }
 
 // ── 接苹果 ─────────────────────────────────────────────────
-function buildCatchApple(): { project: ProjectDoc; workspaces: Record<string, unknown> } {
+function projectCatchApple(): ProjectDoc {
   const basketId = 'sprite_basket';
   const appleId = 'sprite_apple';
   const score = 'var_score';
@@ -285,6 +308,13 @@ function buildCatchApple(): { project: ProjectDoc; workspaces: Record<string, un
     scripts: {},
   };
 
+  return project;
+}
+
+function workspacesCatchApple(): Record<string, unknown> {
+  const basketId = 'sprite_basket';
+  const appleId = 'sprite_apple';
+  const score = 'var_score';
   const basket = serialize((ws) => {
     const right = keyIf(ws, 'right', 'motion_changex', 12);
     const left = keyIf(ws, 'left', 'motion_changex', -12);
@@ -311,14 +341,46 @@ function buildCatchApple(): { project: ProjectDoc; workspaces: Record<string, un
     flagForever(ws, goTo);
   });
 
-  return { project, workspaces: { [basketId]: basket, [appleId]: apple } };
+  return { [basketId]: basket, [appleId]: apple };
 }
 
 export const TEMPLATES: TemplateDefinition[] = [
-  { id: 'blank', nameKey: 'templates.blank', taglineKey: 'templates.blankTagline', build: buildBlank },
-  { id: 'cat-coin', nameKey: 'templates.catCoin', taglineKey: 'templates.catCoinTagline', build: buildCatCoin },
-  { id: 'whack-mole', nameKey: 'templates.whackMole', taglineKey: 'templates.whackMoleTagline', build: buildWhackMole },
-  { id: 'catch-apple', nameKey: 'templates.catchApple', taglineKey: 'templates.catchAppleTagline', build: buildCatchApple },
+  {
+    id: 'blank',
+    nameKey: 'templates.blank',
+    taglineKey: 'templates.blankTagline',
+    scriptGroups: 0,
+    project: projectBlank,
+    workspaces: workspacesBlank,
+    build: () => ({ project: projectBlank(), workspaces: workspacesBlank() }),
+  },
+  {
+    id: 'cat-coin',
+    nameKey: 'templates.catCoin',
+    taglineKey: 'templates.catCoinTagline',
+    scriptGroups: 2,
+    project: projectCatCoin,
+    workspaces: workspacesCatCoin,
+    build: () => ({ project: projectCatCoin(), workspaces: workspacesCatCoin() }),
+  },
+  {
+    id: 'whack-mole',
+    nameKey: 'templates.whackMole',
+    taglineKey: 'templates.whackMoleTagline',
+    scriptGroups: 1,
+    project: projectWhackMole,
+    workspaces: workspacesWhackMole,
+    build: () => ({ project: projectWhackMole(), workspaces: workspacesWhackMole() }),
+  },
+  {
+    id: 'catch-apple',
+    nameKey: 'templates.catchApple',
+    taglineKey: 'templates.catchAppleTagline',
+    scriptGroups: 2,
+    project: projectCatchApple,
+    workspaces: workspacesCatchApple,
+    build: () => ({ project: projectCatchApple(), workspaces: workspacesCatchApple() }),
+  },
 ];
 
 /** 模板封面：取第一个图片素材 */
