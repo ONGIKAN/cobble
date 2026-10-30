@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPoi
 import { useTranslation } from 'react-i18next';
 import { compileProject } from '@cobble/blocks';
 import { sendRun, setPlayerFrame } from '../bridge';
+import { ProjectFileButtons } from './ProjectFileButtons';
 import { useEditorStore } from '../store';
 import { useCoarsePointer } from '../useCompact';
 
@@ -87,6 +88,7 @@ export function StageView({ compact = false }: Props) {
         <span className="panel-meta mono">
           {t('stage.size', { w: project.stage.width, h: project.stage.height })}
         </span>
+        {compact && <ProjectFileButtons variant="inline" />}
       </div>
       <div className="stage-body">
         <div className="stage-frame">

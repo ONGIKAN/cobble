@@ -14,6 +14,9 @@ export const en: Messages = {
     saved: 'Saved',
     website: 'Website',
     source: 'Source',
+    save: 'Save project',
+    open: 'Open project',
+    badFile: 'That file is not a valid .gproj project',
   },
   panels: {
     stage: 'Stage',

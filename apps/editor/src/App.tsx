@@ -55,8 +55,8 @@ function bootstrap(): void {
   const translate = (key: string, options?: Record<string, unknown>): string =>
     String(i18n.t(key, options as never));
   defineGameBlocks({ t: translate, project: state.project });
-  // 首次打开：没有历史脚本，生成演示工程「小猫吃金币」
-  if (Object.keys(state.workspaces).length === 0) {
+  // 首次打开：没有历史脚本时，为内置演示工程生成「小猫吃金币」脚本
+  if (Object.keys(state.workspaces).length === 0 && state.project.meta.id === 'demo-cat-coin') {
     for (const [spriteId, workspace] of Object.entries(buildDemoWorkspaces(state.project))) {
       state.setWorkspace(spriteId, workspace);
     }
@@ -100,7 +100,7 @@ export function App() {
   if (!ready) {
     return (
       <div className="splash">
-        <span className="splash-mark">GF</span>
+        <span className="splash-mark">CB</span>
         <p className="splash-tagline">{t('app.tagline')}</p>
       </div>
     );

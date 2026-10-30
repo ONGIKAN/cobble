@@ -1105,3 +1105,29 @@ button {
 .app-compact .status-links {
   display: none;
 }
+
+/* 工程文件：桌面顶栏入口 + 手机舞台页头部入口 */
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.file-actions .btn {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.file-actions.is-inline {
+  margin-left: 6px;
+}
+
+.file-actions.is-inline .btn {
+  min-height: 26px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.app-compact .topbar-files {
+  display: none;
+}

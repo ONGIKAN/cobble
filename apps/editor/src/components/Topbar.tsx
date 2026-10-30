@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compileProject } from '@cobble/blocks';
 import { switchLocale, type Locale } from '@cobble/i18n';
 import { sendRun, sendStop } from '../bridge';
+import { ProjectFileButtons } from './ProjectFileButtons';
 import { useEditorStore } from '../store';
 import { REPO_URL, SITE_URL } from '../links';
 
@@ -56,6 +57,10 @@ export function Topbar() {
       </nav>
 
       <div className="topbar-actions">
+        <div className="topbar-files">
+          <ProjectFileButtons />
+        </div>
+
         <div className="segmented" role="group" aria-label={t('toolbar.language')}>
           <button
             type="button"

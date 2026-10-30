@@ -21,9 +21,22 @@ const staging = resolve('pages-dist');
 const site = resolve('site');
 const dist = resolve('apps/editor/dist');
 
+const sanitize = (text) => String(text).replace(/x-access-token:[^@]+@/g, 'x-access-token:***@');
+
 const run = (command, args, options = {}) => {
-  console.log(`$ ${command} ${args.join(' ').replace(/x-access-token:[^@]+@/, 'x-access-token:***@')}`);
-  execFileSync(command, args, { stdio: 'inherit', ...options });
+  const { capture = false, ...rest } = options;
+  console.log(`$ ${sanitize(`${command} ${args.join(' ')}`)}`);
+  if (!capture) {
+    execFileSync(command, args, { stdio: 'inherit', ...rest });
+    return;
+  }
+  try {
+    process.stdout.write(sanitize(execFileSync(command, args, { ...rest, stdio: ['ignore', 'pipe', 'pipe'] }).toString()));
+  } catch (error) {
+    if (error?.stdout) process.stdout.write(sanitize(error.stdout.toString()));
+    if (error?.stderr) process.stderr.write(sanitize(error.stderr.toString()));
+    throw error;
+  }
 };
 
 // 1) 构建编辑器（官网是纯静态，无需构建）
@@ -76,7 +89,7 @@ if (process.argv.includes('--push')) {
     ['-c', `user.name=${REPO.split('/')[0]}`, '-c', `user.email=${REPO.split('/')[0]}@users.noreply.github.com`, 'commit', '-m', 'site: publish Cobble landing page + live demo'],
     { cwd: staging },
   );
-  run(git, ['push', '--force', remote, `HEAD:${PAGES_BRANCH}`], { cwd: staging });
+  run(git, ['push', '--force', remote, `HEAD:${PAGES_BRANCH}`], { cwd: staging, capture: true });
   console.log(`pushed ${staging} -> ${REPO}#${PAGES_BRANCH}`);
 }
 

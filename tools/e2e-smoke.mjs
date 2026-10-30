@@ -1,5 +1,5 @@
 import { chromium } from 'playwright-core';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 
 const url = process.env.FORGE_URL ?? 'http://127.0.0.1:5183/';
 const shotDir = process.env.FORGE_SHOTS ?? 'tools/shots';
@@ -93,6 +93,38 @@ try {
     return !child?.contentWindow?.__cobbleRuntime;
   });
   record('stop clears runtime', stopped, 'iframe runtime gone');
+
+  // 5. .gproj 保存：下载文件里应带工程与积木数据
+  const downloadPromise = page.waitForEvent('download');
+  await page.click('[data-testid="save-project"]');
+  const download = await downloadPromise;
+  const savedPath = await download.path();
+  const savedDoc = JSON.parse(readFileSync(savedPath, 'utf8'));
+  const savedOk =
+    savedDoc.format === 'cobble-studio' &&
+    savedDoc.version === 1 &&
+    savedDoc.project?.meta?.name === '小猫吃金币' &&
+    Object.keys(savedDoc.workspaces ?? {}).length === 2;
+  record('project save (.gproj)', savedOk, `file=${download.suggestedFilename()}`);
+
+  // 6. .gproj 打开：改名后重新打开应整页重载并载入新工程
+  const importPath = `${shotDir}/tmp-import.gproj`;
+  savedDoc.project.meta.name = '导入测试工程';
+  writeFileSync(importPath, JSON.stringify(savedDoc));
+  await page.setInputFiles('[data-testid="open-project-input"]', importPath);
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
+  await page.waitForTimeout(1000);
+  const importedName = await page.locator('.project-name-text').innerText();
+  const importedBlocks = await page.evaluate(() => document.querySelectorAll('.blocklyBlockCanvas .blocklyDraggable').length);
+  record('project open (.gproj)', importedName === '导入测试工程' && importedBlocks >= 8, `name=${importedName} blocks=${importedBlocks}`);
+  rmSync(importPath, { force: true });
+
+  // 恢复演示工程，后续截图仍用标准示例
+  await page.click('[data-testid="reset-project"]');
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 15000 });
+  await page.waitForTimeout(1200);
 
   // 5. 深色截图（先重新运行）
   await page.click('[data-testid="run"]');

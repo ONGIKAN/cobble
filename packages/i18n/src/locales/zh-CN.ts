@@ -12,6 +12,9 @@ export const zhCN = {
     saved: '已保存',
     website: '官网',
     source: '源码',
+    save: '保存工程',
+    open: '打开工程',
+    badFile: '这个文件不是有效的 .gproj 工程',
   },
   panels: {
     stage: '舞台',

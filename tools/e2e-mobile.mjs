@@ -59,6 +59,8 @@ async function runPhone() {
   check('compact layout', (await page.locator('.layout-compact').count()) === 1);
   check('4 bottom tabs', (await page.locator('.mobile-tab').count()) === 4);
   check('dpad visible', await page.locator('[data-testid="dpad"]').isVisible());
+  check('phone save/open buttons', await page.locator('[data-testid="m-save-project"]').isVisible() && (await page.locator('[data-testid="m-open-project"]').isVisible()));
+  check('phone topbar files hidden', !(await page.locator('[data-testid="save-project"]').isVisible()));
 
   const before = await runtimeState(page);
   check('phone runtime running', Boolean(before?.cat));
