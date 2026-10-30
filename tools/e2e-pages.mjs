@@ -49,7 +49,7 @@ check('site: beta demo link', (await sitePage.locator('a[href="./demo-beta/"]').
 const versionLogNav = await sitePage.locator('a[href="#changelog"]').first().innerText();
 check('site: version log wording', versionLogNav.includes('版本日志'), versionLogNav);
 check('site: stable tags', (await sitePage.locator('.release-tag.is-stable').count()) >= 5);
-check('site: experimental tag', (await sitePage.locator('.release-tag.is-beta').count()) >= 1);
+check('site: stable tags', (await sitePage.locator('.release-tag.is-stable').count()) >= 10);
 
 {
   const betaPage = await site.newPage();
@@ -110,7 +110,7 @@ await sitePage.waitForTimeout(1200);
 const state = await runtimeState(sitePage);
 check('demo: runtime running', state?.running === true, JSON.stringify(state));
 const stableStatus = await sitePage.locator('[data-testid="status-changelog-link"]').innerText();
-check('demo: stable version v0.11', stableStatus.includes('v0.11') && !stableStatus.includes('beta'), stableStatus);
+check('demo: stable version v0.12', stableStatus.includes('v0.12') && !stableStatus.includes('beta'), stableStatus);
 await sitePage.screenshot({ path: `${SHOTS}/pages-demo.png` });
 
 // 演示 -> 官网（链接存在且可点）

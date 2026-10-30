@@ -200,6 +200,18 @@ export function ProjectHub() {
             {t('hub.footNote')}
             {storePath && <span className="hub-store mono">{storePath}</span>}
           </span>
+          <span className="hub-community">
+            <a
+              className="status-link"
+              href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode"
+              data-testid="hub-qq-group"
+              title={t('hub.joinQqHint')}
+            >
+              {t('hub.joinQq')} 424124959
+            </a>
+            <span className="hub-community-sep">·</span>
+            <span>{t('hub.douyinGroup')} 888985597118</span>
+          </span>
           <span className="hub-version mono">
             v{APP_VERSION} ·{' '}
             <a className="status-link" href={CHANGELOG_URL} target="_blank" rel="noreferrer" data-testid="hub-changelog-link">

@@ -4,6 +4,8 @@
 
 用积木拼逻辑，一键运行 2D 小游戏。当前是 **P0 的可运行原型（M0）**：积木编辑 → 编译 IR → iframe 内 Phaser 运行时跑起来的完整链路已经打通，内置 8 个新建模板与 4 款完整示例游戏，支持深浅主题、中英双语界面，以及手机 / 平板的触屏手柄；积木是低饱和、直角、方正的外观。
 
+**交流群：[QQ 群 424124959](mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode)（点击直接加群）· 抖音群 888985597118** —— 版本更新、教程与答疑
+
 **[官网](https://ongikan.github.io/cobble/)** · **[在线演示（稳定版）](https://ongikan.github.io/cobble/demo/)** · **[测试版在线演示](https://ongikan.github.io/cobble/demo-beta/)** · **[GitHub 仓库](https://github.com/ONGIKAN/cobble)**
 
 ![编辑器（深色）](docs/screenshots/01-editor-dark.png)
@@ -26,7 +28,7 @@
 
 ## 下载安装包
 
-稳定版 v0.11.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobble/#download>）：
+稳定版 v0.12.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobble/#download>）：
 
 | 平台 | 文件 | 说明 |
 | --- | --- | --- |

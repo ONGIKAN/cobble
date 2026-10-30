@@ -744,3 +744,82 @@ h3 {
 .btn-ghost:hover {
   color: var(--text);
 }
+
+.community-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 9px clamp(16px, 4vw, 48px);
+  background: linear-gradient(90deg, rgba(157, 123, 255, 0.18), rgba(157, 123, 255, 0.04));
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.community-label {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.community-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px;
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.community-chip.is-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(157, 123, 255, 0.08);
+}
+
+.community-chip b {
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  color: var(--accent);
+  letter-spacing: 0.03em;
+}
+
+.community-cta {
+  padding: 1px 6px;
+  background: var(--accent);
+  color: var(--accent-text, #140a2b);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.community-hint {
+  margin-left: auto;
+  color: var(--text-dim);
+  opacity: 0.8;
+}
+
+.foot-community {
+  margin: 18px 0 6px;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.foot-community a {
+  color: var(--text);
+}
+
+.foot-community a:hover {
+  color: var(--accent);
+}
+
+.foot-community b {
+  color: var(--accent);
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+}
+
+@media (max-width: 720px) {
+  .community-hint {
+    margin-left: 0;
+  }
+}

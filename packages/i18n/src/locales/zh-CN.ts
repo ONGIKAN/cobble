@@ -16,6 +16,9 @@ export const zhCN = {
     delete: '删除',
     confirmDelete: '删除「{{name}}」？此操作不可撤销。',
     back: '工程',
+    joinQq: '加入 QQ 群',
+    joinQqHint: '已安装 QQ 时点击直接打开群资料并申请加入',
+    douyinGroup: '抖音群',
     footNote: '工程只保存在这台设备的浏览器里，建议定期导出 .gproj 备份',
   },
   toolbar: {

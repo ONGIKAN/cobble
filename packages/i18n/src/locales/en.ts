@@ -18,6 +18,9 @@ export const en: Messages = {
     delete: 'Delete',
     confirmDelete: 'Delete “{{name}}”? This cannot be undone.',
     back: 'Projects',
+    joinQq: 'Join QQ group',
+    joinQqHint: 'Opens the QQ group profile so you can request to join',
+    douyinGroup: 'Douyin group',
     footNote: 'Projects live only in this browser. Export .gproj files as backups.',
   },
   toolbar: {

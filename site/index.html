@@ -14,6 +14,16 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
+    <div class="community-bar" id="community">
+      <span class="community-label"><span class="zh">加入交流群</span><span class="en">Join our community</span></span>
+      <a class="community-chip is-link" href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode" title="已安装 QQ 时点击直接打开群资料并申请加入">
+        <span class="community-net">QQ <span class="zh">群</span><span class="en">group</span></span>
+        <b>424124959</b>
+        <span class="community-cta"><span class="zh">点击加群</span><span class="en">Join</span></span>
+      </a>
+      <span class="community-chip"><span class="community-net"><span class="zh">抖音群</span><span class="en">Douyin group</span></span><b>888985597118</b></span>
+      <span class="community-hint"><span class="zh">版本更新、教程与答疑</span><span class="en">Updates, tutorials &amp; support</span></span>
+    </div>
     <header class="site-head">
       <a class="brand" href="./">
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
@@ -207,14 +217,14 @@
         <p class="eyebrow">Download</p>
         <h2><span class="zh">下载安装包</span><span class="en">Get the apps</span></h2>
         <p class="section-sub">
-          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.11.0 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
+          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.12.0 稳定版构建；作品保存在本机，工程以 .gproj 落盘（桌面版），离线也能玩。</span>
           <span class="en">Windows and Android builds ship through GitHub Releases, both from the v0.11.0 stable build. Projects live on your machine and desktop installs store them as .gproj files — fully offline.</span>
         </p>
         <div class="download-grid">
           <article class="download-card">
             <p class="download-os">Windows</p>
             <h3><span class="zh">安装版</span><span class="en">Installer</span></h3>
-            <p class="download-meta">Tauri · NSIS · x64 · ~1.9 MB</p>
+            <p class="download-meta">Tauri · NSIS · x64 · ~2.0 MB</p>
             <p class="download-desc">
               <span class="zh">装到当前用户目录，开始菜单出现「Cobble Studio」；工程自动保存到应用数据目录。</span>
               <span class="en">Installs to your user profile and adds Cobble Studio to the Start menu. Projects autosave into the app data folder.</span>
@@ -227,7 +237,7 @@
           <article class="download-card">
             <p class="download-os">Windows</p>
             <h3><span class="zh">便携版</span><span class="en">Portable</span></h3>
-            <p class="download-meta">Tauri · 免安装 · x64 · ~3.7 MB</p>
+            <p class="download-meta">Tauri · 免安装 · x64 · ~3.9 MB</p>
             <p class="download-desc">
               <span class="zh">单文件绿色版，双击即用；请放在纯英文路径下（中文路径会导致 WebView2 无法创建窗口）。</span>
               <span class="en">Single-file, no install. Keep it on an ASCII-only path — WebView2 cannot create the window from a non-ASCII folder.</span>
@@ -240,7 +250,7 @@
           <article class="download-card">
             <p class="download-os">Android</p>
             <h3><span class="zh">APK</span><span class="en">APK</span></h3>
-            <p class="download-meta">Capacitor · debug 签名 · minSdk 23 · ~5.1 MB</p>
+            <p class="download-meta">Capacitor · debug 签名 · minSdk 23 · ~5.3 MB</p>
             <p class="download-desc">
               <span class="zh">适用于 Android 6.0 及以上；因为是调试签名，安装时需要允许「未知来源」，正式上架版本会换成发布签名。</span>
               <span class="en">Android 6.0+. It is debug-signed, so allow installs from unknown sources; a release-signed build will follow when it hits the store.</span>
@@ -423,12 +433,12 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <p class="eyebrow">Release log</p>
         <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
         <p class="section-sub">
-          <span class="zh">当前稳定版 <strong>v0.11.0</strong>，测试版 <strong>v0.12.0</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，稳定版更新到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
-          <span class="en">Stable release <strong>v0.11.0</strong>, experimental <strong>v0.12.0</strong>. Small releases: routine updates ship to the <a href="./demo-beta/">beta demo</a> first, stable ones update the <a href="./demo/">stable demo</a>. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
+          <span class="zh">当前稳定版 <strong>v0.12.0</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期只显示相对时间（三天内 → 七天内 → 七天之前）。</span>
+          <span class="en">Current stable release <strong>v0.12.0</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are relative only (within 3 days → within 7 days → more than 7 days ago).</span>
         </p>
         <ol class="release-list">
-          <li class="release">
-            <div class="release-head"><span class="release-ver">v0.12.0</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-beta"><span class="zh">实验版</span><span class="en">experimental</span></span></div>
+          <li class="release is-current">
+            <div class="release-head"><span class="release-ver">v0.12.0</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <h4><span class="zh">RPG 史莱姆战斗 + 全新示例截图</span><span class="en">RPG slime battles &amp; fresh demo shots</span></h4>
             <ul>
               <li><span class="zh">勇者小镇新增史莱姆战斗：贴近后按「动作」键攻击，史莱姆 HP 归零即被击败，HUD 实时显示史莱姆 HP。</span><span class="en">Knight Town gains slime battles: close in and press the action binding to attack; the slime drops once its HP hits zero, with HP shown live in the HUD.</span></li>
@@ -437,9 +447,10 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
               <li><span class="zh">触屏交互按工程单独配置：手柄模式（摇杆 + 自定义按钮，三档尺寸）或直接触摸模式（不显示手柄，点按互动 / 拖动角色），设置随工程保存。</span><span class="en">Touch controls are per project: choose pad (joystick + custom buttons, three sizes) or direct-touch (no on-screen pad; tap to interact, press and drag sprites). Settings persist with the project.</span></li>
               <li><span class="zh">新增「交互」积木分类：当角色被拖动时、指针 X / 指针 Y、角色被拖动？、设置可拖动 开/关；直接触摸模式下可拖动舞台上的角色。</span><span class="en">New Interaction category: when sprite dragged, pointer X / Y, sprite being dragged?, set draggable on/off; direct-touch mode lets you drag sprites on the stage.</span></li>
               <li><span class="zh">修复比较运算符：新增 ≤ / ≥ / ≠（此前横版格斗会开局误判胜负、平台跳跃无法按金币数通关）。</span><span class="en">Comparison operators now include ≤ / ≥ / ≠ (fixes the brawler auto-finishing and the platformer goal check).</span></li>
+              <li><span class="zh">官网与编辑器加入交流群入口：QQ 群 424124959 可点击直接拉起 QQ 群资料页申请加入，抖音群 888985597118 显示群号。</span><span class="en">Community links on the site and in the editor: tap the QQ group number to open the QQ group profile and request to join; the Douyin group number is shown as well.</span></li>
             </ul>
           </li>
-          <li class="release is-current">
+          <li class="release">
             <div class="release-head"><span class="release-ver">v0.11.0</span><span class="release-date"><span class="zh">三天内</span><span class="en">Within 3 days</span></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">示例游戏加固 + 手机触屏手柄重做</span><span class="en">Harder demo games + redesigned touch pad</span></p>
             <ul>
@@ -562,6 +573,10 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <a href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer"><span class="zh">GitHub 仓库</span><span class="en">GitHub repo</span></a>
         <a href="https://github.com/ONGIKAN/cobble/blob/main/docs/技术方案-v1.md" target="_blank" rel="noreferrer"><span class="zh">技术方案</span><span class="en">Design doc</span></a>
       </nav>
+      <p class="foot-community">
+        <span class="zh">交流群：<a href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode">QQ 群 <b>424124959</b>（点击加群）</a> · 抖音群 <b>888985597118</b></span>
+        <span class="en">Community: <a href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode">QQ group <b>424124959</b></a> · Douyin group <b>888985597118</b></span>
+      </p>
       <p class="foot-note">
         <span class="zh">Apache License 2.0 · 用积木拼出你的第一款游戏</span>
         <span class="en">Apache License 2.0 · Build your first game with blocks</span>

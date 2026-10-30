@@ -2098,3 +2098,23 @@ button {
 .topbar-actions {
   gap: 6px;
 }
+
+.hub-community {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.hub-community .status-link {
+  color: var(--text);
+}
+
+.hub-community .status-link:hover {
+  color: var(--accent);
+}
+
+.hub-community-sep {
+  opacity: 0.5;
+}
