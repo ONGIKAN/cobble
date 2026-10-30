@@ -8,7 +8,7 @@
 
 **[官网](https://ongikan.github.io/cobble/)** · **[在线演示（稳定版）](https://ongikan.github.io/cobble/demo/)** · **[测试版在线演示](https://ongikan.github.io/cobble/demo-beta/)** · **[GitHub 仓库](https://github.com/ONGIKAN/cobble)**
 
-![编辑器（深色）](docs/screenshots/01-editor-dark.png)
+![编辑器运行贪吃蛇（深色）](docs/screenshots/11-snake.png)
 
 | 桌面（深色） | 手机（390×844） |
 | --- | --- |
@@ -22,19 +22,19 @@
 | --- | --- |
 | ![手机积木页](docs/screenshots/m-phone-blocks.png) | ![运行中](docs/screenshots/03-playing.png) |
 
-| 平台跳跃 v2 | 吃豆豆 |
+| 贪吃蛇示例（含 EXE / 安卓导出按钮） | 手机底部积木抽屉 |
 | --- | --- |
-| ![平台跳跃](docs/screenshots/platformer.png) | ![吃豆豆](docs/screenshots/dot-maze.png) |
+| ![贪吃蛇](docs/screenshots/11-snake.png) | ![手机积木抽屉](docs/screenshots/m-phone-blocks-sheet.png) |
 
 ## 下载安装包
 
-稳定版 v0.12.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobble/#download>）：
+稳定版 v0.13.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobble/#download>）：
 
 | 平台 | 文件 | 说明 |
 | --- | --- | --- |
-| Windows | [`CobbleStudio-Windows-x64-Setup.exe`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Setup.exe) | Tauri NSIS 安装版，装到当前用户，约 1.9 MB |
-| Windows | [`CobbleStudio-Windows-x64-Portable.exe`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Portable.exe) | 免安装便携版，约 3.7 MB，需放纯英文路径 |
-| Android | [`CobbleStudio-Android.apk`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Android.apk) | Capacitor APK，debug 签名，Android 6.0+，约 5.1 MB |
+| Windows | [`CobbleStudio-Windows-x64-Setup.exe`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Setup.exe) | Tauri NSIS 安装版，装到当前用户，约 3.3 MB（含 EXE 导出播放器） |
+| Windows | [`CobbleStudio-Windows-x64-Portable.exe`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Portable.exe) | 免安装便携版，约 8.8 MB，需放纯英文路径（内置 EXE 导出播放器） |
+| Android | [`CobbleStudio-Android.apk`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Android.apk) | Capacitor APK，debug 签名，Android 6.0+，约 5.8 MB |
 
 > 安装包未做代码签名；Windows 首次运行可能出现 SmartScreen 提示（更多信息 → 仍要运行），安卓安装需允许未知来源。桌面版工程以 `.gproj` 落盘到 `%APPDATA%/studio.cobble.app/projects`。
 
@@ -47,9 +47,10 @@ npm install
 npm run dev          # 打开 http://127.0.0.1:5183
 ```
 
-打开后会自动载入示例工程「小猫吃金币」：
+打开后会自动载入示例工程「贪吃蛇」：
 
-- 点右上角 **运行** 或直接按方向键，小猫会左右上下移动，碰到金币分数 +1，金币随机换位置
+- 点右上角 **运行** 或直接按方向键 / 手机摇杆，小蛇会按方向移动；吃到苹果分数 +1 且身体变长，撞墙或咬到自己会结束并提示重新运行
+- 顶栏 **EXE** 可在桌面版导出一个可双击运行的独立 Windows 游戏（安卓导出仍在内测，点击会提示）
 - 舞台下方是触屏手柄：左侧摇杆控制方向，右侧按钮触发绑定的输入事件；全屏时手柄浮在下缘，手机上按住摇杆即可移动
 - 每个工程可以单独配置触屏交互（「输入」设置）：手柄模式（摇杆 + 自定义按钮，三档尺寸）或**直接触摸模式**（不显示手柄，点按角色互动、按住拖动角色）；也能自定义输入事件绑定的按键
 - **停止** 结束运行；**中文 / EN** 切换界面语言（会整页重载）；**浅色 / 深色** 切换主题
