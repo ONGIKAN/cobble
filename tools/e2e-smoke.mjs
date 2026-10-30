@@ -1,4 +1,5 @@
 import { chromium } from 'playwright-core';
+import { resolve } from 'node:path';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 
 const url = process.env.FORGE_URL ?? 'http://127.0.0.1:5183/';
@@ -212,6 +213,22 @@ try {
   await page.click('[data-testid="lang-zh"]');
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(800);
+
+  // 9. 导出单文件 HTML5：下载 → 本地打开 → 运行时启动
+  const [exportDownload] = await Promise.all([
+    page.waitForEvent('download', { timeout: 15000 }),
+    page.click('[data-testid="export-html5"]'),
+  ]);
+  const exportPath = resolve(shotDir, 'tmp-export.html');
+  await exportDownload.saveAs(exportPath);
+  const game = await browser.newPage({ viewport: { width: 1000, height: 620 } });
+  const gameErrors = [];
+  game.on('pageerror', (error) => gameErrors.push(String(error)));
+  await game.goto(`file:///${exportPath.replaceAll('\\', '/')}`);
+  await game.waitForFunction(() => Boolean(window.__cobbleRuntime), null, { timeout: 20000 });
+  const hud = await game.$$eval('.hud-var', (items) => items.length);
+  record('export html5', hud >= 1 && gameErrors.length === 0, `download=${exportDownload.suggestedFilename()} hud=${hud} errors=${gameErrors.length}`);
+  await game.close();
 
   record('no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 } catch (error) {

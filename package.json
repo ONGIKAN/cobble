@@ -1,6 +1,6 @@
 {
   "name": "cobble",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "Cobble Studio - 轻量 2D 积木游戏创作平台",
@@ -10,11 +10,12 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace @cobble/editor",
-    "build": "npm run build --workspace @cobble/editor",
+    "build": "npm run build:standalone && npm --workspace @cobble/editor run build",
     "preview": "npm run preview --workspace @cobble/editor",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "smoke": "node tools/e2e-smoke.mjs",
-    "smoke:mobile": "node tools/e2e-mobile.mjs"
+    "smoke:mobile": "node tools/e2e-mobile.mjs",
+    "build:standalone": "node tools/build-standalone.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.64.1",

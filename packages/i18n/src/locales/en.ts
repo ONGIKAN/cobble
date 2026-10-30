@@ -17,6 +17,11 @@ export const en: Messages = {
     save: 'Save project',
     open: 'Open project',
     badFile: 'That file is not a valid .gproj project',
+    exportHtml: 'Export HTML5',
+    exportFailed: 'Export failed: player template missing — run npm run build:standalone first',
+    shortSave: 'Save',
+    shortOpen: 'Open',
+    shortExport: 'Export',
   },
   panels: {
     stage: 'Stage',

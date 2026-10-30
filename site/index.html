@@ -56,6 +56,7 @@
             <li><span class="zh">中英双语</span><span class="en">Bilingual UI</span></li>
             <li><span class="zh">深浅主题</span><span class="en">Dark / light</span></li>
             <li><span class="zh">.gproj 工程文件</span><span class="en">.gproj projects</span></li>
+            <li><span class="zh">单文件 HTML5 导出</span><span class="en">Single-file export</span></li>
           </ul>
         </div>
         <figure class="hero-shot">
@@ -91,8 +92,8 @@
             <p class="card-no">02</p>
             <h3><span class="zh">实时预览</span><span class="en">Live preview</span></h3>
             <p>
-              <span class="zh">舞台内嵌 Phaser 4 运行时，点「运行」立刻试玩；预览与以后的单文件导出复用同一套运行时。</span>
-              <span class="en">A Phaser 4 runtime is embedded in the stage. Hit Run to play immediately — the same runtime powers future single-file exports.</span>
+              <span class="zh">舞台内嵌 Phaser 4 运行时，点「运行」立刻试玩；同一套运行时也被打进「导出 HTML5」的单文件里。</span>
+              <span class="en">A Phaser 4 runtime is embedded in the stage. Hit Run to play immediately — the same runtime is bundled into the single-file HTML5 export.</span>
             </p>
           </article>
           <article class="card">
@@ -144,6 +145,10 @@
             <img src="./assets/02-editor-light.png" alt="浅色主题" loading="lazy" />
             <figcaption><span class="zh">桌面 · 浅色主题</span><span class="en">Desktop · light theme</span></figcaption>
           </figure>
+          <figure class="shot">
+            <img src="./assets/export-playing.png" alt="导出的单文件 HTML5 在浏览器里运行" loading="lazy" />
+            <figcaption><span class="zh">导出的单文件 HTML5 · 双击即玩</span><span class="en">Exported single-file HTML5 · double-click to play</span></figcaption>
+          </figure>
         </div>
         <div class="phone-row">
           <figure class="shot is-phone">
@@ -169,8 +174,8 @@
           <p class="eyebrow">Roadmap</p>
           <h2><span class="zh">现在到哪了</span><span class="en">Where it stands</span></h2>
           <p class="section-sub">
-            <span class="zh">积木编辑 → 编译 → 运行 → 保存工程 → 素材与角色管理全部可用，现在开始做桌面/安卓安装包与导出。</span>
-            <span class="en">Edit → compile → run → save → asset and sprite editing all work. Desktop/Android packages and export are next.</span>
+            <span class="zh">积木编辑 → 编译 → 运行 → 保存工程 → 素材与角色管理 → 单文件导出全部可用；稳定版收尾后打桌面 / 安卓安装包。</span>
+            <span class="en">Edit → compile → run → save → asset editing → single-file export all work. Desktop / Android packaging follows the stable release.</span>
           </p>
         </div>
         <ol class="roadmap">
@@ -204,33 +209,43 @@
               </p>
             </div>
           </li>
-          <li>
-            <span class="state"><span class="zh">下一步</span><span class="en">Next</span></span>
-            <div>
-              <h3><span class="zh">桌面 EXE 与安卓 APK</span><span class="en">Desktop EXE &amp; Android APK</span></h3>
-              <p>
-                <span class="zh">把编辑器装进桌面壳与安卓应用，离线也能用，双击/点开就能创作。</span>
-                <span class="en">Ship the editor as a Windows app and an Android app that work offline.</span>
-              </p>
-            </div>
-          </li>
-          <li>
-            <span class="state"><span class="zh">计划中</span><span class="en">Planned</span></span>
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
             <div>
               <h3><span class="zh">单文件 HTML5 导出</span><span class="en">Single-file HTML5 export</span></h3>
               <p>
-                <span class="zh">把运行时和作品打包成一个双击可玩的 HTML 文件，并给预览 iframe 加上 sandbox 隔离。</span>
-                <span class="en">Bundle runtime + game into one playable HTML file, with sandbox isolation for previews.</span>
+                <span class="zh">一键把工程编译成运行时指令，连同播放器与素材内联成一个 HTML 文件：双击即玩、离线可用，文件里带变量 HUD 与官网链接。</span>
+                <span class="en">One click compiles the project into runtime instructions and inlines the player plus assets into a single HTML file — double-click to play offline, with HUD and a link back home.</span>
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="state"><span class="zh">下一步</span><span class="en">Next</span></span>
+            <div>
+              <h3><span class="zh">示例游戏与模板库</span><span class="en">Demo games &amp; templates</span></h3>
+              <p>
+                <span class="zh">平台跳跃、吃豆人、RPG、横版格斗四款完整示例，加上模板库与新建空白工程。</span>
+                <span class="en">Four complete demo games (platformer, Pac-Man, RPG, fighting) plus templates and blank-project creation.</span>
               </p>
             </div>
           </li>
           <li>
             <span class="state"><span class="zh">计划中</span><span class="en">Planned</span></span>
             <div>
-              <h3><span class="zh">桌面壳与模板库</span><span class="en">Desktop shell &amp; templates</span></h3>
+              <h3><span class="zh">桌面 EXE 与安卓 APK</span><span class="en">Desktop EXE &amp; Android APK</span></h3>
               <p>
-                <span class="zh">Tauri 2 桌面应用，直接打开本地工程；再补一批示例模板（打地鼠、接苹果等）。</span>
-                <span class="en">Tauri 2 desktop app that opens local projects, plus example templates (whack-a-mole, catch-the-fruit…).</span>
+                <span class="zh">稳定版之后把编辑器装进 Tauri 桌面壳与 Capacitor 安卓应用，离线也能用。</span>
+                <span class="en">After the stable release, ship the editor as a Tauri desktop app and a Capacitor Android app.</span>
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="state"><span class="zh">计划中</span><span class="en">Planned</span></span>
+            <div>
+              <h3><span class="zh">更多积木与社区</span><span class="en">More blocks &amp; community</span></h3>
+              <p>
+                <span class="zh">克隆、列表、自定义积木，精确像素碰撞；之后是账号、云端保存与作品社区。</span>
+                <span class="en">Clones, lists, custom blocks, pixel-perfect collision — then accounts, cloud saves and a community gallery.</span>
               </p>
             </div>
           </li>

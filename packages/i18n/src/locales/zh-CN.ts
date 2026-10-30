@@ -15,6 +15,11 @@ export const zhCN = {
     save: '保存工程',
     open: '打开工程',
     badFile: '这个文件不是有效的 .gproj 工程',
+    exportHtml: '导出 HTML5',
+    exportFailed: '导出失败：找不到播放器模板，请先运行 npm run build:standalone',
+    shortSave: '保存',
+    shortOpen: '打开',
+    shortExport: '导出',
   },
   panels: {
     stage: '舞台',

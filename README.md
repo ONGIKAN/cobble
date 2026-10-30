@@ -75,6 +75,7 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 | `packages/engine-phaser` | Phaser 4 适配器：纹理预加载、Scratch 坐标系换算、朝向/翻转、说话气泡、键鼠输入 |
 | `apps/editor` | 三栏编辑器：角色/变量栏、舞台（iframe 预览）、Blockly 工作区、属性检查器；深浅主题；自动保存；运行/停止 |
 | 工程文件 | 顶栏「保存工程 / 打开工程」：`.gproj`（JSON，含工程与各角色 Blockly 工作区，素材内联为 data URL），打开后整页重载；手机入口在舞台页头部 |
+| 单文件导出 | 顶栏「导出 HTML5」：把工程编译成运行时指令，连同 Phaser 播放器、素材一起内联成一个 `.html`，双击即玩、离线可用；打开后显示变量 HUD 与官网链接 |
 | 素材与角色 | 新建/删除角色、上传图片造型（PNG/JPEG/WebP/GIF/SVG ≤2MB，可改名/排序/删除）、上传音效（MP3/WAV/OGG/WebM ≤5MB，可试听/改名/删除）、变量增删改名改值、舞台背景色与尺寸预设（960×540 / 1280×720 / 640×360） |
 | 触屏适配 | 窗口 ≤1119px 自动切换紧凑布局：底部 4 标签（舞台/积木/角色/属性）、舞台页屏幕方向键、角色快捷条；粗指针设备（pointer: coarse）才显示方向键 |
 | 积木外观 | 自定义 `square` 渲染器（thrasos 派生）：圆角半径 0、字段边框为直角、事件积木顶部压平；低饱和 8 类配色 |
@@ -82,12 +83,10 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 
 ## 还没做（P0 后续 / P1）
 
-- 单文件 HTML5 导出（把 runtime + 工程一起打包成双击可玩的 html）
-- 桌面端安装包（EXE）与安卓端安装包（APK）
+- 桌面端安装包（EXE）与安卓端安装包（APK）——工具链已就绪（Tauri 2 本地 MSVC 构建通过），按计划在功能稳定后打包
 - 示例音效与模板库（声音块已可用，模板库待做）
 - 精确像素级碰撞（目前是 AABB 矩形近似）
-- 预览 iframe 的 sandbox 隔离（需先改成 IIFE 构建，P1）
-- Tauri 2 桌面壳（P2）
+- 预览 iframe 的 sandbox 隔离（导出文件本身已是单文件，不依赖 iframe）
 
 ## 工程结构
 
@@ -115,6 +114,9 @@ cobble/
 │  ├─ e2e-mobile.mjs           # 手机 / 平板触屏冒烟测试
 │  ├─ e2e-pages.mjs            # 官网 + 演示 + 互链验证
 │  ├─ publish-pages.mjs        # 组装 pages-dist 并推送 gh-pages
+│  ├─ build-standalone.mjs     # 生成单文件导出模板（import 前先跑）
+│  ├─ make-logo.py             # 生成 LOGO（svg/png/ico/安卓图标）
+│  ├─ build-tauri.bat          # 在 MSVC 环境下构建 Tauri 壳
 │  └─ serve.mjs                # 静态服务器（本地预览 Pages 产物）
 ├─ docs/技术方案-v1.md         # 技术方案 v1（架构、积木清单、路线图、成本）
 └─ tsconfig.json               # 全仓库路径别名 @cobble/*
@@ -124,7 +126,7 @@ cobble/
 
 - **UI 与内容分层**：界面文案全部走 i18n key（禁止硬编码）；作品内的角色名/变量名属于"内容"，切语言不翻译、工程文件也不含界面文案。
 - **无圆角、方正积木**：全局 `border-radius: 0`；Blockly 使用自定义 `square` 渲染器（`CORNER_RADIUS = 0`、`FIELD_BORDER_RECT_RADIUS = 0`、`START_HAT_HEIGHT/WIDTH = 0`），积木为直角矩形。
-- **预览与未来导出一致**：舞台 iframe 里跑的就是 `packages/runtime` + `packages/engine-phaser`，之后单文件 HTML5 导出复用同一套运行时。
+- **预览与导出一致**：舞台 iframe 里跑的就是 `packages/runtime` + `packages/engine-phaser`；单文件 HTML5 导出的播放器由 `src/standalone/main.ts` 单独打一个 IIFE 包（`npm run build:standalone`），再内联进模板，保证"编辑时怎么玩，导出后就怎么玩"。
 - **固定逻辑帧**：模拟按 60Hz 固定步长推进，与显示器刷新率无关。
 - **相对路径发布**：编辑器与演示构建使用 `base: './'`，可直接放在 Pages 的 `/demo/` 子路径下运行。
 
@@ -139,10 +141,9 @@ cobble/
 
 ## 下一步（建议）
 
-1. 打包分发：`apps/desktop` Electron 便携 EXE + Capacitor 安卓 APK
-2. 单文件 HTML5 导出 + iframe sandbox 隔离
-3. Tauri 2 桌面壳，直接打开本地 `.gproj`
-4. 用 Blockly 生成示例模板（打地鼠、接苹果等）并落到模板库
-5. 工程文件增强：新建空白工程、自动保存到本地文件（FS Access API）
+1. 稳定版收尾（v1.0.0）：示例游戏（平台跳跃 / 吃豆人 / RPG / 横版格斗）、模板库、新建空白工程、编辑器体验补全
+2. 打包分发：Tauri 2 桌面安装包 + Capacitor 安卓 APK（工具链已验证）
+3. 精确像素级碰撞与更多积木（克隆、列表、自定义积木）
+4. 账号与云端保存、作品社区（远期）
 
 技术方案与完整路线图见 [docs/技术方案-v1.md](docs/技术方案-v1.md)。

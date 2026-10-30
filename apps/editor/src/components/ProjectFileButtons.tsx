@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { downloadStandaloneHtml } from '../export-html';
 import { downloadProject, readProjectFile } from '../project-file';
 import { useEditorStore } from '../store';
 
@@ -12,10 +13,20 @@ export function ProjectFileButtons({ variant = 'bar' }: Props) {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const inline = variant === 'inline';
+  const label = (long: string, short: string): string => (inline ? short : long);
 
   const save = (): void => {
     const state = useEditorStore.getState();
     downloadProject(state.project, state.workspaces);
+  };
+
+  const exportHtml = async (): Promise<void> => {
+    const state = useEditorStore.getState();
+    try {
+      await downloadStandaloneHtml(state.project, state.workspaces);
+    } catch {
+      window.alert(t('toolbar.exportFailed'));
+    }
   };
 
   const open = async (file: File): Promise<void> => {
@@ -35,7 +46,7 @@ export function ProjectFileButtons({ variant = 'bar' }: Props) {
         data-testid={inline ? 'm-save-project' : 'save-project'}
         onClick={save}
       >
-        {t('toolbar.save')}
+        {label(t('toolbar.save'), t('toolbar.shortSave'))}
       </button>
       <button
         type="button"
@@ -43,7 +54,17 @@ export function ProjectFileButtons({ variant = 'bar' }: Props) {
         data-testid={inline ? 'm-open-project' : 'open-project'}
         onClick={() => inputRef.current?.click()}
       >
-        {t('toolbar.open')}
+        {label(t('toolbar.open'), t('toolbar.shortOpen'))}
+      </button>
+      <button
+        type="button"
+        className="btn btn-ghost"
+        data-testid={inline ? 'm-export-html5' : 'export-html5'}
+        onClick={() => {
+          void exportHtml();
+        }}
+      >
+        {label(t('toolbar.exportHtml'), t('toolbar.shortExport'))}
       </button>
       <input
         ref={inputRef}

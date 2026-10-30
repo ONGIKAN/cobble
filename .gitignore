@@ -10,3 +10,4 @@ pages-dist/
 tools/shots/
 *.log
 apps/desktop-tauri/src-tauri/gen/
+apps/editor/dist-standalone/
