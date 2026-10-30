@@ -109,8 +109,8 @@ await phone.screenshot({ path: `${SHOTS}/pages-demo-phone.png` });
 await mobile.close();
 
 // ---------- 资源与报错 ----------
-const cssResponse = await fetch(`${BASE}/site.css`);
-check('site.css served', cssResponse.status === 200, String(cssResponse.status));
+const cssResponse = await fetch(`${BASE}/style.css`);
+check('style.css served', cssResponse.status === 200, String(cssResponse.status));
 
 check('no console errors / failed requests', errors.length === 0, errors.slice(0, 5).join(' | '));
 

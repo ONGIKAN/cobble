@@ -40,8 +40,12 @@ const server = createServer((request, response) => {
     response.writeHead(403).end('Forbidden');
     return;
   }
-  const file = existsSync(target) && statSync(target).isFile() ? target : join(root, 'index.html');
-  if (!existsSync(file)) {
+  const file = existsSync(target) && statSync(target).isFile()
+    ? target
+    : extname(target)
+      ? null
+      : join(root, 'index.html');
+  if (!file || !existsSync(file)) {
     response.writeHead(404).end('Not found');
     return;
   }
