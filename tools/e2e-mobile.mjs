@@ -115,6 +115,18 @@ async function runPhone() {
   const sheetFull = await page.locator('[data-testid="blocks-drawer"]').boundingBox();
   check('blocks drawer expands', Boolean(sheetHalf && sheetFull) && sheetFull.height > sheetHalf.height * 1.2, `${Math.round(sheetHalf?.height ?? 0)} -> ${Math.round(sheetFull?.height ?? 0)}`);
   await page.screenshot({ path: 'tools/shots/m-phone-blocks-sheet.png' });
+  const sheetOptions = await page.locator('[data-testid="sheet-sprite-select"] option').count();
+  check('sheet sprite select lists sprites', sheetOptions >= 3, `${sheetOptions} options`);
+  if (!(await page.locator('[data-testid="sheet-stop"]').isDisabled())) {
+    await page.locator('[data-testid="sheet-stop"]').tap();
+    await page.waitForTimeout(500);
+  }
+  await page.locator('[data-testid="sheet-run"]').tap();
+  await page.waitForTimeout(900);
+  check('sheet run starts game', Boolean(await runtimeState(page)));
+  await page.locator('[data-testid="sheet-stop"]').tap();
+  await page.waitForTimeout(600);
+  check('sheet stop returns to canvas', !(await runtimeState(page)));
   await page.locator('[data-testid="blocks-drawer-close"]').tap();
   await page.waitForTimeout(400);
   check('blocks drawer closes', (await page.locator('[data-testid="blocks-drawer"]').count()) === 0);
@@ -160,6 +172,12 @@ async function runPhone() {
 
   await page.locator('[data-testid="tab-sprites"]').tap();
   await page.waitForTimeout(400);
+  const addGroupBtn = page.locator('[data-testid="add-group"]').first();
+  await addGroupBtn.tap();
+  await page.waitForTimeout(400);
+  const phoneGroups = await page.locator('[data-testid^="sprite-group-"]').count();
+  check('phone sprite group created', phoneGroups >= 1, `${phoneGroups} group(s)`);
+  await page.screenshot({ path: 'tools/shots/m-phone-groups.png' });
   const spritesBeforeAsset = await page.locator('.sprite-card').count();
   await page.locator('[data-testid="tab-stage"]').tap();
   await page.waitForTimeout(300);

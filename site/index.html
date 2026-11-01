@@ -28,7 +28,7 @@
       <a class="brand" href="./">
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <span class="brand-name">Cobble Studio</span>
-        <span class="brand-ver" title="当前版本">v0.14.0</span>
+        <span class="brand-ver" title="当前稳定版">v0.15.0</span>
       </a>
       <nav class="site-nav">
         <a href="#features"><span class="zh">功能</span><span class="en">Features</span></a>
@@ -425,11 +425,21 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
       <section class="section" id="changelog">
         <p class="eyebrow">Release log</p>
         <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
-        <p class="section-sub">
-          <span class="zh">当前稳定版 <strong>v0.14.0</strong>，测试版 <strong>v0.15.0</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期根据真实发布日期自动换算为「今天 / 昨天 / 七天内 / 七天之前」，相同日期只显示一次，站点无需每天更新。</span>
-          <span class="en">Current stable release <strong>v0.14.0</strong>, beta <strong>v0.15.0</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are real publish dates, bucketed in the browser as “today / yesterday / within 7 days / more than 7 days ago”; repeated dates show once — no daily site update needed.</span>
-        </p>
         <ol class="release-list">
+          <li class="release is-current">
+            <div class="release-head">
+              <span class="release-ver">v0.16.0</span>
+              <span class="release-date"><time data-date="2026-11-01"></time></span>
+              <span class="release-tag is-beta"><span class="zh">实验版</span><span class="en">experimental</span></span>
+            </div>
+            <h4 class="release-title">手机 / 平板体验 + 角色分组</h4>
+            <ul class="release-points">
+              <li><span class="zh">顶栏精简：语言切换收进设置；舞台面板头合并为一行，新增撤销 / 重做</span><span class="en">Compact topbar (language in Settings), single-row stage header with undo / redo</span></li>
+              <li><span class="zh">积木抽屉头部可直接切换角色、运行 / 停止；底部标签适配安全区</span><span class="en">Blocks drawer header switches sprites and runs/stops; bottom tabs respect safe areas</span></li>
+              <li><span class="zh">角色分组：新建 / 重命名 / 删除，拖动角色进分组，拖动分组头排序，属性面板选分组</span><span class="en">Sprite groups: create / rename / delete, drag sprites in, drag headers to reorder, pick one in the inspector</span></li>
+              <li><span class="zh">舞台尺寸支持自定义宽高（摄像机框同步）；画布双指缩放；隐藏 <code>_</code> 开头内部变量</span><span class="en">Custom stage width/height (camera follows), pinch-zoom canvas, hide internal <code>_</code> variables</span></li>
+            </ul>
+          </li>
           <li class="release">
             <div class="release-head">
               <span class="release-ver">v0.15.0</span>

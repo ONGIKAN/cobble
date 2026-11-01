@@ -133,7 +133,7 @@ export function Topbar() {
           {t('toolbar.settings')}
         </button>
 
-        <div className="segmented" role="group" aria-label={t('toolbar.language')}>
+        <div className="segmented topbar-lang" role="group" aria-label={t('toolbar.language')}>
           <button
             type="button"
             className={`seg-btn${locale === 'zh-CN' ? ' is-on' : ''}`}
@@ -158,7 +158,7 @@ export function Topbar() {
 
         <button
           type="button"
-          className="btn btn-ghost"
+          className="btn btn-ghost topbar-theme"
           data-testid="theme-toggle"
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         >

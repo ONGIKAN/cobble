@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { compileProject } from '@cobble/blocks';
+import { sendRun, sendStop } from '../bridge';
 import { useEditorStore } from '../store';
 import { BlocksView } from './BlocksView';
 
@@ -16,7 +18,9 @@ export function MobileBlocksDrawer({ open, onClose }: Props) {
   const { t } = useTranslation();
   const project = useEditorStore((state) => state.project);
   const selectedSpriteId = useEditorStore((state) => state.selectedSpriteId);
-  const sprite = project.sprites.find((item) => item.id === selectedSpriteId);
+  const selectSprite = useEditorStore((state) => state.selectSprite);
+  const running = useEditorStore((state) => state.running);
+  const setRunning = useEditorStore((state) => state.setRunning);
   const [expanded, setExpanded] = useState(false);
   const dragRef = useRef<number | null>(null);
 
@@ -36,6 +40,17 @@ export function MobileBlocksDrawer({ open, onClose }: Props) {
   if (!open) return null;
 
   const toggle = (): void => setExpanded((value) => !value);
+
+  const run = (): void => {
+    const state = useEditorStore.getState();
+    sendRun(compileProject(state.project, state.workspaces));
+    setRunning(true);
+  };
+
+  const stop = (): void => {
+    sendStop();
+    setRunning(false);
+  };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>): void => {
     dragRef.current = event.clientY;
@@ -88,11 +103,37 @@ export function MobileBlocksDrawer({ open, onClose }: Props) {
         <header className="sheet-head">
           <div className="sheet-title">
             <strong>{t('panels.blocks')}</strong>
-            {sprite ? <span className="sheet-sprite">{sprite.name}</span> : null}
+            <select
+              className="field-input sheet-sprite-select"
+              data-testid="sheet-sprite-select"
+              aria-label={t('panels.sprites')}
+              value={selectedSpriteId}
+              onChange={(event) => selectSprite(event.target.value)}
+            >
+              {project.sprites.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
           </div>
-          <button type="button" className="btn ghost sheet-close" data-testid="blocks-drawer-close" onClick={onClose}>
-            {t('sheet.close')}
-          </button>
+          <div className="sheet-actions">
+            <button
+              type="button"
+              className={`btn${running ? '' : ' btn-primary'}`}
+              data-testid="sheet-run"
+              disabled={running}
+              onClick={run}
+            >
+              {t('sheet.run')}
+            </button>
+            <button type="button" className="btn" data-testid="sheet-stop" disabled={!running} onClick={stop}>
+              {t('sheet.stop')}
+            </button>
+            <button type="button" className="btn ghost sheet-close" data-testid="blocks-drawer-close" onClick={onClose}>
+              {t('sheet.close')}
+            </button>
+          </div>
         </header>
         <div className="sheet-body">
           <BlocksView />

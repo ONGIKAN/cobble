@@ -11,6 +11,7 @@ const assetSchema = z.object({
 
 const costumeSchema = z.object({ name: z.string(), assetId: z.string() });
 const soundSchema = z.object({ id: z.string(), name: z.string(), assetId: z.string() });
+const spriteGroupSchema = z.object({ id: z.string().min(1), name: z.string().min(1) });
 
 export const spriteSchema = z.object({
   id: z.string().min(1),
@@ -22,6 +23,7 @@ export const spriteSchema = z.object({
   visible: z.boolean(),
   zIndex: z.number(),
   rotationStyle: z.enum(['all-around', 'left-right', 'none']),
+  groupId: z.string().min(1).optional(),
   costumes: z.array(costumeSchema),
   sounds: z.array(soundSchema),
 });
@@ -56,6 +58,7 @@ export const projectSchema = z.object({
   assets: z.array(assetSchema),
   variables: z.array(z.object({ id: z.string(), name: z.string(), value: z.union([z.number(), z.string()]) })),
   sprites: z.array(spriteSchema),
+  groups: z.array(spriteGroupSchema).optional(),
   input: inputSchema.optional(),
   scripts: z.record(z.string(), z.unknown()),
 });

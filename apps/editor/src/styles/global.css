@@ -2933,3 +2933,131 @@ button {
 .app-compact .topbar-history {
   display: none;
 }
+
+
+/* ===== v0.16.0 手机/平板：角色分组、抽屉操作、属性分组、画布手势 ===== */
+.sprite-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 6px 6px;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--panel-2);
+}
+
+.sprite-group-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  color: var(--text-dim);
+}
+
+.sprite-group-toggle {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.sprite-group-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
+.sprite-group-count {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.sprite-group-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.layout-compact .sprite-group {
+  grid-column: 1 / -1;
+}
+
+.layout-compact .sprite-group-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 8px;
+}
+
+.inspector-group {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+}
+
+.inspector-group .field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sheet-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sheet-sprite-select {
+  max-width: 150px;
+  min-height: 32px;
+  font-size: 12px;
+}
+
+.mobile-history {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+@media (max-width: 1119px) {
+  .layout-compact .topbar-lang {
+    display: none;
+  }
+}
+
+
+/* 角色分组拖拽：拖动分组排序 / 拖角色到分组 */
+.sprite-group-head {
+  cursor: grab;
+}
+
+.sprite-group.is-dragging {
+  opacity: 0.45;
+}
+
+.sprite-group.is-drop-before {
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+
+.sprite-group.is-drop-after {
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.sprite-group.is-drop-inside {
+  outline: 1px dashed var(--accent);
+  outline-offset: -1px;
+}
+
+.sprite-list.is-drop-ungroup {
+  outline: 1px dashed var(--border-strong);
+}

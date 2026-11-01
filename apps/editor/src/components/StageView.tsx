@@ -14,6 +14,7 @@ import { StageSettings } from './StageSettings';
 import { openAssetLibrary } from './AssetLibrary';
 import { WorldCanvas } from './WorldCanvas';
 import { useEditorStore } from '../store';
+import { redo, undo, useHistoryStatus } from '../history';
 import { useCoarsePointer } from '../useCompact';
 
 const PLAYER_SRC = `${import.meta.env.BASE_URL}player.html`;
@@ -28,6 +29,7 @@ export function StageView({ compact = false }: Props) {
   const { t } = useTranslation();
   const project = useEditorStore((state) => state.project);
   const running = useEditorStore((state) => state.running);
+  const { canUndo, canRedo } = useHistoryStatus();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const stageBodyRef = useRef<HTMLDivElement | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
@@ -204,6 +206,30 @@ export function StageView({ compact = false }: Props) {
         <span className="panel-meta mono">
           {t('stage.size', { w: project.stage.width, h: project.stage.height })}
         </span>
+        {compact && (
+          <div className="mobile-history">
+            <button
+              type="button"
+              className="mini-btn"
+              data-testid="m-undo"
+              disabled={!canUndo}
+              aria-label={t('toolbar.undo')}
+              onClick={() => undo()}
+            >
+              ↶
+            </button>
+            <button
+              type="button"
+              className="mini-btn"
+              data-testid="m-redo"
+              disabled={!canRedo}
+              aria-label={t('toolbar.redo')}
+              onClick={() => redo()}
+            >
+              ↷
+            </button>
+          </div>
+        )}
         <button
           type="button"
           className="mini-btn stage-fullscreen-btn"

@@ -36,8 +36,16 @@ export interface SpriteDef {
   visible: boolean;
   zIndex: number;
   rotationStyle: RotationStyle;
+  /** 所属角色分组 id（省略 = 未分组；仅编辑器组织用） */
+  groupId?: string;
   costumes: CostumeDef[];
   sounds: SoundDef[];
+}
+
+/** 角色分组：仅编辑器用于组织角色，不影响运行 */
+export interface SpriteGroupDef {
+  id: string;
+  name: string;
 }
 
 export interface StageDef {
@@ -112,6 +120,8 @@ export interface ProjectDoc {
   assets: AssetDef[];
   variables: VariableDef[];
   sprites: SpriteDef[];
+  /** 角色分组（可省略） */
+  groups?: SpriteGroupDef[];
   /** 输入事件与触屏控件（可省略，省略时用 DEFAULT_INPUT） */
   input?: InputConfig;
   /** spriteId -> Blockly 序列化状态（Blockly.serialization.workspaces.save） */

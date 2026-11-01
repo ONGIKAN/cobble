@@ -225,6 +225,20 @@ try {
   const stageBg = await page.locator('[data-testid="stage-background"]').inputValue();
   const stageSize = await page.locator('[data-testid="stage-size"]').inputValue();
   record('stage settings', stageBg === '#112233' && stageSize === '1280x720', `bg=${stageBg} size=${stageSize}`);
+
+  // 自定义舞台尺寸 (v0.16.0)
+  await page.selectOption('[data-testid="stage-size"]', 'custom');
+  await page.waitForTimeout(200);
+  await page.fill('[data-testid="stage-width"]', '800');
+  await page.press('[data-testid="stage-width"]', 'Enter');
+  await page.fill('[data-testid="stage-height"]', '450');
+  await page.press('[data-testid="stage-height"]', 'Enter');
+  await page.waitForTimeout(400);
+  const camBox = await page.locator('[data-testid="camera-frame"]').boundingBox();
+  const camRatio = camBox && camBox.height > 0 ? camBox.width / camBox.height : 0;
+  record('custom stage size', Math.abs(camRatio - 800 / 450) < 0.05, `ratio=${camRatio.toFixed(3)}`);
+  await page.selectOption('[data-testid="stage-size"]', '1280x720');
+  await page.waitForTimeout(250);
   await page.click('[data-testid="stage-settings-toggle"]');
 
   // 输入事件 (v0.5.0)
@@ -281,6 +295,42 @@ try {
   await page.waitForTimeout(300);
   const numValue = await numField.inputValue();
   record('number input clearing', numValue === '100', `value=${numValue}`);
+
+  // 角色分组 (v0.16.0)
+  const groupsBefore = await page.locator('[data-testid^="sprite-group-"]').count();
+  await page.click('[data-testid="add-group"]');
+  await page.waitForTimeout(350);
+  const groupEl = page.locator('[data-testid^="sprite-group-"]').first();
+  const groupTestId = (await groupEl.getAttribute('data-testid')) ?? '';
+  const groupId = groupTestId.replace('sprite-group-', '');
+  await page.selectOption('[data-testid="sprite-group"]', groupId);
+  await page.waitForTimeout(350);
+  const groupedCards = await page.locator(`[data-testid="sprite-group-${groupId}"] .sprite-card`).count();
+  await page.click(`[data-testid="group-toggle-${groupId}"]`);
+  await page.waitForTimeout(300);
+  const collapsedCards = await page.locator(`[data-testid="sprite-group-${groupId}"] .sprite-card`).count();
+  await page.click(`[data-testid="group-toggle-${groupId}"]`);
+  await page.waitForTimeout(300);
+  const groupsAfter = await page.locator('[data-testid^="sprite-group-"]').count();
+  record('sprite groups', groupsAfter === groupsBefore + 1 && groupedCards === 1 && collapsedCards === 0, `groups=${groupsAfter} grouped=${groupedCards} collapsed=${collapsedCards}`);
+
+  // 拖动角色到分组 / 拖动分组排序 (v0.16.0)
+  await page.click('[data-testid="add-group"]');
+  await page.waitForTimeout(300);
+  const groupEls = page.locator('[data-testid^="sprite-group-"]');
+  const firstGroupId = ((await groupEls.nth(0).getAttribute('data-testid')) ?? '').replace('sprite-group-', '');
+  const secondGroupId = ((await groupEls.nth(1).getAttribute('data-testid')) ?? '').replace('sprite-group-', '');
+  const ungroupedCard = page.locator('[data-testid="sprite-list"] > .sprite-card').first();
+  await ungroupedCard.dragTo(page.locator(`[data-testid="sprite-group-${secondGroupId}"]`));
+  await page.waitForTimeout(350);
+  const draggedInto = await page.locator(`[data-testid="sprite-group-${secondGroupId}"] .sprite-card`).count();
+  const orderBefore = await page.locator('.sprite-group-name').allInnerTexts();
+  await page.locator(`[data-testid="sprite-group-${firstGroupId}"] .sprite-group-head`).dragTo(page.locator(`[data-testid="sprite-group-${secondGroupId}"]`));
+  await page.waitForTimeout(350);
+  const orderAfter = await page.locator('.sprite-group-name').allInnerTexts();
+  record('drag sprite into group', draggedInto === 1, `count=${draggedInto}`);
+  record('drag reorder groups', orderAfter[0] === orderBefore[1] && orderAfter[1] === orderBefore[0], `${orderBefore.join(',')} -> ${orderAfter.join(',')}`);
+  await page.screenshot({ path: `${shotDir}/07-sprite-groups.png` });
 
   page.once('dialog', (dialog) => dialog.accept());
   await page.click('[data-testid="delete-sprite"]');

@@ -61,6 +61,13 @@ export function WorldCanvas() {
   const initializedRef = useRef(false);
   const dragRef = useRef<{ id: string; offsetX: number; offsetY: number } | null>(null);
   const panRef = useRef<{ startX: number; startY: number; ox: number; oy: number } | null>(null);
+  const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchRef = useRef<{
+    distance: number;
+    zoom: number;
+    worldX: number;
+    worldY: number;
+  } | null>(null);
   const [sizes, setSizes] = useState<Record<string, { width: number; height: number }>>({});
   const [panning, setPanning] = useState(false);
 
@@ -145,6 +152,30 @@ export function WorldCanvas() {
   };
 
   const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>): void => {
+    if (pointersRef.current.has(event.pointerId)) {
+      pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    }
+    if (pointersRef.current.size >= 2) {
+      const points = Array.from(pointersRef.current.values());
+      const [a, b] = points;
+      const distance = Math.hypot(a.x - b.x, a.y - b.y);
+      const host = hostRef.current;
+      if (!host) return;
+      const rect = host.getBoundingClientRect();
+      const midX = (a.x + b.x) / 2 - rect.left;
+      const midY = (a.y + b.y) / 2 - rect.top;
+      if (!pinchRef.current) {
+        const world = screenToWorld((a.x + b.x) / 2, (a.y + b.y) / 2);
+        pinchRef.current = { distance, zoom: view.zoom, worldX: world.x, worldY: world.y };
+        dragRef.current = null;
+        panRef.current = null;
+        return;
+      }
+      const pinch = pinchRef.current;
+      const zoom = clamp(pinch.zoom * (distance / Math.max(1, pinch.distance)), ZOOM_MIN, ZOOM_MAX);
+      setView({ zoom, ox: midX - pinch.worldX * zoom, oy: midY + pinch.worldY * zoom });
+      return;
+    }
     if (panRef.current) {
       const deltaX = event.clientX - panRef.current.startX;
       const deltaY = event.clientY - panRef.current.startY;
@@ -160,7 +191,9 @@ export function WorldCanvas() {
     }
   };
 
-  const onPointerUp = (): void => {
+  const onPointerUp = (event?: ReactPointerEvent<HTMLDivElement>): void => {
+    if (event) pointersRef.current.delete(event.pointerId);
+    if (pointersRef.current.size < 2) pinchRef.current = null;
     panRef.current = null;
     dragRef.current = null;
     setPanning(false);
@@ -248,6 +281,9 @@ export function WorldCanvas() {
         ref={hostRef}
         className={`world-canvas${panning ? ' is-panning' : ''}`}
         data-testid="world-canvas"
+        onPointerDownCapture={(event) => {
+          pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        }}
         onPointerDown={(event) => {
           setMenu(null);
           if (event.target === event.currentTarget) startPan(event);

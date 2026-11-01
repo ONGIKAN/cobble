@@ -19,6 +19,8 @@ export function Inspector() {
   const renameSound = useEditorStore((state) => state.renameSound);
   const removeSound = useEditorStore((state) => state.removeSound);
   const removeSprite = useEditorStore((state) => state.removeSprite);
+  const duplicateSprite = useEditorStore((state) => state.duplicateSprite);
+  const setSpriteGroup = useEditorStore((state) => state.setSpriteGroup);
   const [previewing, setPreviewing] = useState<string | null>(null);
 
   const sprite = project.sprites.find((item) => item.id === selectedSpriteId);
@@ -252,7 +254,35 @@ export function Inspector() {
         </ul>
       )}
 
+      <div className="inspector-group">
+        <label className="field-label" htmlFor="sprite-group">
+          {t('sprites.group')}
+          <select
+            id="sprite-group"
+            className="field-input"
+            data-testid="sprite-group"
+            value={sprite.groupId ?? ''}
+            onChange={(event) => setSpriteGroup(sprite.id, event.target.value || null)}
+          >
+            <option value="">{t('sprites.groupNone')}</option>
+            {(project.groups ?? []).map((group) => (
+              <option key={group.id} value={group.id}>
+                {group.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       <div className="inspector-actions">
+        <button
+          type="button"
+          className="btn"
+          data-testid="duplicate-sprite"
+          onClick={() => duplicateSprite(sprite.id)}
+        >
+          {t('sprites.duplicate')}
+        </button>
         <button
           type="button"
           className="btn btn-danger"

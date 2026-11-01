@@ -1,6 +1,6 @@
 {
   "name": "cobble",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "private": true,
   "type": "module",
   "description": "Cobble Studio - 轻量 2D 积木游戏创作平台",

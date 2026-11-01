@@ -5,6 +5,7 @@ import {
   type InputConfig,
   type ProjectDoc,
   type SpriteDef,
+  type SpriteGroupDef,
   type StageDef,
 } from '@cobble/project';
 import { spritePlaceholderSvg } from './sprite-assets';
@@ -60,6 +61,13 @@ interface EditorState {
   removeSprite: (spriteId: string) => void;
   /** 复制角色（含造型与位置，新名字带「副本」） */
   duplicateSprite: (spriteId: string) => string | null;
+  /** 角色分组 */
+  addGroup: () => string;
+  renameGroup: (groupId: string, name: string) => void;
+  removeGroup: (groupId: string) => void;
+  setSpriteGroup: (spriteId: string, groupId: string | null) => void;
+  /** 拖动分组排序：把 groupId 移到 targetId 前/后 */
+  moveGroup: (groupId: string, targetId: string, position: 'before' | 'after') => void;
   /** 撤销/重做：直接恢复工程与积木快照 */
   restoreSnapshot: (project: ProjectDoc, workspaces: Record<string, unknown>) => void;
   addCostume: (spriteId: string, asset: NewAsset) => void;
@@ -188,6 +196,59 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
     });
     return spriteIdNew;
   },
+  addGroup: () => {
+    const current = get();
+    const groups = current.project.groups ?? [];
+    const groupId = uniqueId('group', groups.map((group) => group.id));
+    const group: SpriteGroupDef = { id: groupId, name: `分组 ${groups.length + 1}` };
+    set({ project: touched({ ...current.project, groups: [...groups, group] }) });
+    return groupId;
+  },
+  renameGroup: (groupId, name) =>
+    set((current) => ({
+      project: touched({
+        ...current.project,
+        groups: (current.project.groups ?? []).map((group) =>
+          group.id === groupId ? { ...group, name } : group,
+        ),
+      }),
+    })),
+  removeGroup: (groupId) =>
+    set((current) => ({
+      project: touched({
+        ...current.project,
+        groups: (current.project.groups ?? []).filter((group) => group.id !== groupId),
+        sprites: current.project.sprites.map((sprite) => {
+          if (sprite.groupId !== groupId) return sprite;
+          const next = { ...sprite };
+          delete next.groupId;
+          return next;
+        }),
+      }),
+    })),
+  moveGroup: (groupId, targetId, position) =>
+    set((current) => {
+      const groups = [...(current.project.groups ?? [])];
+      const from = groups.findIndex((group) => group.id === groupId);
+      if (from < 0 || groupId === targetId) return {};
+      const [moved] = groups.splice(from, 1);
+      let index = groups.findIndex((group) => group.id === targetId);
+      if (index < 0) return {};
+      if (position === 'after') index += 1;
+      groups.splice(index, 0, moved);
+      return { project: touched({ ...current.project, groups }) };
+    }),
+  setSpriteGroup: (spriteId, groupId) =>
+    set((current) => ({
+      project: touched(
+        mapSprite(current.project, spriteId, (sprite) => {
+          const next = { ...sprite };
+          if (groupId) next.groupId = groupId;
+          else delete next.groupId;
+          return next;
+        }),
+      ),
+    })),
   restoreSnapshot: (project, workspaces) => {
     const current = get();
     const selected = project.sprites.some((sprite) => sprite.id === current.selectedSpriteId)
