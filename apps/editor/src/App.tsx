@@ -21,8 +21,11 @@ import { PaneSplitter } from './components/PaneSplitter';
 import { onNewProjectDialog } from './new-project';
 import { onInputSettings } from './input-settings';
 import { useCompact, type MobileTab } from './useCompact';
+import { redo, resetHistory, startHistory, undo } from './history';
 
 let bootstrapped = false;
+// Ctrl/Cmd+C 复制的角色 id（粘贴时再复制一份）
+let clipboardSpriteId: string | null = null;
 
 const PANES_KEY = 'cobble.panes';
 interface PaneSizes { rail: number; inspector: number; stage: number }
@@ -131,7 +134,11 @@ export function App({ projectId }: { projectId: string }) {
     return () => window.removeEventListener('cobble:native-back', onNativeBack);
   }, [assetsOpen, blocksOpen]);
 
-  // 常用快捷键：Ctrl/Cmd+S 保存工程、Ctrl/Cmd+O 打开工程、Ctrl/Cmd+E 导出 HTML5
+  // 常用快捷键：撤销/重做、复制/粘贴/克隆、保存、打开、导出
+  useEffect(() => {
+    startHistory();
+  }, []);
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
       if (!(event.ctrlKey || event.metaKey) || event.altKey) return;
@@ -140,6 +147,34 @@ export function App({ projectId }: { projectId: string }) {
       const typing =
         Boolean(target) &&
         (target!.tagName === 'INPUT' || target!.tagName === 'TEXTAREA' || target!.isContentEditable);
+      const state = useEditorStore.getState();
+      if (key === 'z' && !typing) {
+        event.preventDefault();
+        if (event.shiftKey) redo();
+        else undo();
+        return;
+      }
+      if (key === 'y' && !typing) {
+        event.preventDefault();
+        redo();
+        return;
+      }
+      if (key === 'c' && !typing) {
+        clipboardSpriteId = state.selectedSpriteId;
+        return;
+      }
+      if (key === 'v' && !typing) {
+        event.preventDefault();
+        if (clipboardSpriteId && state.project.sprites.some((sprite) => sprite.id === clipboardSpriteId)) {
+          state.duplicateSprite(clipboardSpriteId);
+        }
+        return;
+      }
+      if (key === 'd' && !typing) {
+        event.preventDefault();
+        state.duplicateSprite(state.selectedSpriteId);
+        return;
+      }
       const click = (selector: string): boolean => {
         const button = document.querySelector<HTMLButtonElement>(selector);
         if (!button) return false;
@@ -161,6 +196,22 @@ export function App({ projectId }: { projectId: string }) {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
+  // Delete/Backspace 删除选中角色（至少保留一个）
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.key !== 'Delete' && event.key !== 'Backspace') return;
+      const target = event.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      const state = useEditorStore.getState();
+      if (state.project.sprites.length <= 1) return;
+      event.preventDefault();
+      state.removeSprite(state.selectedSpriteId);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   useEffect(() => {
     const loaded = useEditorStore.getState().loadProject(projectId);
     if (!loaded) {
@@ -168,6 +219,8 @@ export function App({ projectId }: { projectId: string }) {
       return;
     }
     bootstrap();
+    // 加载完成后清空历史基线，避免撤销回到上一个工程
+    resetHistory();
     // 从模板新建的工程：首次打开时按模板生成积木脚本（此时积木已按该工程注册）
     const entry = findEntry(projectId);
     if (entry?.templateId && Object.keys(useEditorStore.getState().workspaces).length === 0) {

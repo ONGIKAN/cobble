@@ -7,6 +7,7 @@ import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';
 import { openAssetLibrary } from './AssetLibrary';
 import { openSettings } from '../settings-dialog';
+import { redo, undo, useHistoryStatus } from '../history';
 import { updateEntry } from '../library';
 import { routeToProjects } from '../routes';
 import { IS_BETA } from '../version';
@@ -22,6 +23,7 @@ export function Topbar() {
   const setRunning = useEditorStore((state) => state.setRunning);
   const resetProject = useEditorStore((state) => state.resetProject);
   const locale: Locale = i18n.language === 'en' ? 'en' : 'zh-CN';
+  const history = useHistoryStatus();
 
   useEffect(() => {
     document.title = `${project.meta.name} — Cobble Studio`;
@@ -69,6 +71,28 @@ export function Topbar() {
       </nav>
 
       <div className="topbar-actions">
+        <div className="topbar-history">
+          <button
+            type="button"
+            className="btn ghost icon-btn"
+            data-testid="undo"
+            disabled={!history.canUndo}
+            onClick={undo}
+            title={`${t('toolbar.undo')} · Ctrl+Z`}
+          >
+            ↶
+          </button>
+          <button
+            type="button"
+            className="btn ghost icon-btn"
+            data-testid="redo"
+            disabled={!history.canRedo}
+            onClick={redo}
+            title={`${t('toolbar.redo')} · Ctrl+Shift+Z`}
+          >
+            ↷
+          </button>
+        </div>
         <button
           type="button"
           className="btn ghost topbar-projects"

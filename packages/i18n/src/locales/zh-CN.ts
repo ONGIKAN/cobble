@@ -55,6 +55,8 @@ export const zhCN = {
     newProjectShort: '新建',
     controls: '输入',
     changelog: '版本日志',
+    undo: '撤销',
+    redo: '重做',
     assets: '资源库',
   },
   inputs: {
@@ -206,6 +208,10 @@ export const zhCN = {
     editHint: '编辑模式：拖动角色摆位置，拖动空白处平移画布，滚轮缩放；点「运行」进入游戏画面',
     camera: '摄像机',
     cameraNote: '框内 = 运行时的游戏画面，框外内容运行时不可见',
+    ctxDuplicate: '复制角色',
+    ctxFront: '移到最上层',
+    ctxBack: '移到最下层',
+    ctxDelete: '删除角色',
   },
   sprites: {
     costumeCount: '{{count}} 个造型',

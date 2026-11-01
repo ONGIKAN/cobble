@@ -2884,3 +2884,52 @@ button {
 .stage-frame.is-hidden {
   display: none;
 }
+
+/* ── v0.15.0 编辑器效率：历史按钮与画布右键菜单 ── */
+.topbar-history {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.world-menu {
+  position: fixed;
+  z-index: 130;
+  min-width: 148px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.world-menu button {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  text-align: left;
+  font-size: 12px;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.world-menu button:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.world-menu button.is-danger {
+  color: #e05780;
+}
+
+.world-menu button.is-danger:hover {
+  background: rgba(224, 87, 128, 0.12);
+  color: #e05780;
+}
+
+.app-compact .topbar-history {
+  display: none;
+}

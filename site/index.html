@@ -426,10 +426,24 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <p class="eyebrow">Release log</p>
         <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
         <p class="section-sub">
-          <span class="zh">当前稳定版 <strong>v0.14.0</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期显示真实发布日期，并自动换算「今天 / N 天前」，站点无需每天更新。</span>
-          <span class="en">Current stable release <strong>v0.14.0</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are real publish dates, with “today / N days ago” computed in the browser — no daily site update needed.</span>
+          <span class="zh">当前稳定版 <strong>v0.14.0</strong>，测试版 <strong>v0.15.0</strong>。按功能小版本迭代：常规小更新先进<a href="./demo-beta/">测试版在线演示</a>，验证通过后晋升到<a href="./demo/">正式在线演示</a>。每个版本标注「稳定版 / 实验版」：实验版只发布在测试版演示通道，验证后再晋升稳定版。日期根据真实发布日期自动换算为「今天 / 昨天 / 七天内 / 七天之前」，相同日期只显示一次，站点无需每天更新。</span>
+          <span class="en">Current stable release <strong>v0.14.0</strong>, beta <strong>v0.15.0</strong>. Small releases ship to the <a href="./demo-beta/">beta demo</a> first, then get promoted to the <a href="./demo/">stable demo</a> once verified. Every release is tagged Stable or Experimental: experimental ones ship to the beta demo only. Dates are real publish dates, bucketed in the browser as “today / yesterday / within 7 days / more than 7 days ago”; repeated dates show once — no daily site update needed.</span>
         </p>
         <ol class="release-list">
+          <li class="release">
+            <div class="release-head">
+              <span class="release-ver">v0.15.0</span>
+              <span class="release-date"><time data-date="2026-11-01"></time></span>
+              <span class="release-tag is-beta"><span class="zh">实验版</span><span class="en">experimental</span></span>
+            </div>
+            <h4 class="release-title">编辑器工作流第一批</h4>
+            <ul class="release-points">
+              <li><span class="zh">撤销 / 重做（Ctrl/Cmd+Z、Shift+Z、Ctrl+Y），最多 60 步</span><span class="en">Undo / redo (Ctrl/Cmd+Z, Shift+Z, Ctrl+Y), up to 60 steps</span></li>
+              <li><span class="zh">复制粘贴角色（Ctrl/Cmd+C/V）、Ctrl+D 直接复制、Delete 删除</span><span class="en">Copy/paste sprites (Ctrl/Cmd+C/V), Ctrl+D duplicate, Delete to remove</span></li>
+              <li><span class="zh">画布右键菜单：复制、移到最上层 / 最下层、删除</span><span class="en">Canvas context menu: duplicate, bring to front/back, delete</span></li>
+              <li><span class="zh">双击空白打开资源库，按 F 让摄像机适应视图；版本日志相同日期只显示一次</span><span class="en">Double-click empty canvas for assets, F to fit view; repeated dates now show once</span></li>
+            </ul>
+          </li>
           <li class="release is-current">
             <div class="release-head"><span class="release-ver">v0.14.0</span><span class="release-date"><time data-date="2026-11-01"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <div class="release-tagline"><span class="zh">摄像机 + 无限画布</span><span class="en">Camera + infinite canvas</span></div>

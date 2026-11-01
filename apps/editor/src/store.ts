@@ -58,6 +58,10 @@ interface EditorState {
   /** 从资源库素材创建角色（x/y 为舞台坐标） */
   addSpriteFromAsset: (input: { name: string; dataUrl: string; x: number; y: number }) => string;
   removeSprite: (spriteId: string) => void;
+  /** 复制角色（含造型与位置，新名字带「副本」） */
+  duplicateSprite: (spriteId: string) => string | null;
+  /** 撤销/重做：直接恢复工程与积木快照 */
+  restoreSnapshot: (project: ProjectDoc, workspaces: Record<string, unknown>) => void;
   addCostume: (spriteId: string, asset: NewAsset) => void;
   renameCostume: (spriteId: string, index: number, name: string) => void;
   removeCostume: (spriteId: string, index: number) => void;
@@ -164,6 +168,32 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
       selectedSpriteId: current.selectedSpriteId === spriteId ? sprites[0]?.id ?? '' : current.selectedSpriteId,
       workspaces,
     });
+  },
+  duplicateSprite: (spriteId) => {
+    const current = get();
+    const source = current.project.sprites.find((sprite) => sprite.id === spriteId);
+    if (!source) return null;
+    const spriteIdNew = uniqueId('sprite', current.project.sprites.map((sprite) => sprite.id));
+    const copy: SpriteDef = {
+      ...source,
+      id: spriteIdNew,
+      name: `${source.name} 副本`,
+      x: source.x + 40,
+      y: source.y - 40,
+      zIndex: Math.max(...current.project.sprites.map((sprite) => sprite.zIndex)) + 1,
+    };
+    set({
+      project: touched({ ...current.project, sprites: [...current.project.sprites, copy] }),
+      selectedSpriteId: spriteIdNew,
+    });
+    return spriteIdNew;
+  },
+  restoreSnapshot: (project, workspaces) => {
+    const current = get();
+    const selected = project.sprites.some((sprite) => sprite.id === current.selectedSpriteId)
+      ? current.selectedSpriteId
+      : project.sprites[0]?.id ?? '';
+    set({ project, workspaces, selectedSpriteId: selected, running: false });
   },
   addCostume: (spriteId, asset) =>
     set((current) => {

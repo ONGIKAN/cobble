@@ -26,6 +26,12 @@
 | --- | --- |
 | ![贪吃蛇](docs/screenshots/11-snake.png) | ![手机积木抽屉](docs/screenshots/m-phone-blocks-sheet.png) |
 
+### 快捷键
+
+- `Ctrl/Cmd+Z` 撤销，`Ctrl/Cmd+Shift+Z` / `Ctrl+Y` 重做
+- `Ctrl/Cmd+C` / `Ctrl/Cmd+V` 复制粘贴角色，`Ctrl/Cmd+D` 直接复制，`Delete` 删除
+- 画布空白处双击打开资源库，按 `F` 让摄像机适应视图
+
 ## 下载安装包
 
 稳定版 v0.14.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobble/#download>）：

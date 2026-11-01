@@ -9,42 +9,46 @@ const detect = () => {
   return languages.some((lang) => lang.toLowerCase().startsWith('zh')) ? 'zh-CN' : 'en';
 };
 
-// 版本日志日期：真实发布日期 + 浏览器自动换算相对时间（站点无需每天更新）。
-const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
+// 版本日志日期：记录真实发布日期，浏览器打开时自动换算为「今天 / 昨天 / 七天内 / 七天之前」，站点无需每天更新。
 const parseDay = (value) => {
   const [year, month, day] = value.split('-').map(Number);
   return new Date(year, month - 1, day);
 };
 
-const relativeLabel = (diff, lang) => {
+const bucketLabel = (diff, lang) => {
   if (lang === 'zh-CN') {
     if (diff <= 0) return '今天';
     if (diff === 1) return '昨天';
-    if (diff < 30) return `${diff} 天前`;
-    if (diff < 365) return `${Math.floor(diff / 30)} 个月前`;
-    return `${Math.floor(diff / 365)} 年前`;
+    if (diff <= 7) return '七天内';
+    return '七天之前';
   }
   if (diff <= 0) return 'today';
   if (diff === 1) return 'yesterday';
-  if (diff < 30) return `${diff} days ago`;
-  if (diff < 365) return `${Math.floor(diff / 30)} months ago`;
-  return `${Math.floor(diff / 365)} years ago`;
+  if (diff <= 7) return 'within 7 days';
+  return 'more than 7 days ago';
 };
 
 const renderReleaseDates = (lang) => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  document.querySelectorAll('.release-date [data-date]').forEach((node) => {
+  let previousDate = '';
+  document.querySelectorAll('.release').forEach((release) => {
+    const node = release.querySelector('.release-date [data-date]');
+    if (!node) return;
     const raw = node.dataset.date;
     if (!raw) return;
     const date = parseDay(raw);
     const diff = Math.round((today - date) / 86400000);
-    if (lang === 'zh-CN') {
-      node.textContent = `${raw} · ${relativeLabel(diff, lang)}`;
+    const wrap = node.closest('.release-date');
+    if (raw === previousDate) {
+      // 相同发布日期的连续版本只显示一次
+      node.textContent = '';
+      if (wrap) wrap.style.display = 'none';
     } else {
-      node.textContent = `${MONTHS_EN[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()} · ${relativeLabel(diff, lang)}`;
+      node.textContent = bucketLabel(diff, lang);
+      if (wrap) wrap.style.display = '';
     }
+    previousDate = raw;
   });
 };
 
@@ -70,8 +74,6 @@ document.getElementById('lang-toggle')?.addEventListener('click', () => {
 
 // 官网深浅主题：默认浅色，选择持久化到 localStorage。
 const THEME_KEY = 'gf.theme';
-const themeMedia = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
-
 const detectTheme = () => {
   const saved = localStorage.getItem(THEME_KEY);
   if (saved === 'light' || saved === 'dark') return saved;

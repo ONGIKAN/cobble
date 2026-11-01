@@ -326,6 +326,83 @@ try {
   const afterDrag = await spriteCount();
   record('asset library drag drop', afterDrag === afterAssetClick + 1, `sprites ${afterAssetClick}->${afterDrag} stage=${stageBox.w}x${stageBox.h}`);
 
+  // 编辑器效率：撤销/重做、右键菜单、复制粘贴、F 适应视图、双击资源库 (v0.15.0)
+  const headX = () => page.locator('.inspector input').nth(1).inputValue();
+  const headSprite = page.locator('[data-testid="world-sprite-sprite_snake_head"]');
+  // 先点选蛇头（避开与其他角色重叠的中心，点右边缘），读取当前 X，再拖动并撤销/重做
+  const headBox = await headSprite.boundingBox();
+  const grabX = headBox.x + headBox.width * 0.88;
+  const grabY = headBox.y + headBox.height * 0.5;
+  await page.mouse.click(grabX, grabY);
+  await page.waitForTimeout(250);
+  const beforeDragX = await headX();
+  await page.mouse.move(grabX, grabY);
+  await page.mouse.down();
+  await page.mouse.move(grabX + 96, grabY, { steps: 6 });
+  await page.mouse.up();
+  await page.waitForTimeout(500);
+  const afterDragX = await headX();
+  await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', code: 'KeyZ', ctrlKey: true, bubbles: true })));
+  await page.waitForTimeout(500);
+  const undoX = await headX();
+  await page.evaluate(() =>
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', code: 'KeyZ', ctrlKey: true, shiftKey: true, bubbles: true })),
+  );
+  await page.waitForTimeout(500);
+  const redoX = await headX();
+  record(
+    'undo redo shortcuts',
+    beforeDragX !== afterDragX && undoX === beforeDragX && redoX === afterDragX,
+    `x ${beforeDragX}->${afterDragX} undo=${undoX} redo=${redoX}`,
+  );
+
+  const beforeMenu = await spriteCount();
+  const headNow = await headSprite.boundingBox();
+  await page.mouse.click(headNow.x + headNow.width * 0.88, headNow.y + headNow.height / 2, { button: 'right' });
+  await page.waitForTimeout(300);
+  const menuOpen = await page.locator('[data-testid="world-context-menu"]').isVisible();
+  await page.click('[data-testid="ctx-duplicate"]');
+  await page.waitForTimeout(400);
+  const afterCtxDup = await spriteCount();
+  await page.keyboard.press('Delete');
+  await page.waitForTimeout(400);
+  const afterCtxDelete = await spriteCount();
+  record(
+    'sprite context menu',
+    menuOpen && afterCtxDup === beforeMenu + 1 && afterCtxDelete === afterCtxDup - 1,
+    `menu=${menuOpen} ${beforeMenu}->${afterCtxDup}->${afterCtxDelete}`,
+  );
+
+  await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', code: 'KeyD', ctrlKey: true, bubbles: true })));
+  await page.waitForTimeout(300);
+  const afterCtrlD = await spriteCount();
+  await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', code: 'KeyC', ctrlKey: true, bubbles: true })));
+  await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'v', code: 'KeyV', ctrlKey: true, bubbles: true })));
+  await page.waitForTimeout(300);
+  const afterPaste = await spriteCount();
+  record(
+    'duplicate copy paste',
+    afterCtrlD === afterCtxDelete + 1 && afterPaste === afterCtrlD + 1,
+    `sprites ${afterCtxDelete}->${afterCtrlD}->${afterPaste}`,
+  );
+
+  await page.click('[data-testid="world-zoom-in"]');
+  await page.click('[data-testid="world-zoom-in"]');
+  await page.waitForTimeout(200);
+  const zoomedText = await page.locator('[data-testid="world-zoom-reset"]').innerText();
+  await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'f', code: 'KeyF', bubbles: true })));
+  await page.waitForTimeout(300);
+  const fittedText = await page.locator('[data-testid="world-zoom-reset"]').innerText();
+  record('fit view shortcut', zoomedText !== fittedText, `${zoomedText}->${fittedText}`);
+
+  const blankBox = await page.locator('[data-testid="world-canvas"]').boundingBox();
+  await page.mouse.dblclick(blankBox.x + 30, blankBox.y + 40);
+  await page.waitForTimeout(500);
+  const dblLibrary = await page.locator('[data-testid="asset-library"]').isVisible();
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+  record('double click opens asset library', dblLibrary, `visible=${dblLibrary}`);
+
   await page.click('[data-testid="stage-fullscreen"]');
   await page.waitForTimeout(600);
   const fsExitVisible = await page.locator('[data-testid="stage-exit-fullscreen"]').isVisible();

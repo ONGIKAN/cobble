@@ -42,6 +42,7 @@ watch(sitePage, 'site');
 await sitePage.goto(SITE, { waitUntil: 'networkidle' });
 
 check('site: title', (await sitePage.title()).includes('Cobble'), await sitePage.title());
+const stableV = (await sitePage.locator('.brand-ver').first().innerText()).trim();
 check('site: hero heading', (await sitePage.locator('h1').innerText()).length > 4);
 const imgOk = await sitePage.locator('img').evaluateAll((nodes) => nodes.every((node) => node.naturalWidth > 0));
 check('site: screenshots loaded', imgOk);
@@ -56,8 +57,9 @@ check('site: stable tags', (await sitePage.locator('.release-tag.is-stable').cou
 const releaseDates = await sitePage.locator('#changelog .release-date').allInnerTexts();
 check(
   'site: release dates computed',
-  releaseDates.length >= 10 && releaseDates.every((text) => /\d{4}-\d{2}-\d{2}/.test(text)),
-  releaseDates.slice(0, 2).join(' | '),
+  releaseDates.length >= 3 &&
+    releaseDates.every((text) => text.trim().length === 0 || ['今天', '昨天', '七天内', '七天之前'].includes(text.trim())),
+  releaseDates.filter((text) => text.trim()).slice(0, 2).join(' | '),
 );
 
 {
@@ -119,7 +121,8 @@ await sitePage.waitForTimeout(1200);
 const state = await runtimeState(sitePage);
 check('demo: runtime running', state?.running === true, JSON.stringify(state));
 const stableStatus = await sitePage.locator('[data-testid="status-changelog-link"]').innerText();
-check(`demo: stable version ${V}`, stableStatus.includes(V) && !stableStatus.includes('beta'), stableStatus);
+// 稳定版 demo 跟随官网当前稳定版（小版本先发 beta，稳定 demo 保持上一个稳定版）
+check(`demo: stable version ${stableV}`, stableStatus.includes(stableV) && !stableStatus.includes('beta'), stableStatus);
 await sitePage.screenshot({ path: `${SHOTS}/pages-demo.png` });
 
 // 演示 -> 官网（链接存在且可点）

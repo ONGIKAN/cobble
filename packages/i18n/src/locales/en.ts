@@ -57,6 +57,8 @@ export const en: Messages = {
     newProjectShort: 'New',
     controls: 'Controls',
     changelog: 'Changelog',
+    undo: 'Undo',
+    redo: 'Redo',
     assets: 'Assets',
   },
   inputs: {
@@ -208,6 +210,10 @@ export const en: Messages = {
     editHint: 'Edit mode: drag sprites to place them, drag empty space to pan, scroll to zoom; press Run to play',
     camera: 'Camera',
     cameraNote: 'Inside the frame = gameplay area; content outside is hidden while running',
+    ctxDuplicate: 'Duplicate sprite',
+    ctxFront: 'Bring to front',
+    ctxBack: 'Send to back',
+    ctxDelete: 'Delete sprite',
   },
   sprites: {
     costumeCount: '{{count}} costume(s)',

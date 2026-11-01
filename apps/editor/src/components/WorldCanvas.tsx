@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { SpriteDef } from '@cobble/project';
-import { ASSET_MIME } from './AssetLibrary';
+import { ASSET_MIME, openAssetLibrary } from './AssetLibrary';
 import { useEditorStore } from '../store';
 
 /**
@@ -52,9 +52,12 @@ export function WorldCanvas() {
   const selectSprite = useEditorStore((state) => state.selectSprite);
   const updateSprite = useEditorStore((state) => state.updateSprite);
   const addSpriteFromAsset = useEditorStore((state) => state.addSpriteFromAsset);
+  const removeSprite = useEditorStore((state) => state.removeSprite);
+  const duplicateSprite = useEditorStore((state) => state.duplicateSprite);
 
   const hostRef = useRef<HTMLDivElement | null>(null);
   const [view, setView] = useState<ViewState>({ ox: 320, oy: 240, zoom: 0.6 });
+  const [menu, setMenu] = useState<{ x: number; y: number; spriteId: string } | null>(null);
   const initializedRef = useRef(false);
   const dragRef = useRef<{ id: string; offsetX: number; offsetY: number } | null>(null);
   const panRef = useRef<{ startX: number; startY: number; ox: number; oy: number } | null>(null);
@@ -199,6 +202,20 @@ export function WorldCanvas() {
     });
   };
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      if (event.key.toLowerCase() === 'f') {
+        event.preventDefault();
+        fitView();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [fitView]);
+
   const dropFromLibrary = (event: ReactDragEvent<HTMLDivElement>): void => {
     event.preventDefault();
     const raw = event.dataTransfer.getData(ASSET_MIME) || event.dataTransfer.getData('text/plain');
@@ -232,7 +249,11 @@ export function WorldCanvas() {
         className={`world-canvas${panning ? ' is-panning' : ''}`}
         data-testid="world-canvas"
         onPointerDown={(event) => {
+          setMenu(null);
           if (event.target === event.currentTarget) startPan(event);
+        }}
+        onDoubleClick={(event) => {
+          if (event.target === event.currentTarget) openAssetLibrary();
         }}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -286,6 +307,12 @@ export function WorldCanvas() {
               alt={sprite.name}
               draggable={false}
               onPointerDown={startDragSprite(sprite)}
+              onContextMenu={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                selectSprite(sprite.id);
+                setMenu({ x: event.clientX, y: event.clientY, spriteId: sprite.id });
+              }}
               style={{
                 left: view.ox + sprite.x * view.zoom - width / 2,
                 top: view.oy - sprite.y * view.zoom - height / 2,
@@ -313,6 +340,58 @@ export function WorldCanvas() {
         <div className="world-camera-note mono" data-testid="world-camera-note">
           {t('stage.cameraNote')}
         </div>
+        {menu ? (
+          <div
+            className="world-menu"
+            data-testid="world-context-menu"
+            style={{ left: menu.x, top: menu.y }}
+            onPointerDown={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              data-testid="ctx-duplicate"
+              onClick={() => {
+                duplicateSprite(menu.spriteId);
+                setMenu(null);
+              }}
+            >
+              {t('stage.ctxDuplicate')}
+            </button>
+            <button
+              type="button"
+              data-testid="ctx-front"
+              onClick={() => {
+                const top = Math.max(...project.sprites.map((sprite) => sprite.zIndex));
+                updateSprite(menu.spriteId, { zIndex: top + 1 });
+                setMenu(null);
+              }}
+            >
+              {t('stage.ctxFront')}
+            </button>
+            <button
+              type="button"
+              data-testid="ctx-back"
+              onClick={() => {
+                const bottom = Math.min(...project.sprites.map((sprite) => sprite.zIndex));
+                updateSprite(menu.spriteId, { zIndex: bottom - 1 });
+                setMenu(null);
+              }}
+            >
+              {t('stage.ctxBack')}
+            </button>
+            <button
+              type="button"
+              className="is-danger"
+              data-testid="ctx-delete"
+              onClick={() => {
+                removeSprite(menu.spriteId);
+                setMenu(null);
+              }}
+            >
+              {t('stage.ctxDelete')}
+            </button>
+          </div>
+        ) : null}
       </div>
       <div className="stage-edit-hint" data-testid="stage-edit-hint">
         {t('stage.editHint')}
