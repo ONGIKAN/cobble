@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>CobBox · 轻量 2D 积木游戏创作平台</title>
+    <meta
+      name="description"
+      content="CobBox 是一个轻量的 2D 积木游戏创作平台：拖积木拼逻辑，一键在浏览器里试玩。桌面、平板、手机都能用，支持深浅主题与中英双语。"
+    />
+    <link rel="icon" href="./assets/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="./assets/logo.svg" />
+    <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="community-bar" id="community">
+      <span class="community-label"><span class="zh">加入交流群</span><span class="en">Join our community</span></span>
+      <a class="community-chip is-link" href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode" title="已安装 QQ 时点击直接打开群资料并申请加入">
+        <span class="community-net">QQ <span class="zh">群</span><span class="en">group</span></span>
+        <b>424124959</b>
+        <span class="community-cta"><span class="zh">点击加群</span><span class="en">Join</span></span>
+      </a>
+      <span class="community-chip"><span class="community-net"><span class="zh">抖音群</span><span class="en">Douyin group</span></span><b>888985597118</b></span>
+      <span class="community-hint"><span class="zh">版本更新、教程与答疑</span><span class="en">Updates, tutorials &amp; support</span></span>
+    </div>
+    <header class="site-head">
+      <a class="brand" href="./">
+        <img class="brand-logo" src="./assets/logo.svg" alt="" />
+        <span class="brand-name">CobBox</span>
+        <span class="brand-ver" title="当前稳定版">v0.17.0</span>
+      </a>
+      <nav class="site-nav">
+        <a href="#features"><span class="zh">功能</span><span class="en">Features</span></a>
+        <a href="#gallery"><span class="zh">截图</span><span class="en">Screens</span></a>
+        <a href="#roadmap"><span class="zh">路线图</span><span class="en">Roadmap</span></a>
+        <a href="#changelog"><span class="zh">版本日志</span><span class="en">Release log</span></a>
+        <a href="#download"><span class="zh">下载</span><span class="en">Download</span></a>
+        <a href="./demo/"><span class="zh">在线演示</span><span class="en">Live demo</span></a>
+        <a href="./demo-beta/"><span class="zh">测试版</span><span class="en">Beta demo</span></a>
+        <a href="https://github.com/ONGIKAN/cobbox" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+      <button class="theme-btn" id="theme-toggle" type="button" aria-label="切换深浅主题 / Toggle theme"><span class="zh">深色</span><span class="en">Dark</span></button>
+      <button class="lang-btn" id="lang-toggle" type="button" aria-label="切换语言 / Switch language">EN</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="dot"></span><span class="zh">P0 · M0 可运行原型</span><span class="en">P0 · working M0 prototype</span></p>
+          <h1>
+            <span class="zh">用积木拼出<br />你的 2D 小游戏</span>
+            <span class="en">Build your own<br />2D games with blocks</span>
+          </h1>
+          <p class="lede">
+            <span class="zh">轻量、跨端的积木游戏创作平台。拖积木 → 编译成运行时指令 → 立刻在浏览器里试玩。桌面、平板、手机都能用。</span>
+            <span class="en">A lightweight, cross-device block-based game maker. Snap blocks, compile to runtime instructions, play right in the browser — on desktop, tablet and phone.</span>
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="./demo/">
+              <span class="zh">在线体验</span><span class="en">Try the demo</span>
+              <span class="arrow">→</span>
+            </a>
+            <a class="btn" href="./demo-beta/">
+              <span class="zh">测试版演示</span><span class="en">Beta demo</span>
+            </a>
+            <a class="btn btn-ghost" href="#download">
+              <span class="zh">下载安装包</span><span class="en">Download apps</span>
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/ONGIKAN/cobbox" target="_blank" rel="noreferrer">
+              <span class="zh">查看源码</span><span class="en">View source</span>
+            </a>
+          </div>
+          <ul class="hero-meta">
+            <li>57 <span class="zh">种积木</span><span class="en">blocks</span></li>
+            <li>Blockly + Phaser 4</li>
+            <li><span class="zh">中英双语</span><span class="en">Bilingual UI</span></li>
+            <li><span class="zh">深浅主题</span><span class="en">Dark / light</span></li>
+            <li><span class="zh">.gproj 工程文件</span><span class="en">.gproj projects</span></li>
+            <li><span class="zh">单文件 HTML5 导出</span><span class="en">Single-file export</span></li>
+          </ul>
+          <p class="lede" style="margin-top: 14px; font-size: 13px">
+            <span class="zh">在线演示分两个通道：<a href="./demo/">最新稳定版</a>与<a href="./demo-beta/">测试版</a>（常规小更新先上测试版，只有在线体验，不打包桌面版与安卓版）。</span>
+            <span class="en">Two live channels: <a href="./demo/">latest stable</a> and the <a href="./demo-beta/">beta demo</a> — small updates land in beta first; beta is web-only (no desktop or Android builds).</span>
+          </p>
+        </div>
+        <figure class="hero-shot">
+          <a href="./demo/" title="打开在线演示">
+            <img src="./assets/world-canvas.png" alt="CobBox 编辑器无限画布与摄像机框（深色主题）" width="1440" height="900" />
+          </a>
+          <figcaption>
+            <span class="zh">编辑器 · 无限画布 · 摄像机框内是运行时的游戏画面</span>
+            <span class="en">Editor · infinite canvas · the camera frame is what players see</span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section" id="features">
+        <div class="section-head">
+          <p class="eyebrow">Features</p>
+          <h2><span class="zh">为“做出来”而设计</span><span class="en">Designed to ship something playable</span></h2>
+          <p class="section-sub">
+            <span class="zh">从第一块积木到能玩的作品，尽量少的概念、尽快的反馈。</span>
+            <span class="en">Few concepts, fast feedback — from the first block to a playable game.</span>
+          </p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <p class="card-no">01</p>
+            <h3><span class="zh">积木编程</span><span class="en">Block programming</span></h3>
+            <p>
+              <span class="zh">51 种积木覆盖事件、运动、外观、声音、控制、侦测、运算与变量，Blockly 工作区直接编译为引擎无关的 IR。</span>
+              <span class="en">57 blocks across events, interaction, motion, rendering, audio, flow, sensing, math and variables — compiled from Blockly into an engine-agnostic IR.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">02</p>
+            <h3><span class="zh">实时预览</span><span class="en">Live preview</span></h3>
+            <p>
+              <span class="zh">舞台内嵌 Phaser 4 运行时，点「运行」立刻试玩；同一套运行时也被打进「导出 HTML5」的单文件里。</span>
+              <span class="en">A Phaser 4 runtime is embedded in the stage. Hit Run to play immediately — the same runtime is bundled into the single-file HTML5 export.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">03</p>
+            <h3><span class="zh">手机 / 平板</span><span class="en">Phone &amp; tablet</span></h3>
+            <p>
+              <span class="zh">触屏布局自动切换：底部标签页、舞台下方的摇杆与按钮手柄、角色快捷条；粗指针设备才显示手柄，桌面保持三栏。</span>
+              <span class="en">Touch layout switches automatically: bottom tabs, a joystick + button pad docked under the stage, and a quick sprite strip. Desktop keeps its three columns.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">04</p>
+            <h3><span class="zh">方正 · 低饱和</span><span class="en">Square &amp; muted</span></h3>
+            <p>
+              <span class="zh">全站零圆角，积木使用自定义渲染器压平圆角与顶帽，走低饱和配色，长时间编辑不刺眼。</span>
+              <span class="en">Zero border radius everywhere. A custom Blockly renderer flattens corners and hats, with a muted palette for long editing sessions.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">05</p>
+            <h3><span class="zh">中英双语</span><span class="en">Bilingual</span></h3>
+            <p>
+              <span class="zh">界面文案全部走 i18n，积木与工具箱跟随语言；作品内的角色名、变量名属于内容，不随界面翻译。</span>
+              <span class="en">Every UI string is an i18n key; blocks and toolbox follow the locale. Sprite and variable names are content and are never translated.</span>
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-no">06</p>
+            <h3><span class="zh">本地优先</span><span class="en">Local-first</span></h3>
+            <p>
+              <span class="zh">无需登录，编辑内容自动保存到浏览器；账号、云端与社区分享在路线图中，当前不依赖任何后端。</span>
+              <span class="en">No sign-in. Work is autosaved in the browser. Accounts, cloud and community sharing are on the roadmap; today there is no backend.</span>
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="gallery">
+        <div class="section-head">
+          <p class="eyebrow">Screens</p>
+          <h2><span class="zh">长这样</span><span class="en">A look around</span></h2>
+        </div>
+        <div class="gallery gallery-wide">
+          <figure class="shot">
+            <img src="./assets/hub-dark.png" alt="工程管理页" loading="lazy" />
+            <figcaption><span class="zh">工程管理页 · 我的工程</span><span class="en">Project hub · my projects</span></figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="./assets/snake.png" alt="贪吃蛇示例游戏" loading="lazy" />
+            <figcaption><span class="zh">示例游戏 · 贪吃蛇（方向转向 / 吃苹果变长 / 撞墙结束）</span><span class="en">Demo game · Snake (steer, grow on apples, game over on walls)</span></figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="./assets/templates.png" alt="新建工程模板选择" loading="lazy" />
+            <figcaption><span class="zh">新建工程 · 模板选择</span><span class="en">New project · templates</span></figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="./assets/02-editor-light.png" alt="浅色主题" loading="lazy" />
+            <figcaption><span class="zh">桌面 · 浅色主题</span><span class="en">Desktop · light theme</span></figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="./assets/export-playing.png" alt="导出的单文件 HTML5 在浏览器里运行" loading="lazy" />
+            <figcaption><span class="zh">导出的单文件 HTML5 · 双击即玩</span><span class="en">Exported single-file HTML5 · double-click to play</span></figcaption>
+          </figure>
+        </div>
+        <div class="phone-row">
+          <figure class="shot is-phone">
+            <img src="./assets/m-phone-stage.png" alt="手机舞台页" loading="lazy" />
+            <figcaption><span class="zh">手机 · 舞台与方向键</span><span class="en">Phone · stage &amp; D-pad</span></figcaption>
+          </figure>
+          <figure class="shot is-phone">
+            <img src="./assets/m-phone-blocks.png" alt="手机积木页" loading="lazy" />
+            <figcaption><span class="zh">手机 · 积木页</span><span class="en">Phone · blocks</span></figcaption>
+          </figure>
+          <figure class="shot is-phone">
+            <img src="./assets/m-phone-blocks-sheet.png" alt="手机底部积木抽屉" loading="lazy" />
+            <figcaption><span class="zh">手机 · 底部积木抽屉</span><span class="en">Phone · blocks bottom sheet</span></figcaption>
+          </figure>
+          <div class="phone-note">
+            <h3><span class="zh">触屏优先</span><span class="en">Touch first</span></h3>
+            <p>
+              <span class="zh">窄屏自动切成单栏：底部「舞台 / 积木 / 角色 / 属性」四标签，舞台页带方向键与角色快捷条，横屏时舞台与方向键并排；积木编辑器支持双指缩放。</span>
+              <span class="en">Narrow screens collapse into a single column with four bottom tabs (stage, blocks, sprites, props), an on-screen D-pad and a sprite strip; landscape puts the stage next to the D-pad, and blocks support pinch zoom.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="download">
+        <p class="eyebrow">Download</p>
+        <h2><span class="zh">下载安装包</span><span class="en">Get the apps</span></h2>
+        <p class="section-sub">
+          <span class="zh">Windows 与安卓安装包由 GitHub Releases 提供，均为 v0.17.0 稳定版构建；桌面版可直接导出可双击运行的 Windows 游戏 EXE，作品保存在本机，工程以 .gproj 落盘，离线也能玩。</span>
+          <span class="en">Windows and Android builds ship through GitHub Releases, both from the v0.17.0 stable build. The desktop app can export a standalone Windows game EXE. Projects live on your machine as .gproj files — fully offline.</span>
+        </p>
+        <div class="download-grid">
+          <article class="download-card">
+            <p class="download-os">Windows</p>
+            <h3><span class="zh">安装版</span><span class="en">Installer</span></h3>
+            <p class="download-meta">Tauri · NSIS · x64 · ~3.3 MB</p>
+            <p class="download-desc">
+              <span class="zh">装到当前用户目录，开始菜单出现「CobBox」；工程自动保存到应用数据目录。</span>
+              <span class="en">Installs to your user profile and adds CobBox to the Start menu. Projects autosave into the app data folder.</span>
+            </p>
+            <a class="btn btn-primary" href="https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Windows-x64-Setup.exe">
+              <span class="zh">下载安装版</span><span class="en">Download installer</span>
+              <span class="arrow">↓</span>
+            </a>
+          </article>
+          <article class="download-card">
+            <p class="download-os">Windows</p>
+            <h3><span class="zh">便携版</span><span class="en">Portable</span></h3>
+            <p class="download-meta">Tauri · 免安装 · x64 · ~8.8 MB</p>
+            <p class="download-desc">
+              <span class="zh">单文件绿色版，双击即用；请放在纯英文路径下（中文路径会导致 WebView2 无法创建窗口）。</span>
+              <span class="en">Single-file, no install. Keep it on an ASCII-only path — WebView2 cannot create the window from a non-ASCII folder.</span>
+            </p>
+            <a class="btn" href="https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Windows-x64-Portable.exe">
+              <span class="zh">下载便携版</span><span class="en">Download portable</span>
+              <span class="arrow">↓</span>
+            </a>
+          </article>
+          <article class="download-card">
+            <p class="download-os">Android</p>
+            <h3><span class="zh">APK</span><span class="en">APK</span></h3>
+            <p class="download-meta">Capacitor · debug 签名 · minSdk 23 · ~5.1 MB</p>
+            <p class="download-desc">
+              <span class="zh">适用于 Android 6.0 及以上；因为是调试签名，安装时需要允许「未知来源」，正式上架版本会换成发布签名。</span>
+              <span class="en">Android 6.0+. It is debug-signed, so allow installs from unknown sources; a release-signed build will follow when it hits the store.</span>
+            </p>
+            <a class="btn" href="https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Android.apk">
+              <span class="zh">下载 APK</span><span class="en">Download APK</span>
+              <span class="arrow">↓</span>
+            </a>
+          </article>
+        </div>
+        <p class="download-note">
+          <span class="zh">安装包未做代码签名：Windows 首次运行可能弹出 SmartScreen 提示，点「更多信息 → 仍要运行」即可。全部版本历史见 <a href="https://github.com/ONGIKAN/cobbox/releases" target="_blank" rel="noreferrer">GitHub Releases</a>。</span>
+          <span class="en">Builds are not code-signed: Windows may show a SmartScreen prompt on first run — choose “More info → Run anyway”. See all versions on <a href="https://github.com/ONGIKAN/cobbox/releases" target="_blank" rel="noreferrer">GitHub Releases</a>.</span>
+        </p>
+      </section>
+
+      <section class="section" id="roadmap">
+        <div class="section-head">
+          <p class="eyebrow">Roadmap</p>
+          <h2><span class="zh">现在到哪了</span><span class="en">Where it stands</span></h2>
+          <p class="section-sub">
+            <span class="zh">积木编辑 → 编译 → 运行 → 保存工程 → 素材与角色管理 → 模板与新建工程 → 工程管理页 → 单文件导出 → 导出 Windows 游戏 EXE → 桌面安装包 / 安卓 APK 全部打通，稳定版 v1.0 收尾中。</span>
+            <span class="en">Edit → compile → run → save → asset editing → templates → project hub → single-file export → Windows game EXE export → desktop installer / Android APK all work; v1.0 polish is underway.</span>
+          </p>
+        </div>
+        <ol class="roadmap">
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">M0 可运行原型</span><span class="en">M0 working prototype</span></h3>
+              <p>
+                <span class="zh">积木编辑、IR 编译、固定 60Hz 解释器、Phaser 4 舞台、深浅主题、中英切换、触屏布局、本地自动保存。</span>
+                <span class="en">Block editing, IR compiler, 60 Hz fixed-step interpreter, Phaser 4 stage, themes, locales, touch layout, autosave.</span>
+              </p>
+            </div>
+          </li>
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">工程文件 .gproj</span><span class="en">.gproj project files</span></h3>
+              <p>
+                <span class="zh">保存/打开工程，积木脚本随文件带走；桌面顶栏与手机舞台页都有入口，打开后立刻可继续编辑。</span>
+                <span class="en">Save and open projects with their block scripts. Entry points on desktop and mobile; editing resumes right away.</span>
+              </p>
+            </div>
+          </li>
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">素材与角色管理</span><span class="en">Assets &amp; sprites</span></h3>
+              <p>
+                <span class="zh">上传图片与音效，新建/删除角色，造型可改名与排序，变量与舞台背景、尺寸都能在编辑器里调整。</span>
+                <span class="en">Upload images and sounds, add or delete sprites, rename and reorder costumes, edit variables plus stage background and size.</span>
+              </p>
+            </div>
+          </li>
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">单文件 HTML5 导出</span><span class="en">Single-file HTML5 export</span></h3>
+              <p>
+                <span class="zh">一键把工程编译成运行时指令，连同播放器与素材内联成一个 HTML 文件：双击即玩、离线可用，文件里带变量 HUD 与官网链接。</span>
+                <span class="en">One click compiles the project into runtime instructions and inlines the player plus assets into a single HTML file — double-click to play offline, with HUD and a link back home.</span>
+              </p>
+            </div>
+          </li>
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">模板与新建工程</span><span class="en">Templates &amp; new project</span></h3>
+              <p>
+                <span class="zh">新建工程弹层：空白工程或「贪吃蛇」示例模板，选完直接进入编辑；默认工程也是贪吃蛇。</span>
+                <span class="en">New-project dialog with a blank project or the finished Snake demo — pick one and start editing.</span>
+              </p>
+            </div>
+          </li>
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">能力块与贪吃蛇</span><span class="en">Game blocks &amp; Snake</span></h3>
+              <p>
+                <span class="zh">「换成指定造型 / x、y 坐标 / 方向 / 等待直到 / 移到某角色」等能力块支撑贪吃蛇：方向转向、吃苹果变长、撞墙或咬到自己结束。</span>
+                <span class="en">Capability blocks (switch costume, x/y position, direction, wait until, go to sprite) power the Snake demo: steering, growing on apples, game over on walls or self-hit.</span>
+              </p>
+            </div>
+          </li>
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">工程管理页</span><span class="en">Project hub</span></h3>
+              <p>
+                <span class="zh">启动即进入「我的工程」：多工程卡片、搜索、新建与 .gproj 导入，卡片上可重命名、复制、导出、删除；工程列表存在浏览器本地。</span>
+                <span class="en">Launch lands on “My projects”: cards with search, new project and .gproj import, plus rename / duplicate / export / delete. The library is stored locally in the browser.</span>
+              </p>
+            </div>
+          </li>
+          <li class="is-done">
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">贪吃蛇示例 + 导出 Windows EXE</span><span class="en">Snake demo &amp; Windows EXE export</span></h3>
+              <p>
+                <span class="zh">示例精简为「空白 + 贪吃蛇」：方向转向、吃苹果变长、撞墙/咬尾结束并提示重开；桌面版新增「导出 EXE」，一键生成可双击运行的独立游戏，安卓导出内测中。</span>
+                <span class="en">Demos are now just Blank + Snake: steering, apples, wall/self collision with restart hint. The desktop app can export a standalone Windows game EXE in one click; Android export is in beta.</span>
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="state"><span class="zh">下一步</span><span class="en">Next</span></span>
+            <div>
+              <h3><span class="zh">稳定版 v1.0</span><span class="en">Stable v1.0</span></h3>
+              <p>
+                <span class="zh">编辑器体验打磨、应用内自动更新、安装包签名与安卓导出内测转正。</span>
+                <span class="en">Editor polish, in-app auto-update, installer signing, and Android export graduating from beta.</span>
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="state"><span class="zh">已完成</span><span class="en">Shipped</span></span>
+            <div>
+              <h3><span class="zh">桌面安装包与安卓 APK</span><span class="en">Desktop installer &amp; Android APK</span></h3>
+              <p>
+                <span class="zh">Tauri NSIS 安装包（currentUser）与便携 exe、Capacitor 安卓 APK 都已构建：桌面版工程以 .gproj 落盘到应用数据目录，离线可用。</span>
+                <span class="en">Shipped as a Tauri NSIS installer (currentUser) plus portable exe, and a Capacitor Android APK. The desktop build writes .gproj files to app data and works offline.</span>
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="state"><span class="zh">计划中</span><span class="en">Planned</span></span>
+            <div>
+              <h3><span class="zh">更多积木与社区</span><span class="en">More blocks &amp; community</span></h3>
+              <p>
+                <span class="zh">克隆、列表、自定义积木，精确像素碰撞；之后是账号、云端保存与作品社区。</span>
+                <span class="en">Clones, lists, custom blocks, pixel-perfect collision — then accounts, cloud saves and a community gallery.</span>
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section start" id="start">
+        <div class="start-copy">
+          <p class="eyebrow">Get started</p>
+          <h2><span class="zh">本地跑起来</span><span class="en">Run it locally</span></h2>
+          <p class="section-sub">
+            <span class="zh">需要 Node.js 20+。不需要后端，不需要登录。</span>
+            <span class="en">Requires Node.js 20+. No backend, no sign-in.</span>
+          </p>
+          <pre class="code"><code>git clone https://github.com/ONGIKAN/cobbox.git
+cd cobbox
+npm install
+npm run dev   # http://127.0.0.1:5183</code></pre>
+          <div class="start-links">
+            <a class="btn btn-primary" href="./demo/"><span class="zh">直接在线体验</span><span class="en">Open the live demo</span> <span class="arrow">→</span></a>
+            <a class="btn" href="https://github.com/ONGIKAN/cobbox" target="_blank" rel="noreferrer">GitHub</a>
+          </div>
+        </div>
+        <div class="start-side">
+          <h3><span class="zh">技术栈</span><span class="en">Stack</span></h3>
+          <ul class="chips">
+            <li>TypeScript</li>
+            <li>React</li>
+            <li>Vite</li>
+            <li>Blockly</li>
+            <li>Phaser 4</li>
+            <li>zustand</li>
+            <li>zod</li>
+            <li>i18next</li>
+            <li>Playwright</li>
+          </ul>
+          <h3><span class="zh">设计约束</span><span class="en">Design rules</span></h3>
+          <ul class="rules">
+            <li><span class="zh">界面文案禁止硬编码，全部走 i18n key</span><span class="en">No hardcoded UI strings — everything is an i18n key</span></li>
+            <li><span class="zh">全站零圆角、方正积木</span><span class="en">Zero radius, square blocks</span></li>
+            <li><span class="zh">预览与导出复用同一运行时</span><span class="en">One runtime for preview and export</span></li>
+            <li><span class="zh">模拟按固定 60Hz 步长推进</span><span class="en">Simulation advances at a fixed 60 Hz step</span></li>
+          </ul>
+        </div>
+      </section>
+      <section class="section" id="changelog">
+        <p class="eyebrow">Release log</p>
+        <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
+        <ol class="release-list">
+          <li class="release is-current">
+            <div class="release-head">
+              <span class="release-ver">v0.17.0</span>
+              <span class="release-date"><time data-date="2026-11-01"></time></span>
+              <span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span>
+            </div>
+            <h4 class="release-title">CobBox 新名字 + AI 创作</h4>
+            <ul class="release-points">
+              <li><span class="zh">项目改名为 CobBox：全新品牌、安装包与本地数据目录，工程与配置自动迁移到新命名空间</span><span class="en">Renamed to CobBox: new brand, builds and data directory; projects and settings migrated to the new namespace</span></li>
+              <li><span class="zh">AI 创作：设置自己的 OpenAI 兼容接口后，用一句话生成可运行的收集 / 躲避 / 点击 / 贪吃蛇小游戏</span><span class="en">AI Create: connect your own OpenAI-compatible endpoint and generate a playable collect / avoid / clicker / snake game from one sentence</span></li>
+              <li><span class="zh">没有配置接口时点击 AI 创作会提示先设置，密钥只保存在本机浏览器</span><span class="en">Without a configured endpoint, AI Create tells you to set it up first; the key stays in your browser</span></li>
+              <li><span class="zh">手机 / 平板体验与角色分组（v0.16.0 内容）一并进入稳定版</span><span class="en">Mobile/tablet polish and sprite groups (from v0.16.0) land in stable too</span></li>
+            </ul>
+          </li>
+          <li class="release ">
+            <div class="release-head">
+              <span class="release-ver">v0.16.0</span>
+              <span class="release-date"><time data-date="2026-11-01"></time></span>
+              <span class="release-tag is-beta"><span class="zh">实验版</span><span class="en">experimental</span></span>
+            </div>
+            <h4 class="release-title">手机 / 平板体验 + 角色分组</h4>
+            <ul class="release-points">
+              <li><span class="zh">顶栏精简：语言切换收进设置；舞台面板头合并为一行，新增撤销 / 重做</span><span class="en">Compact topbar (language in Settings), single-row stage header with undo / redo</span></li>
+              <li><span class="zh">积木抽屉头部可直接切换角色、运行 / 停止；底部标签适配安全区</span><span class="en">Blocks drawer header switches sprites and runs/stops; bottom tabs respect safe areas</span></li>
+              <li><span class="zh">角色分组：新建 / 重命名 / 删除，拖动角色进分组，拖动分组头排序，属性面板选分组</span><span class="en">Sprite groups: create / rename / delete, drag sprites in, drag headers to reorder, pick one in the inspector</span></li>
+              <li><span class="zh">舞台尺寸支持自定义宽高（摄像机框同步）；画布双指缩放；隐藏 <code>_</code> 开头内部变量</span><span class="en">Custom stage width/height (camera follows), pinch-zoom canvas, hide internal <code>_</code> variables</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head">
+              <span class="release-ver">v0.15.0</span>
+              <span class="release-date"><time data-date="2026-11-01"></time></span>
+              <span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span>
+            </div>
+            <h4 class="release-title">编辑器工作流第一批</h4>
+            <ul class="release-points">
+              <li><span class="zh">撤销 / 重做（Ctrl/Cmd+Z、Shift+Z、Ctrl+Y），最多 60 步</span><span class="en">Undo / redo (Ctrl/Cmd+Z, Shift+Z, Ctrl+Y), up to 60 steps</span></li>
+              <li><span class="zh">复制粘贴角色（Ctrl/Cmd+C/V）、Ctrl+D 直接复制、Delete 删除</span><span class="en">Copy/paste sprites (Ctrl/Cmd+C/V), Ctrl+D duplicate, Delete to remove</span></li>
+              <li><span class="zh">画布右键菜单：复制、移到最上层 / 最下层、删除</span><span class="en">Canvas context menu: duplicate, bring to front/back, delete</span></li>
+              <li><span class="zh">双击空白打开资源库，按 F 让摄像机适应视图；版本日志相同日期只显示一次</span><span class="en">Double-click empty canvas for assets, F to fit view; repeated dates now show once</span></li>
+            </ul>
+          </li>
+          <li class="release is-current">
+            <div class="release-head"><span class="release-ver">v0.14.0</span><span class="release-date"><time data-date="2026-11-01"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">摄像机 + 无限画布</span><span class="en">Camera + infinite canvas</span></div>
+            <ul>
+              <li><span class="zh">编辑模式改为无限画布：点阵背景可无限平移，滚轮或缩放按钮在 20%–250% 之间缩放，舞台坐标保持不变。</span><span class="en">Edit mode is now an infinite canvas: pan freely over a dotted grid and zoom from 20% to 250% without changing stage coordinates.</span></li>
+              <li><span class="zh">画布中央显示「摄像机」框（尺寸 = 工程舞台尺寸）：框内是运行时玩家看到的画面，框外内容运行时不可见；拖动角色摆位置时属性面板实时同步。</span><span class="en">A camera frame (sized to the project stage) marks what players see at runtime; sprites can be dragged anywhere and the inspector syncs live.</span></li>
+              <li><span class="zh">资源库素材可直接拖到画布任意位置创建角色；点「运行」切换到真实游戏画面，点「停止」回到画布。</span><span class="en">Drag assets from the library anywhere on the canvas to create sprites; Run switches to the real game view and Stop returns to the canvas.</span></li>
+              <li><span class="zh">桌面冒烟 41/41、手机/平板 42/42，Pages 检查 30/30。</span><span class="en">Desktop smoke 41/41, mobile 42/42, pages checks 30/30.</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.13.1</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">编辑/运行分离 + 贪吃蛇启动优化</span><span class="en">Edit/run split + Snake start fix</span></div>
+            <ul>
+              <li><span class="zh">编辑器舞台默认显示静态预览：不再一进来就自动运行、也不再黑屏；点「运行」进入游戏，点「停止」回到编辑预览。</span><span class="en">The editor stage now shows a static preview by default: no auto-run and no black screen; press Run to play, Stop returns to the edit preview.</span></li>
+              <li><span class="zh">编辑模式下可直接在舞台上拖动精灵调整位置，X/Y 坐标实时同步到属性面板；摇杆只在运行模式出现，编辑模式显示操作提示。</span><span class="en">In edit mode sprites can be dragged directly on the stage, syncing X/Y to the inspector; the joystick only appears while running, and edit mode shows a hint instead.</span></li>
+              <li><span class="zh">贪吃蛇改为按方向键/摇杆后才开始移动，开局静止等待输入，避免刚进关卡就自动撞墙结束。</span><span class="en">Snake now waits for the first direction input before moving, so a fresh run no longer crashes into a wall on its own.</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.13.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">贪吃蛇示例 + 导出 Windows EXE</span><span class="en">Snake demo + Windows game EXE export</span></div>
+            <ul>
+              <li><span class="zh">示例模板精简为「空白 + 贪吃蛇」：贪吃蛇支持方向转向、吃苹果变长、撞墙/咬到自己结束并提示重开；旧平台跳跃、吃豆豆、RPG、格斗等模板已移除。</span><span class="en">Templates are now just Blank + Snake: steering, growing on apples, wall/self collision with a restart hint; the old platformer, dot-muncher, RPG and brawler demos were removed.</span></li>
+              <li><span class="zh">新增「设置」面板：语言与主题、自动保存与间隔、积木网格吸附、删除角色确认、导出全部工程备份、清空本地数据、检查更新与快捷键说明。</span><span class="en">New Settings panel: language &amp; theme, autosave with interval, grid snapping, delete confirmation, export all projects, clear local data, update check and shortcuts.</span></li>
+              <li><span class="zh">输入设置升级为双标签：输入事件绑定 + 触屏控件面板，可分别设置摇杆左右位置/尺寸/透明度，以及每个按钮的图标、绑定、尺寸、左右位置、透明度并实时预览。</span><span class="en">Input settings now have two tabs: event bindings and a touch-control panel where joystick side/size/opacity and each button's icon, binding, size, side and opacity can be set with a live preview.</span></li>
+              <li><span class="zh">桌面版新增「导出 EXE」：一键生成可双击运行的独立 Windows 游戏（内置播放器 + 内嵌工程）；安卓导出仍在内测中，点击会显示提示。</span><span class="en">Desktop app gains “Export EXE”: one click builds a standalone, double-clickable Windows game (embedded player + project payload); Android export is still in beta and shows a notice.</span></li>
+              <li><span class="zh">全屏运行时画面、HUD、手柄与「退出全屏」按钮整体旋转；安卓端按安全区留出顶部/底部边距，圆角屏不再遮挡按钮。</span><span class="en">Fullscreen now rotates the game, HUD, touch pad and exit button together; Android leaves safe-area margins at the top/bottom so rounded corners no longer clip controls.</span></li>
+              <li><span class="zh">桌面冒烟 39/39、手机/平板 39/39，Pages 检查 30/30。</span><span class="en">Desktop smoke 39/39, mobile 39/39, pages checks 30/30.</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.12.4</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">资源库 + 可拖动分栏</span><span class="en">Asset library + resizable panes</span></div>
+            <ul>
+              <li><span class="zh">新增「资源库」：18 个内置素材（英雄、金币、地鼠、幽灵、平台、药水等）可以直接拖到舞台上创建角色；手机端点击素材即添加到舞台中央，工程里已有的图片素材也会列出。</span><span class="en">New asset library: drag any of 18 built-in assets (hero, coin, mole, ghost, platform, potion…) onto the stage to create a sprite; on touch devices tap an asset to add it at the center. Project images are listed too.</span></li>
+              <li><span class="zh">全屏运行时右上角新增「退出全屏」按钮；安卓返回键改为先回工程管理页、再按才退出应用，不再直接退到桌面。</span><span class="en">A visible “Exit fullscreen” button while running fullscreen; the Android back button now returns to the project hub first, and only exits the app on a second press.</span></li>
+              <li><span class="zh">PC 与平板横屏支持拖动分栏：左右面板之间、舞台与积木之间各有一条可拖动的小白条，尺寸自动记在本地；平板默认加宽侧栏与舞台区，解决内容太挤的问题。</span><span class="en">Drag-resizable panes on desktop and tablet: thin handles between the side panels and between stage and blocks, sizes remembered locally; tablet defaults give the stage and sidebars more room.</span></li>
+              <li><span class="zh">修复数字输入框清空后继续输入会变成「0100」的问题（X/Y、方向、大小、层级、变量值等）。</span><span class="en">Fixed numeric inputs turning typed values into “0100” after clearing (X/Y, direction, size, layer, variable values).</span></li>
+              <li><span class="zh">桌面冒烟 39/39、手机/平板 39/39。</span><span class="en">Desktop smoke 39/39, mobile 39/39.</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.12.3</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">预览隔离 + 快捷键</span><span class="en">Preview sandbox + shortcuts</span></div>
+            <ul>
+              <li><span class="zh">运行预览的 iframe 加了 sandbox 隔离（allow-scripts / allow-same-origin / allow-pointer-lock），阻止脚本导航顶层页面或弹窗。</span><span class="en">The preview iframe is now sandboxed (allow-scripts / allow-same-origin / allow-pointer-lock), blocking top-level navigation and popups.</span></li>
+              <li><span class="zh">编辑器快捷键：Ctrl/Cmd+S 保存工程、Ctrl/Cmd+O 打开工程、Ctrl/Cmd+E 导出 HTML5。</span><span class="en">Editor shortcuts: Ctrl/Cmd+S save, Ctrl/Cmd+O open, Ctrl/Cmd+E export HTML5.</span></li>
+              <li><span class="zh">手机/平板积木编辑改为底部抽屉：默认约六成屏高，可展开到接近全屏，点遮罩或「关闭」收起，底部标签栏保持可用。</span><span class="en">Blocks editing on phone/tablet now opens as a bottom sheet (about 60% height, expandable to near full screen); close via overlay or the Close button, bottom tabs remain usable.</span></li>
+              <li><span class="zh">桌面冒烟 34/34、手机/平板 36/36，预览隔离后运行时无回归。</span><span class="en">Desktop smoke 34/34 and mobile 36/36; runtime unaffected by the sandbox.</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.12.2</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">方向输入积木 + 安卓状态栏修复</span><span class="en">Direction input block + Android status bar fix</span></div>
+            <ul>
+              <li><span class="zh">新增「方向输入移动角色」积木：方向键 / WASD / 触屏摇杆共用同一个输入事件，绑定到角色循环脚本即可控制移动。</span><span class="en">New “move with direction input” block: arrows, WASD and the touch joystick share one input event, ready to bind to a character loop.</span></li>
+              <li><span class="zh">安卓端隐藏系统状态栏，编辑器顶部菜单不再被遮挡。</span><span class="en">Android app hides the system status bar so it no longer covers the editor top menu.</span></li>
+              <li><span class="zh">自定义积木总数 57，官网 / README 同步更新。</span><span class="en">Custom block count is now 57, site and README updated.</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.12.1</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <div class="release-tagline"><span class="zh">浅色品牌</span><span class="en">Light brand</span></div>
+            <ul>
+              <li><span class="zh">官网改为默认浅色主题，右上角可切换深色（选择会记住）。</span><span class="en">The site now defaults to a light theme with a dark toggle (remembered).</span></li>
+              <li><span class="zh">安装包 / 应用 / 安卓图标改为白底浅色版，同步更新 favicon。</span><span class="en">Installer, app and Android icons now use a white-background light version, favicons updated too.</span></li>
+              <li><span class="zh">手机端导航与页头按钮在浅色下重新对齐。</span><span class="en">Mobile navigation and header buttons re-aligned for the light theme.</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.12.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <h4><span class="zh">RPG 史莱姆战斗 + 全新示例截图</span><span class="en">RPG slime battles &amp; fresh demo shots</span></h4>
+            <ul>
+              <li><span class="zh">勇者小镇新增史莱姆战斗：贴近后按「动作」键攻击，史莱姆 HP 归零即被击败，HUD 实时显示史莱姆 HP。</span><span class="en">Knight Town gains slime battles: close in and press the action binding to attack; the slime drops once its HP hits zero, with HP shown live in the HUD.</span></li>
+              <li><span class="zh">官网截图全部换成当前版本的四款示例游戏（平台跳跃 v2 / 吃豆豆 / 勇者小镇 / 横版格斗）与 8 模板弹层。</span><span class="en">The gallery now shows the current four demo games (Platformer v2, Dot muncher, Knight Town, Brawler) plus the 8-template dialog.</span></li>
+              <li><span class="zh">官网新增「下载安装包」区块：Windows 安装版 / 便携版与 Android APK，由 GitHub Releases 分发。</span><span class="en">New download section: Windows installer / portable build and the Android APK, distributed via GitHub Releases.</span></li>
+              <li><span class="zh">触屏交互按工程单独配置：手柄模式（摇杆 + 自定义按钮，三档尺寸）或直接触摸模式（不显示手柄，点按互动 / 拖动角色），设置随工程保存。</span><span class="en">Touch controls are per project: choose pad (joystick + custom buttons, three sizes) or direct-touch (no on-screen pad; tap to interact, press and drag sprites). Settings persist with the project.</span></li>
+              <li><span class="zh">新增「交互」积木分类：当角色被拖动时、指针 X / 指针 Y、角色被拖动？、设置可拖动 开/关；直接触摸模式下可拖动舞台上的角色。</span><span class="en">New Interaction category: when sprite dragged, pointer X / Y, sprite being dragged?, set draggable on/off; direct-touch mode lets you drag sprites on the stage.</span></li>
+              <li><span class="zh">修复比较运算符：新增 ≤ / ≥ / ≠（此前横版格斗会开局误判胜负、平台跳跃无法按金币数通关）。</span><span class="en">Comparison operators now include ≤ / ≥ / ≠ (fixes the brawler auto-finishing and the platformer goal check).</span></li>
+              <li><span class="zh">官网与编辑器加入交流群入口：QQ 群 424124959 可点击直接拉起 QQ 群资料页申请加入，抖音群 888985597118 显示群号。</span><span class="en">Community links on the site and in the editor: tap the QQ group number to open the QQ group profile and request to join; the Douyin group number is shown as well.</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.11.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">示例游戏加固 + 手机触屏手柄重做</span><span class="en">Harder demo games + redesigned touch pad</span></p>
+            <ul>
+              <li><span class="zh">平台跳跃 v2：16 个角色，多平台与移动平台、巡逻史莱姆、金币、药水、HP=3、受伤冷却回起点、终点要求金币达标</span><span class="en">Platformer v2: 16 sprites, multiple &amp; moving platforms, patrolling slimes, coins, potion, HP=3, damage cooldown and a coin-gated goal</span></li>
+              <li><span class="zh">新增「横版格斗」模板：HP / 对手 HP、动作键攻击与击退、KO 结算</span><span class="en">New "Side-scroller Brawl" template: HP / rival HP, Action-key attacks, knockback and a K.O. result</span></li>
+              <li><span class="zh">手机触屏手柄：非全屏时在舞台下方不遮挡画面，全屏时浮在画面底部；摇杆 + 自定义按钮</span><span class="en">Phone touch pad: docked below the stage when windowed, floating at the bottom in fullscreen; joystick + custom buttons</span></li>
+              <li><span class="zh">版本日志只显示相对时间（三天内 / 七天内 / 七天之前），不暴露具体日期</span><span class="en">Release log shows relative time only (within 3 days / within 7 days / more than 7 days ago)</span></li>
+              <li><span class="zh">桌面安装包改用 Tauri NSIS（currentUser 安装，简体中文 + English）</span><span class="en">Desktop installer now uses Tauri NSIS (currentUser install, Simplified Chinese + English)</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.10.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">桌面版原生工程文件 + 专业积木术语</span><span class="en">Native desktop project files + professional block terminology</span></p>
+            <ul>
+              <li><span class="zh">桌面端只用 Tauri 2（移除 Electron）：Windows 可执行文件约 3.4MB</span><span class="en">Desktop ships on Tauri 2 only (Electron removed): a ~3.4MB Windows executable</span></li>
+              <li><span class="zh">工程以 .gproj 落盘到应用数据目录，自动保存同步写盘，启动时与本地工程库对齐，工程管理页显示目录</span><span class="en">Projects are stored as .gproj files in the app data folder; autosave mirrors to disk and the hub shows the folder</span></li>
+              <li><span class="zh">「当绿旗被点击」改为「游戏启动时」，分类改为 事件 / 运动 / 渲染 / 音频 / 流程 / 感知 / 数学 / 变量</span><span class="en">"when flag clicked" becomes "when game starts"; categories now Events / Motion / Rendering / Audio / Flow / Sensing / Math / Variables</span></li>
+              <li><span class="zh">积木配色换成低饱和清新色板</span><span class="en">Blocks use a fresh, low-saturation palette</span></li>
+              <li>
+                <span class="zh">官网双通道在线演示：<a href="./demo/">稳定版</a>与<a href="./demo-beta/">测试版</a></span>
+                <span class="en">Two live channels: <a href="./demo/">stable</a> and <a href="./demo-beta/">beta</a></span>
+              </li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.9.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">全屏运行</span><span class="en">Fullscreen play</span></p>
+            <ul>
+              <li><span class="zh">舞台面板新增「全屏」按钮，运行时隐藏编辑器界面专注试玩</span><span class="en">A Fullscreen button on the stage panel hides the editor for focused playtesting</span></li>
+              <li><span class="zh">手机端按游戏画幅自动适配：横屏游戏竖握时尝试锁定方向，锁不住则用 CSS 旋转兜底</span><span class="en">Phones adapt to the game aspect: orientation lock when available, CSS rotation fallback otherwise</span></li>
+              <li><span class="zh">触屏按钮文案随界面语言切换（跳 / Jump）</span><span class="en">Touch button labels follow the UI language (跳 / Jump)</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.8.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">吃豆豆示例</span><span class="en">Dot muncher demo</span></p>
+            <ul>
+              <li><span class="zh">新模板「吃豆豆」：迷宫墙体碰撞、6 颗豆子、会追人的幽灵</span><span class="en">New template "Dot muncher": maze wall collision, six pellets and a chasing ghost</span></li>
+              <li><span class="zh">碰撞用「上一次坐标 + 碰到墙就回退」实现，全程只用积木</span><span class="en">Collision is built from "remember last position, rewind on wall hit" — pure blocks</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.7.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">能力块 + 平台跳跃</span><span class="en">Capability blocks + platformer</span></p>
+            <ul>
+              <li><span class="zh">新增 6 个能力块：换成指定造型、x 坐标、y 坐标、方向、等待直到、移到某角色</span><span class="en">Six new blocks: switch costume to, x position, y position, direction, wait until, go to sprite</span></li>
+              <li><span class="zh">新模板「平台跳跃」：重力、落地判定、跳跃、金币与终点</span><span class="en">New template "Platformer": gravity, landing check, jumping, coins and a goal flag</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.6.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">工程管理页 + 紫色豹猫品牌</span><span class="en">Project hub + purple leopard branding</span></p>
+            <ul>
+              <li><span class="zh">初始页改为工程管理页：多工程卡片、搜索、导入、重命名 / 复制 / 导出 / 删除</span><span class="en">The app now starts on a project hub: multi-project cards, search, import, rename / duplicate / export / delete</span></li>
+              <li><span class="zh">hash 路由区分工程库与编辑器，浏览器刷新与后退都可用</span><span class="en">Hash routes separate the library from the editor, surviving refresh and back</span></li>
+              <li><span class="zh">品牌换成紫色像素豹猫 logo，主题色由橙改为紫</span><span class="en">New purple pixel leopard-cat logo and purple accent theme</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.5.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">输入事件 + Apache-2.0</span><span class="en">Input events + Apache-2.0</span></p>
+            <ul>
+              <li><span class="zh">操作抽象成输入事件：一个事件可绑定多个按键</span><span class="en">Controls become named input events, each bindable to several keys</span></li>
+              <li><span class="zh">原生触屏摇杆与自定义按钮，「当输入 X 被按下」「输入 X 被按下?」积木</span><span class="en">On-screen joystick and custom buttons, plus "when input X pressed" and "input X pressed?" blocks</span></li>
+              <li><span class="zh">项目许可切换为 Apache License 2.0</span><span class="en">Project license moved to Apache License 2.0</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.4.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">模板与新建工程</span><span class="en">Templates &amp; new project</span></p>
+            <ul>
+              <li><span class="zh">新建工程弹层：空白工程 + 小猫吃金币 / 打地鼠 / 接苹果三个可玩模板</span><span class="en">New-project dialog: blank project plus three playable templates (cat &amp; coins, whack-a-mole, catch apples)</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.3.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">单文件 HTML5 导出</span><span class="en">Single-file HTML5 export</span></p>
+            <ul>
+              <li><span class="zh">一键导出双击就能玩的 HTML：运行时与作品打包成一个文件，可发给别人离线玩</span><span class="en">Export a double-clickable HTML file: runtime and project bundled, playable offline</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.2.1</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">品牌 logo 与桌面 / 移动壳</span><span class="en">Logo and desktop / mobile shells</span></p>
+            <ul>
+              <li><span class="zh">加入 CobBox 品牌 logo，编辑器、官网与安装包统一图标</span><span class="en">CobBox logo across editor, site and installer icons</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.2.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">素材与角色管理</span><span class="en">Assets &amp; sprites</span></p>
+            <ul>
+              <li><span class="zh">上传图片造型与音效、新建 / 删除角色、造型排序与改名、变量管理、舞台设置</span><span class="en">Upload costumes and sounds, add / remove sprites, reorder and rename costumes, manage variables, stage settings</span></li>
+            </ul>
+          </li>
+          <li class="release">
+            <div class="release-head"><span class="release-ver">v0.1.0</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
+            <p class="release-tagline"><span class="zh">可运行原型</span><span class="en">Working prototype</span></p>
+            <ul>
+              <li><span class="zh">积木编辑、IR 编译、固定 60Hz 运行时、Phaser 4 舞台、深浅主题、中英双语、触屏布局</span><span class="en">Block editing, IR compile, fixed 60 Hz runtime, Phaser 4 stage, dark/light themes, bilingual UI, touch layout</span></li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="site-foot">
+      <div class="foot-brand">
+        <img class="brand-logo" src="./assets/logo.svg" alt="" />
+        <div>
+          <strong>CobBox</strong>
+          <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.14.0</span><span class="en">A lightweight 2D block game maker · v0.14.0</span></p>
+        </div>
+      </div>
+      <nav class="foot-links">
+        <a href="./"><span class="zh">官网首页</span><span class="en">Home</span></a>
+        <a href="#changelog"><span class="zh">版本日志</span><span class="en">Release log</span></a>
+        <a href="./demo/"><span class="zh">在线演示</span><span class="en">Live demo</span></a>
+        <a href="./demo-beta/"><span class="zh">测试版演示</span><span class="en">Beta demo</span></a>
+        <a href="https://github.com/ONGIKAN/cobbox" target="_blank" rel="noreferrer"><span class="zh">GitHub 仓库</span><span class="en">GitHub repo</span></a>
+        <a href="https://github.com/ONGIKAN/cobbox/blob/main/docs/技术方案-v1.md" target="_blank" rel="noreferrer"><span class="zh">技术方案</span><span class="en">Design doc</span></a>
+      </nav>
+      <p class="foot-community">
+        <span class="zh">交流群：<a href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode">QQ 群 <b>424124959</b>（点击加群）</a> · 抖音群 <b>888985597118</b></span>
+        <span class="en">Community: <a href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode">QQ group <b>424124959</b></a> · Douyin group <b>888985597118</b></span>
+      </p>
+      <p class="foot-note">
+        <span class="zh">Apache License 2.0 · 用积木拼出你的第一款游戏</span>
+        <span class="en">Apache License 2.0 · Build your first game with blocks</span>
+      </p>
+    </footer>
+
+    <script src="./site.js"></script>
+  </body>
+</html>
