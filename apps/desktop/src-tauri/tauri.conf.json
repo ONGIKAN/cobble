@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "CobBox",
-  "version": "0.15.0",
-  "identifier": "studio.cobbox.app",
+  "version": "0.17.0",
+  "identifier": "studio.cobbox.editor",
   "build": {
     "frontendDist": "../../editor/dist"
   },

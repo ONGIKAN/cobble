@@ -332,7 +332,7 @@ dependencies = [
 
 [[package]]
 name = "cobbox"
-version = "0.14.0"
+version = "0.17.0"
 dependencies = [
  "serde_json",
  "tauri",

@@ -42,7 +42,7 @@
 | Windows | [`CobBox-Windows-x64-Portable.exe`](https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Windows-x64-Portable.exe) | 免安装便携版，约 8.8 MB，需放纯英文路径（内置 EXE 导出播放器） |
 | Android | [`CobBox-Android.apk`](https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Android.apk) | Capacitor APK，debug 签名，Android 6.0+，约 5.8 MB |
 
-> 安装包未做代码签名；Windows 首次运行可能出现 SmartScreen 提示（更多信息 → 仍要运行），安卓安装需允许未知来源。桌面版工程以 `.gproj` 落盘到 `%APPDATA%/studio.cobbox.app/projects`。
+> 安装包未做代码签名；Windows 首次运行可能出现 SmartScreen 提示（更多信息 → 仍要运行），安卓安装需允许未知来源。桌面版工程以 `.gproj` 落盘到 `%APPDATA%/studio.cobbox.editor/projects`。
 
 - **手机 / 平板优先**：顶栏精简、积木抽屉直接切角色与运行、底部标签安全区、世界画布双指缩放。
 - **角色分组**：分组新建 / 重命名 / 删除，拖动角色进分组、拖动分组头排序。
@@ -92,7 +92,7 @@ npm run build                      # 先构建编辑器
 ```
 
 - 前端通过自定义 `app://` 协议加载构建产物，避免 `file://` 下 ES module 被 CORS 拦
-- Rust 侧提供 `list_projects` / `read_project` / `write_project` / `delete_project` / `projects_location` 命令，工程文件落在应用数据目录的 `projects/` 下（Windows 一般是 `%APPDATA%/studio.cobbox.app/projects`）
+- Rust 侧提供 `list_projects` / `read_project` / `write_project` / `delete_project` / `projects_location` 命令，工程文件落在应用数据目录的 `projects/` 下（Windows 一般是 `%APPDATA%/studio.cobbox.editor/projects`）
 - 桌面版启动时会把 localStorage 工程库与磁盘上的 `.gproj` 对齐；编辑器里每次自动保存也会同步写盘，工程管理页底部会显示该目录
 - 需要 MSVC（Visual Studio Build Tools / Community）与 Rust 工具链；`tools/build-tauri.bat` 会自动 `call VsDevCmd`
 

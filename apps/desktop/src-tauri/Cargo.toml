@@ -1,6 +1,6 @@
 [package]
 name = "cobbox"
-version = "0.15.0"
+version = "0.17.0"
 description = "CobBox — lightweight block-based 2D game maker"
 edition = "2021"
 
