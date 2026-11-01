@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Cobble Game",
+  "productName": "CobBox Game",
   "version": "0.15.0",
-  "identifier": "studio.cobble.player",
+  "identifier": "studio.cobbox.player",
   "build": {
     "frontendDist": "../dist"
   },
@@ -10,7 +10,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Cobble Game",
+        "title": "CobBox Game",
         "width": 1024,
         "height": 640,
         "minWidth": 640,

@@ -6,7 +6,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { inputConfig, type TouchButtonDef } from '@cobble/project';
+import { inputConfig, type TouchButtonDef } from '@cobbox/project';
 import { sendTouch, setPlayerFrame } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';

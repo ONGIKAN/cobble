@@ -1,7 +1,7 @@
 [package]
-name = "cobble-game-player"
+name = "cobbox-game-player"
 version = "0.15.0"
-description = "Cobble Studio standalone game player"
+description = "CobBox standalone game player"
 edition = "2021"
 
 [build-dependencies]

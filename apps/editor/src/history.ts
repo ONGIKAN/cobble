@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { ProjectDoc } from '@cobble/project';
+import type { ProjectDoc } from '@cobbox/project';
 import { useEditorStore } from './store';
 
 /**

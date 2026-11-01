@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { displayName, inputConfig, keyLabel, type InputConfig } from '@cobble/project';
+import { displayName, inputConfig, keyLabel, type InputConfig } from '@cobbox/project';
 import { refreshAssetBlocks } from '../block-defs';
 import { useEditorStore } from '../store';
 import { TouchControlsPanel } from './TouchControlsPanel';

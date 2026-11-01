@@ -1,11 +1,11 @@
 import { useState, type DragEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { AssetDef, SpriteDef } from '@cobble/project';
+import type { AssetDef, SpriteDef } from '@cobbox/project';
 import { useEditorStore } from '../store';
 import { NumberInput } from './NumberInput';
 
-const SPRITE_MIME = 'application/x-cobble-sprite';
-const GROUP_MIME = 'application/x-cobble-group';
+const SPRITE_MIME = 'application/x-cobbox-sprite';
+const GROUP_MIME = 'application/x-cobbox-group';
 
 type DropTarget = { groupId: string; position: 'before' | 'after' | 'inside' } | null;
 

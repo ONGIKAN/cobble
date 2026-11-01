@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { displayName, type InputConfig, type PadSide, type PadSize, type TouchButtonDef } from '@cobble/project';
+import { displayName, type InputConfig, type PadSide, type PadSize, type TouchButtonDef } from '@cobbox/project';
 
 interface Props {
   config: InputConfig;

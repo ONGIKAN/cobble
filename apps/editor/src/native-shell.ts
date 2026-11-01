@@ -25,7 +25,7 @@ export async function setupNativeShell(): Promise<void> {
   try {
     const { App } = await import('@capacitor/app');
     await App.addListener('backButton', () => {
-      const event = new CustomEvent('cobble:native-back', { cancelable: true });
+      const event = new CustomEvent('cobbox:native-back', { cancelable: true });
       const handled = !window.dispatchEvent(event);
       if (handled) return;
       if (location.hash.startsWith('#/editor/')) {

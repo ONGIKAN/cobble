@@ -5,7 +5,7 @@ import { en } from './locales/en';
 
 export type Locale = 'zh-CN' | 'en';
 export const SUPPORTED_LOCALES: readonly Locale[] = ['zh-CN', 'en'];
-export const LOCALE_STORAGE_KEY = 'cobble.locale';
+export const LOCALE_STORAGE_KEY = 'cobbox.locale';
 
 export type TFunc = (key: string, options?: Record<string, unknown>) => string;
 

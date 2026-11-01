@@ -1,4 +1,4 @@
-import type { CompiledProject } from '@cobble/project';
+import type { CompiledProject } from '@cobbox/project';
 
 let frame: HTMLIFrameElement | null = null;
 

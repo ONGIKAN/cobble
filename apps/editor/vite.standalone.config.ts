@@ -10,8 +10,8 @@ export default defineConfig({
     lib: {
       entry: fileURLToPath(new URL('./src/standalone/main.ts', import.meta.url)),
       formats: ['iife'],
-      name: 'CobblePlayer',
-      fileName: () => 'cobble-player.js',
+      name: 'CobBoxPlayer',
+      fileName: () => 'cobbox-player.js',
     },
   },
 });

@@ -85,7 +85,7 @@ export function registerSquareRenderer(): void {
 
 export function createBlocklyTheme(mode: ThemeMode): Blockly.Theme {
   const theme = new Blockly.Theme(
-    `cobble-${mode}`,
+    `cobbox-${mode}`,
     BLOCK_STYLES,
     undefined,
     mode === 'dark' ? DARK_COMPONENTS : LIGHT_COMPONENTS,

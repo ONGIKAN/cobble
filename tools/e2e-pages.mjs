@@ -10,7 +10,7 @@ const V = `v${APP_VERSION}`;
 const SITE = `${BASE}/`;
 const DEMO = `${BASE}/demo/`;
 const DEMO_BETA = `${BASE}/demo-beta/`;
-const REPO = 'https://github.com/ONGIKAN/cobble';
+const REPO = 'https://github.com/ONGIKAN/cobbox';
 const SHOTS = 'tools/shots';
 mkdirSync(SHOTS, { recursive: true });
 
@@ -41,7 +41,7 @@ const sitePage = await site.newPage();
 watch(sitePage, 'site');
 await sitePage.goto(SITE, { waitUntil: 'networkidle' });
 
-check('site: title', (await sitePage.title()).includes('Cobble'), await sitePage.title());
+check('site: title', (await sitePage.title()).includes('CobBox'), await sitePage.title());
 const stableV = (await sitePage.locator('.brand-ver').first().innerText()).trim();
 check('site: hero heading', (await sitePage.locator('h1').innerText()).length > 4);
 const imgOk = await sitePage.locator('img').evaluateAll((nodes) => nodes.every((node) => node.naturalWidth > 0));
@@ -85,7 +85,7 @@ await sitePage.screenshot({ path: `${SHOTS}/site-zh.png` });
 await sitePage.locator('#lang-toggle').click();
 await sitePage.waitForTimeout(150);
 check('site: switch to en', (await sitePage.evaluate(() => document.documentElement.lang)) === 'en');
-check('site: en title', (await sitePage.title()).includes('Cobble'));
+check('site: en title', (await sitePage.title()).includes('CobBox'));
 await sitePage.screenshot({ path: `${SHOTS}/site-en.png` });
 
 // 官网 -> 演示（点击真实跳转，验证相对路径）
@@ -102,7 +102,7 @@ check('demo: editor boots from site', true);
 // 演示页互链
 const siteLink = sitePage.locator('[data-testid="site-link"]').first();
 const repoLink = sitePage.locator('[data-testid="repo-link"]').first();
-check('demo: site link href', (await siteLink.getAttribute('href')) === 'https://ongikan.github.io/cobble/');
+check('demo: site link href', (await siteLink.getAttribute('href')) === 'https://ongikan.github.io/cobbox/');
 check('demo: repo link href', (await repoLink.getAttribute('href')) === REPO);
 check('demo: status bar links', (await sitePage.locator('[data-testid="status-site-link"]').count()) > 0);
 
@@ -111,7 +111,7 @@ const runtimeState = async (page) => {
   const frame = page.frames().find((item) => item.url().includes('player.html'));
   if (!frame) return null;
   return frame.evaluate(() => {
-    const runtime = window.__cobbleRuntime;
+    const runtime = window.__cobboxRuntime;
     return runtime ? { running: runtime.isRunning } : null;
   });
 };

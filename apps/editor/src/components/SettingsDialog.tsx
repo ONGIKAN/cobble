@@ -1,29 +1,34 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { detectLocale, LOCALE_STORAGE_KEY, switchLocale, type Locale } from '@cobble/i18n';
+import { detectLocale, LOCALE_STORAGE_KEY, switchLocale, type Locale } from '@cobbox/i18n';
 import { loadLibrary } from '../library';
 import { useSettings } from '../settings';
 import { APP_CHANNEL, APP_VERSION, IS_BETA } from '../version';
 import { REPO_URL, SITE_URL } from '../links';
+import { AiSettingsPanel } from './AiDialog';
+import type { SettingsTab } from '../settings-dialog';
 
 interface Props {
   open: boolean;
+  initialTab?: SettingsTab;
   onClose: () => void;
 }
 
-type Tab = 'general' | 'editor' | 'data' | 'about';
-const THEME_KEY = 'cobble.theme';
+type Tab = SettingsTab;
+const THEME_KEY = 'cobbox.theme';
 
 /** 应用设置：语言/主题、编辑器行为、本地数据、关于与检查更新 */
-export function SettingsDialog({ open, onClose }: Props) {
+export function SettingsDialog({ open, initialTab = 'general', onClose }: Props) {
   if (!open) return null;
-  return <SettingsBody onClose={onClose} />;
+  return <SettingsBody onClose={onClose} initialTab={initialTab} />;
 }
 
-function SettingsBody({ onClose }: { onClose: () => void }) {
+function SettingsBody({ onClose, initialTab }: { onClose: () => void; initialTab: SettingsTab }) {
   const { t } = useTranslation();
   const settings = useSettings();
-  const [tab, setTab] = useState<Tab>('general');
+  const [tab, setTab] = useState<Tab>(initialTab);
+
+  useEffect(() => setTab(initialTab), [initialTab]);
   const [dataInfo] = useState(() => readDataInfo());
   const [updateState, setUpdateState] = useState<'idle' | 'checking' | 'latest' | 'available' | 'failed'>('idle');
   const [remoteVersion, setRemoteVersion] = useState('');
@@ -40,7 +45,7 @@ function SettingsBody({ onClose }: { onClose: () => void }) {
   const exportAll = (): void => {
     const library = loadLibrary();
     const payload = {
-      format: 'cobble-studio-backup',
+      format: 'cobbox-backup',
       version: 1,
       exportedAt: new Date().toISOString(),
       projects: library,
@@ -49,15 +54,15 @@ function SettingsBody({ onClose }: { onClose: () => void }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `cobble-projects-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `cobbox-projects-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
   };
 
   const clearAll = (): void => {
     if (!window.confirm(t('settings.clearConfirm'))) return;
-    localStorage.removeItem('cobble.library');
-    localStorage.removeItem('cobble.autosave');
+    localStorage.removeItem('cobbox.library');
+    localStorage.removeItem('cobbox.autosave');
     location.hash = '#/projects';
     location.reload();
   };
@@ -90,7 +95,7 @@ function SettingsBody({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="modal-tabs" role="tablist">
-          {(['general', 'editor', 'data', 'about'] as Tab[]).map((item) => (
+          {(['general', 'editor', 'ai', 'data', 'about'] as Tab[]).map((item) => (
             <button
               key={item}
               type="button"
@@ -228,6 +233,8 @@ function SettingsBody({ onClose }: { onClose: () => void }) {
             </>
           )}
 
+          {tab === 'ai' && <AiSettingsPanel />}
+
           {tab === 'data' && (
             <>
               <section className="settings-section">
@@ -262,7 +269,7 @@ function SettingsBody({ onClose }: { onClose: () => void }) {
                 <div className="settings-about-head">
                   <img className="settings-logo" src={`${import.meta.env.BASE_URL}logo.svg`} alt="" />
                   <div>
-                    <strong>Cobble Studio</strong>
+                    <strong>CobBox</strong>
                     <p>
                       v{APP_VERSION}
                       {IS_BETA ? ' · beta' : ''} · {APP_CHANNEL}

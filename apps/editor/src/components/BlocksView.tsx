@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import * as Blockly from 'blockly';
-import { buildToolbox } from '@cobble/blocks';
+import { buildToolbox } from '@cobbox/blocks';
 import { createBlocklyTheme, registerSquareRenderer } from '../blockly-theme';
 import { useEditorStore } from '../store';
 import { readSettings } from '../settings';

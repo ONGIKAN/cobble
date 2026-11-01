@@ -6,7 +6,7 @@ import {
   type InputConfig,
   type ProjectDoc,
   type SpriteDef,
-} from '@cobble/project';
+} from '@cobbox/project';
 import {
   attachStatement,
   attachValue,

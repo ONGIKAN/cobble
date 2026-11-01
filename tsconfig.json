@@ -16,11 +16,11 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@cobble/project": ["packages/project/src/index.ts"],
-      "@cobble/i18n": ["packages/i18n/src/index.ts"],
-      "@cobble/blocks": ["packages/blocks/src/index.ts"],
-      "@cobble/runtime": ["packages/runtime/src/index.ts"],
-      "@cobble/engine-phaser": ["packages/engine-phaser/src/index.ts"]
+      "@cobbox/project": ["packages/project/src/index.ts"],
+      "@cobbox/i18n": ["packages/i18n/src/index.ts"],
+      "@cobbox/blocks": ["packages/blocks/src/index.ts"],
+      "@cobbox/runtime": ["packages/runtime/src/index.ts"],
+      "@cobbox/engine-phaser": ["packages/engine-phaser/src/index.ts"]
     }
   },
   "include": ["apps/editor/src", "apps/editor/*.d.ts", "packages/*/src"]

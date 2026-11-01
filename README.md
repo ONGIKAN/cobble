@@ -1,12 +1,12 @@
-<p align="center"><img src="docs/logo.png" width="88" height="88" alt="Cobble Studio logo" /></p>
+<p align="center"><img src="docs/logo.png" width="88" height="88" alt="CobBox logo" /></p>
 
-# Cobble Studio · 轻量 2D 积木游戏创作平台
+# CobBox · 轻量 2D 积木游戏创作平台
 
 用积木拼逻辑，一键运行 2D 小游戏。当前是 **P0 的可运行原型（M0）**：积木编辑 → 编译 IR → iframe 内 Phaser 运行时跑起来的完整链路已经打通，内置空白工程 + 贪吃蛇示例模板，支持导出独立 Windows 游戏 EXE，支持深浅主题、中英双语界面，以及手机 / 平板的触屏手柄；积木是低饱和、直角、方正的外观。
 
 **交流群：[QQ 群 424124959](mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode)（点击直接加群）· 抖音群 888985597118** —— 版本更新、教程与答疑
 
-**[官网](https://ongikan.github.io/cobble/)** · **[在线演示（稳定版）](https://ongikan.github.io/cobble/demo/)** · **[测试版在线演示](https://ongikan.github.io/cobble/demo-beta/)** · **[GitHub 仓库](https://github.com/ONGIKAN/cobble)**
+**[官网](https://ongikan.github.io/cobbox/)** · **[在线演示（稳定版）](https://ongikan.github.io/cobbox/demo/)** · **[测试版在线演示](https://ongikan.github.io/cobbox/demo-beta/)** · **[GitHub 仓库](https://github.com/ONGIKAN/cobbox)**
 
 ![编辑器运行贪吃蛇（深色）](docs/screenshots/11-snake.png)
 
@@ -34,15 +34,15 @@
 
 ## 下载安装包
 
-稳定版 v0.14.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobble/#download>）：
+稳定版 v0.14.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobbox/#download>）：
 
 | 平台 | 文件 | 说明 |
 | --- | --- | --- |
-| Windows | [`CobbleStudio-Windows-x64-Setup.exe`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Setup.exe) | Tauri NSIS 安装版，装到当前用户，约 3.3 MB（含 EXE 导出播放器） |
-| Windows | [`CobbleStudio-Windows-x64-Portable.exe`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Portable.exe) | 免安装便携版，约 8.8 MB，需放纯英文路径（内置 EXE 导出播放器） |
-| Android | [`CobbleStudio-Android.apk`](https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Android.apk) | Capacitor APK，debug 签名，Android 6.0+，约 5.8 MB |
+| Windows | [`CobBox-Windows-x64-Setup.exe`](https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Windows-x64-Setup.exe) | Tauri NSIS 安装版，装到当前用户，约 3.3 MB（含 EXE 导出播放器） |
+| Windows | [`CobBox-Windows-x64-Portable.exe`](https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Windows-x64-Portable.exe) | 免安装便携版，约 8.8 MB，需放纯英文路径（内置 EXE 导出播放器） |
+| Android | [`CobBox-Android.apk`](https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Android.apk) | Capacitor APK，debug 签名，Android 6.0+，约 5.8 MB |
 
-> 安装包未做代码签名；Windows 首次运行可能出现 SmartScreen 提示（更多信息 → 仍要运行），安卓安装需允许未知来源。桌面版工程以 `.gproj` 落盘到 `%APPDATA%/studio.cobble.app/projects`。
+> 安装包未做代码签名；Windows 首次运行可能出现 SmartScreen 提示（更多信息 → 仍要运行），安卓安装需允许未知来源。桌面版工程以 `.gproj` 落盘到 `%APPDATA%/studio.cobbox.app/projects`。
 
 - **手机 / 平板优先**：顶栏精简、积木抽屉直接切角色与运行、底部标签安全区、世界画布双指缩放。
 - **角色分组**：分组新建 / 重命名 / 删除，拖动角色进分组、拖动分组头排序。
@@ -51,8 +51,8 @@
 ## 快速开始
 
 ```bash
-git clone https://github.com/ONGIKAN/cobble.git
-cd cobble
+git clone https://github.com/ONGIKAN/cobbox.git
+cd cobbox
 npm install
 npm run dev          # 打开 http://127.0.0.1:5183
 ```
@@ -88,11 +88,11 @@ npm run smoke:mobile # 手机（390×844）/ 平板（820×1180）触屏冒烟�
 ```bash
 npm run build                      # 先构建编辑器
 ./tools/build-tauri.bat build --release
-# 产物：apps/desktop/src-tauri/target/release/cobble-studio.exe
+# 产物：apps/desktop/src-tauri/target/release/cobbox.exe
 ```
 
 - 前端通过自定义 `app://` 协议加载构建产物，避免 `file://` 下 ES module 被 CORS 拦
-- Rust 侧提供 `list_projects` / `read_project` / `write_project` / `delete_project` / `projects_location` 命令，工程文件落在应用数据目录的 `projects/` 下（Windows 一般是 `%APPDATA%/studio.cobble.app/projects`）
+- Rust 侧提供 `list_projects` / `read_project` / `write_project` / `delete_project` / `projects_location` 命令，工程文件落在应用数据目录的 `projects/` 下（Windows 一般是 `%APPDATA%/studio.cobbox.app/projects`）
 - 桌面版启动时会把 localStorage 工程库与磁盘上的 `.gproj` 对齐；编辑器里每次自动保存也会同步写盘，工程管理页底部会显示该目录
 - 需要 MSVC（Visual Studio Build Tools / Community）与 Rust 工具链；`tools/build-tauri.bat` 会自动 `call VsDevCmd`
 
@@ -100,8 +100,8 @@ npm run build                      # 先构建编辑器
 
 ```bash
 node tools/pack-desktop.mjs    # 构建编辑器 + Tauri release + NSIS 安装包
-# 产物：dist-release/Cobble Studio_<version>_x64-setup.exe
-#      dist-release/CobbleStudio-<version>-portable.exe
+# 产物：dist-release/CobBox_<version>_x64-setup.exe
+#      dist-release/CobBox-<version>-portable.exe
 ```
 
 - NSIS 安装包按当前用户安装（`currentUser`），装到 `%LOCALAPPDATA%` 下，语言支持简体中文与 English
@@ -114,10 +114,10 @@ node tools/pack-desktop.mjs    # 构建编辑器 + Tauri release + NSIS 安装�
 
 | 页面 | 地址 | 来源 |
 | --- | --- | --- |
-| 官网 | `https://ongikan.github.io/cobble/` | `site/` |
-| 在线演示（稳定版） | `https://ongikan.github.io/cobble/demo/` | `apps/editor/dist`（`VITE_CHANNEL=stable`） |
-| 测试版演示 | `https://ongikan.github.io/cobble/demo-beta/` | `apps/editor/dist`（`VITE_CHANNEL=beta`，界面带 BETA 标记） |
-| 源码 | `https://github.com/ONGIKAN/cobble` | 本仓库 `main` 分支 |
+| 官网 | `https://ongikan.github.io/cobbox/` | `site/` |
+| 在线演示（稳定版） | `https://ongikan.github.io/cobbox/demo/` | `apps/editor/dist`（`VITE_CHANNEL=stable`） |
+| 测试版演示 | `https://ongikan.github.io/cobbox/demo-beta/` | `apps/editor/dist`（`VITE_CHANNEL=beta`，界面带 BETA 标记） |
+| 源码 | `https://github.com/ONGIKAN/cobbox` | 本仓库 `main` 分支 |
 
 发布通道约定：常规小更新先发到 `/demo-beta/`（只有在线体验，不打包桌面版与安卓版），确认无误后再把稳定版发到 `/demo/`。`publish-pages.mjs` 会连续构建两个通道并分别放到 `pages-dist/demo` 与 `pages-dist/demo-beta`。
 
@@ -152,7 +152,7 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 | 触屏适配 | 窗口 ≤1119px 自动切换紧凑布局：底部 4 标签（舞台/积木/角色/属性）、舞台页触屏手柄（摇杆 + 自定义按钮 + 全屏悬浮）、角色快捷条；粗指针设备（pointer: coarse）才显示手柄。每个工程可单独配置触屏交互模式（手柄 / 直接触摸）与尺寸，设置随工程保存 |
 | 交互积木 | 「交互」分类：当角色被拖动时、指针 X / 指针 Y、角色被拖动？、设置可拖动 开/关；配合直接触摸模式可做点按、拖拽类玩法 |
 | 积木外观 | 自定义 `square` 渲染器（thrasos 派生）：圆角半径 0、字段边框为直角、事件积木顶部压平；低饱和 8 类配色 |
-| 工程管理页 | 启动即进入工程库：多工程卡片（缩略图 / 角色数 / 脚本数 / 更新时间）、搜索、新建、`.gproj` 导入、重命名 / 复制 / 导出 / 删除；hash 路由 `#/projects` 与 `#/editor/<id>`，工程存 localStorage `cobble.library`（旧版单工程自动迁移） |
+| 工程管理页 | 启动即进入工程库：多工程卡片（缩略图 / 角色数 / 脚本数 / 更新时间）、搜索、新建、`.gproj` 导入、重命名 / 复制 / 导出 / 删除；hash 路由 `#/projects` 与 `#/editor/<id>`，工程存 localStorage `cobbox.library`（旧版单工程自动迁移） |
 | 官网 | `site/`：落地页（中英切换、截图、路线图、快速开始），直角深色设计，与演示页/仓库互链 |
 
 ## 还没做（P0 后续 / P1）
@@ -164,7 +164,7 @@ GH_TOKEN=<你的 token> node tools/publish-pages.mjs --push   # 推送到 gh-pag
 ## 工程结构
 
 ```
-cobble/
+cobbox/
 ├─ apps/editor/                # React + Vite 编辑器 + player.html（舞台运行时页面）
 │  └─ src/
 │     ├─ components/           # Topbar / SpriteRail / StageView / BlocksView / Inspector / StatusBar / MobileTabs / ProjectFileButtons
@@ -192,7 +192,7 @@ cobble/
 │  ├─ build-tauri.bat          # 在 MSVC 环境下构建 Tauri 壳
 │  └─ serve.mjs                # 静态服务器（本地预览 Pages 产物）
 ├─ docs/技术方案-v1.md         # 技术方案 v1（架构、积木清单、路线图、成本）
-└─ tsconfig.json               # 全仓库路径别名 @cobble/*
+└─ tsconfig.json               # 全仓库路径别名 @cobbox/*
 ```
 
 ## 设计约束（已落地）

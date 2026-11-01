@@ -1,4 +1,4 @@
-import type { TFunc } from '@cobble/i18n';
+import type { TFunc } from '@cobbox/i18n';
 
 export interface ToolboxCategory {
   kind: 'category';

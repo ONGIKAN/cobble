@@ -13,17 +13,17 @@ export default defineConfig({
   root: ROOT,
   base: './',
   define: {
-    __COBBLE_VERSION__: JSON.stringify(rootPkg.version),
-    __COBBLE_CHANNEL__: JSON.stringify(channel),
+    __COBBOX_VERSION__: JSON.stringify(rootPkg.version),
+    __COBBOX_CHANNEL__: JSON.stringify(channel),
   },
   plugins: [react()],
   resolve: {
     alias: {
-      '@cobble/project': pkg('project'),
-      '@cobble/i18n': pkg('i18n'),
-      '@cobble/blocks': pkg('blocks'),
-      '@cobble/runtime': pkg('runtime'),
-      '@cobble/engine-phaser': pkg('engine-phaser'),
+      '@cobbox/project': pkg('project'),
+      '@cobbox/i18n': pkg('i18n'),
+      '@cobbox/blocks': pkg('blocks'),
+      '@cobbox/runtime': pkg('runtime'),
+      '@cobbox/engine-phaser': pkg('engine-phaser'),
     },
   },
   server: {

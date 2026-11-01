@@ -1,11 +1,11 @@
-import { compileProject } from '@cobble/blocks';
-import type { ProjectDoc } from '@cobble/project';
+import { compileProject } from '@cobbox/blocks';
+import type { ProjectDoc } from '@cobbox/project';
 
 function slug(name: string): string {
   const cleaned = name
     .replace(/[^\p{L}\p{N}]+/gu, '-')
     .replace(/^-+|-+$/g, '');
-  return cleaned || 'cobble-game';
+  return cleaned || 'cobbox-game';
 }
 
 /**
@@ -25,8 +25,8 @@ export async function downloadStandaloneHtml(
   const template = await response.text();
   const json = JSON.stringify(compiled).replaceAll('<', '\\u003c');
   const html = template
-    .replaceAll('__COBBLE_PROJECT__', json)
-    .replaceAll('__COBBLE_TITLE__', project.meta.name);
+    .replaceAll('__COBBOX_PROJECT__', json)
+    .replaceAll('__COBBOX_TITLE__', project.meta.name);
 
   const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);

@@ -17,17 +17,17 @@ const resourcesDir = path.join(root, 'apps', 'desktop', 'src-tauri', 'resources'
 console.log('[game-player] building player bundle…');
 execSync('node tools/build-standalone.mjs', { stdio: 'inherit', cwd: root });
 
-const bundleSource = path.join(editorDir, 'dist-standalone', 'cobble-player.js');
+const bundleSource = path.join(editorDir, 'dist-standalone', 'cobbox-player.js');
 if (!existsSync(bundleSource)) throw new Error(`missing ${bundleSource}`);
 mkdirSync(distDir, { recursive: true });
-copyFileSync(bundleSource, path.join(distDir, 'cobble-player.js'));
+copyFileSync(bundleSource, path.join(distDir, 'cobbox-player.js'));
 
 const indexHtml = `<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cobble Game</title>
+    <title>CobBox Game</title>
     <style>
       :root { color-scheme: dark; }
       html, body { margin: 0; height: 100%; background: #0d0f12; overflow: hidden; }
@@ -43,12 +43,12 @@ const indexHtml = `<!doctype html>
     <div id="stage"></div>
     <div id="hud"></div>
     <div id="error"></div>
-    <script id="cobble-project" type="application/json">{}</script>
+    <script id="cobbox-project" type="application/json">{}</script>
     <script>
       (async () => {
         try {
           const payload = await window.__TAURI__.core.invoke('load_game');
-          document.getElementById('cobble-project').textContent = payload;
+          document.getElementById('cobbox-project').textContent = payload;
         } catch (error) {
           const node = document.getElementById('error');
           node.style.display = 'flex';
@@ -56,7 +56,7 @@ const indexHtml = `<!doctype html>
           return;
         }
         const script = document.createElement('script');
-        script.src = './cobble-player.js';
+        script.src = './cobbox-player.js';
         document.body.appendChild(script);
       })();
     </script>
@@ -68,10 +68,10 @@ writeFileSync(path.join(distDir, 'index.html'), indexHtml, 'utf8');
 console.log('[game-player] building exe (tauri build --no-bundle)…');
 execSync('cmd /c "tools\\\\build-tauri.bat player"', { stdio: 'inherit', cwd: root });
 
-const exePath = path.join(playerDir, 'src-tauri', 'target', 'release', 'cobble-game-player.exe');
+const exePath = path.join(playerDir, 'src-tauri', 'target', 'release', 'cobbox-game-player.exe');
 if (!existsSync(exePath)) throw new Error(`missing ${exePath}`);
 mkdirSync(resourcesDir, { recursive: true });
-const target = path.join(resourcesDir, 'cobble-game-player.exe');
+const target = path.join(resourcesDir, 'cobbox-game-player.exe');
 copyFileSync(exePath, target);
 const size = readFileSync(target).length;
 console.log(`[game-player] wrote ${path.relative(root, target)} (${(size / 1024 / 1024).toFixed(2)} MB)`);
@@ -79,5 +79,5 @@ console.log(`[game-player] wrote ${path.relative(root, target)} (${(size / 1024 
 // 供本地验证：把模板 exe 复制到 dist-release（可选）
 const releaseDir = path.join(root, 'dist-release');
 mkdirSync(releaseDir, { recursive: true });
-copyFileSync(exePath, path.join(releaseDir, 'CobbleGamePlayer-template.exe'));
+copyFileSync(exePath, path.join(releaseDir, 'CobBoxPlayer-template.exe'));
 console.log('[game-player] done');

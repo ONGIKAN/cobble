@@ -68,11 +68,11 @@ fn safe_file_name(title: &str) -> String {
         .map(|ch| if ch.is_alphanumeric() || ch == ' ' || ch == '-' || ch == '_' { ch } else { '_' })
         .collect();
     let trimmed = cleaned.trim();
-    if trimmed.is_empty() { "CobbleGame".to_string() } else { trimmed.to_string() }
+    if trimmed.is_empty() { "CobBox".to_string() } else { trimmed.to_string() }
 }
 
 /// 独立游戏播放器模板：构建时直接嵌入主程序，便携版也能导出 EXE
-static PLAYER_TEMPLATE: &[u8] = include_bytes!("../resources/cobble-game-player.exe");
+static PLAYER_TEMPLATE: &[u8] = include_bytes!("../resources/cobbox-game-player.exe");
 
 #[tauri::command]
 fn export_game_exe(app: tauri::AppHandle, title: String, payload: String) -> Result<String, String> {
@@ -101,5 +101,5 @@ fn main() {
             export_game_exe
         ])
         .run(tauri::generate_context!())
-        .expect("error while running Cobble Studio");
+        .expect("error while running CobBox");
 }

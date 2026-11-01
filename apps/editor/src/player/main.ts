@@ -1,7 +1,7 @@
-import { Runtime, visualsFromProject } from '@cobble/runtime';
-import type { SpriteVisual } from '@cobble/runtime';
-import type { CompiledProject } from '@cobble/project';
-import { PhaserAdapter } from '@cobble/engine-phaser';
+import { Runtime, visualsFromProject } from '@cobbox/runtime';
+import type { SpriteVisual } from '@cobbox/runtime';
+import type { CompiledProject } from '@cobbox/project';
+import { PhaserAdapter } from '@cobbox/engine-phaser';
 import './player.css';
 
 const stageNode = document.getElementById('stage');
@@ -64,7 +64,7 @@ function destroySession(notify: boolean): void {
   window.clearInterval(hudTimer);
   hud.replaceChildren();
   showHud(true);
-  (window as unknown as { __cobbleRuntime?: Runtime }).__cobbleRuntime = undefined;
+  (window as unknown as { __cobboxRuntime?: Runtime }).__cobboxRuntime = undefined;
   if (notify) post({ type: 'stopped' });
 }
 
@@ -88,7 +88,7 @@ async function run(project: CompiledProject): Promise<void> {
   runtime = new Runtime(adapter, project);
   runtime.start();
   session = { adapter, runtime };
-  (window as unknown as { __cobbleRuntime?: Runtime }).__cobbleRuntime = runtime;
+  (window as unknown as { __cobboxRuntime?: Runtime }).__cobboxRuntime = runtime;
   window.clearInterval(hudTimer);
   hudTimer = window.setInterval(renderHud, 200);
   renderHud();

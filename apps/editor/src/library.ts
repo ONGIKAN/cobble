@@ -1,4 +1,4 @@
-import type { ProjectDoc } from '@cobble/project';
+import type { ProjectDoc } from '@cobbox/project';
 import { TEMPLATES } from './templates';
 import { parseProjectFile } from './project-file';
 import {
@@ -9,8 +9,8 @@ import {
   writeNativeProject,
 } from './native';
 
-export const LIBRARY_KEY = 'cobble.library';
-export const AUTOSAVE_KEY = 'cobble.autosave';
+export const LIBRARY_KEY = 'cobbox.library';
+export const AUTOSAVE_KEY = 'cobbox.autosave';
 
 export interface ProjectEntry {
   /** 新建时使用的模板 id，编辑器首次打开时据此生成脚本 */
@@ -205,7 +205,7 @@ export function relativeTime(iso: string, locale: string): string {
 /** 工程的可持久化快照（磁盘 .gproj 与导出的 .gproj 同格式） */
 export function entrySnapshot(entry: ProjectEntry): string {
   return JSON.stringify(
-    { format: 'cobble-studio', version: 1, project: entry.project, workspaces: entry.workspaces },
+    { format: 'cobbox', version: 1, project: entry.project, workspaces: entry.workspaces },
     null,
     2,
   );

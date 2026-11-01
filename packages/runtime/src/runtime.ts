@@ -4,7 +4,7 @@ import type {
   IRExpr,
   IRNode,
   TouchingTarget,
-} from '@cobble/project';
+} from '@cobbox/project';
 import type { EngineAdapter, InputState, SpriteVisual } from './adapter';
 
 type Yield = { kind: 'frame' } | { kind: 'sleep'; ms: number };

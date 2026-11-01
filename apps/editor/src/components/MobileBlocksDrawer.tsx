@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compileProject } from '@cobble/blocks';
+import { compileProject } from '@cobbox/blocks';
 import { sendRun, sendStop } from '../bridge';
 import { useEditorStore } from '../store';
 import { BlocksView } from './BlocksView';

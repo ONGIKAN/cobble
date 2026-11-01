@@ -1,4 +1,4 @@
-# Cobble Studio 宣传片
+# CobBox 宣传片
 
 16:9（Bilibili）与 9:16（抖音）两条无配乐宣传动画，静音画面轨，方便后期自行配 BGM。
 

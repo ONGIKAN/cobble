@@ -7,13 +7,13 @@ import {
   type SpriteDef,
   type SpriteGroupDef,
   type StageDef,
-} from '@cobble/project';
+} from '@cobbox/project';
 import { spritePlaceholderSvg } from './sprite-assets';
 import { createEntry, deleteEntry, findEntry } from './library';
 
 export type ThemeMode = 'dark' | 'light';
 
-export const THEME_KEY = 'cobble.theme';
+export const THEME_KEY = 'cobbox.theme';
 
 function initialTheme(): ThemeMode {
   return localStorage.getItem(THEME_KEY) === 'light' ? 'light' : 'dark';

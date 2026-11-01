@@ -1,5 +1,5 @@
 {
-  "name": "@cobble/blocks",
+  "name": "@cobbox/blocks",
   "version": "0.1.0",
   "private": true,
   "type": "module",

@@ -36,6 +36,14 @@ try {
   record('hub new-project dialog opens', true);
   await page.keyboard.press('Escape');
   await page.waitForTimeout(250);
+  // AI 创作入口：未设置 API 时必须给出提示
+  await page.getByTestId('hub-ai').click();
+  await page.waitForSelector('[data-testid="ai-dialog"]', { timeout: 5000 });
+  const aiNotice = await page.locator('[data-testid="ai-not-configured"]').isVisible();
+  record('ai requires api config', aiNotice, 'notice shown before setup');
+  await page.getByTestId('ai-close').click();
+  await page.waitForTimeout(200);
+
   await page.locator('[data-testid^="project-open-"]').first().click();
   await page.waitForTimeout(1500);
   record('open project from hub', page.url().includes('#/editor/'), page.url());
@@ -74,15 +82,15 @@ try {
     () => {
       const child = document.querySelector('[data-testid="stage-iframe"]');
       const win = child?.contentWindow;
-      return Boolean(win && win.__cobbleRuntime);
+      return Boolean(win && win.__cobboxRuntime);
     },
     { timeout: 20000 },
   );
-  record('runtime started', true, 'window.__cobbleRuntime available');
+  record('runtime started', true, 'window.__cobboxRuntime available');
 
   const readSnake = () =>
     frame.evaluate(() => {
-      const state = window.__cobbleRuntime.getSpriteState('sprite_snake_head');
+      const state = window.__cobboxRuntime.getSpriteState('sprite_snake_head');
       return { x: state?.x ?? NaN, y: state?.y ?? NaN };
     });
 
@@ -122,7 +130,7 @@ try {
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${shotDir}/03-playing.png` });
   const snakeState = await frame.evaluate(() => {
-    const runtime = window.__cobbleRuntime;
+    const runtime = window.__cobboxRuntime;
     const apple = runtime.getSpriteState('sprite_apple');
     const score = runtime.getVariables().find((item) => item.id === 'var_score');
     return { appleX: apple?.x ?? null, score: score?.value ?? null };
@@ -136,7 +144,7 @@ try {
   await page.waitForTimeout(400);
   const stopped = await page.evaluate(() => {
     const child = document.querySelector('iframe');
-    return !child?.contentWindow?.__cobbleRuntime;
+    return !child?.contentWindow?.__cobboxRuntime;
   });
   record('stop clears runtime', stopped, 'iframe runtime gone');
   await page.waitForSelector('[data-testid="world-canvas"]', { timeout: 10000 });
@@ -149,7 +157,7 @@ try {
   const savedPath = await download.path();
   const savedDoc = JSON.parse(readFileSync(savedPath, 'utf8'));
   const savedOk =
-    savedDoc.format === 'cobble-studio' &&
+    savedDoc.format === 'cobbox' &&
     savedDoc.version === 1 &&
     savedDoc.project?.meta?.name === '贪吃蛇' &&
     Object.keys(savedDoc.workspaces ?? {}).length >= 6;
@@ -541,7 +549,7 @@ try {
   const gameErrors = [];
   game.on('pageerror', (error) => gameErrors.push(String(error)));
   await game.goto(`file:///${exportPath.replaceAll('\\', '/')}`);
-  await game.waitForFunction(() => Boolean(window.__cobbleRuntime), null, { timeout: 20000 });
+  await game.waitForFunction(() => Boolean(window.__cobboxRuntime), null, { timeout: 20000 });
   const hud = await game.$$eval('.hud-var', (items) => items.length);
   record('export html5', hud >= 1 && gameErrors.length === 0, `download=${exportDownload.suggestedFilename()} hud=${hud} errors=${gameErrors.length}`);
   await game.close();
@@ -584,16 +592,63 @@ try {
   await page.getByTestId('run').click();
   await page.waitForTimeout(450);
   const snakeFrame = page.frames().find((item) => item.url().includes('player.html'));
-  const headA = snakeFrame ? await snakeFrame.evaluate(() => window.__cobbleRuntime?.getSpriteState?.('sprite_snake_head')) : null;
+  const headA = snakeFrame ? await snakeFrame.evaluate(() => window.__cobboxRuntime?.getSpriteState?.('sprite_snake_head')) : null;
   await snakeFrame?.evaluate(() => {
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', code: 'ArrowUp', bubbles: true }));
   });
   await page.waitForTimeout(600);
-  const headB = snakeFrame ? await snakeFrame.evaluate(() => window.__cobbleRuntime?.getSpriteState?.('sprite_snake_head')) : null;
+  const headB = snakeFrame ? await snakeFrame.evaluate(() => window.__cobboxRuntime?.getSpriteState?.('sprite_snake_head')) : null;
   await snakeFrame?.evaluate(() => {
     window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowUp', code: 'ArrowUp', bubbles: true }));
   });
   record('snake game runs', Boolean(headA && headB) && Math.abs((headB?.x ?? 0) - (headA?.x ?? 0)) + Math.abs((headB?.y ?? 0) - (headA?.y ?? 0)) > 0, `head ${headA?.x},${headA?.y} -> ${headB?.x},${headB?.y}`);
+
+  // 11. AI 创作：设置接口后用拦截的响应生成一个工程
+  await page.getByTestId('app-settings').click();
+  await page.waitForSelector('[data-testid="settings-dialog"]', { timeout: 5000 });
+  await page.getByTestId('settings-tab-ai').click();
+  await page.fill('[data-testid="ai-base-url"]', 'https://api.example.test/v1');
+  await page.fill('[data-testid="ai-api-key"]', 'sk-test-123');
+  await page.fill('[data-testid="ai-model"]', 'test-model');
+  await page.getByTestId('ai-save').click();
+  const aiConfig = await page.evaluate(() => localStorage.getItem('cobbox.ai'));
+  record('ai settings saved', Boolean(aiConfig && aiConfig.includes('api.example.test')), (aiConfig ?? 'null').slice(0, 100));
+  await page.getByTestId('settings-done').click();
+  await page.waitForTimeout(300);
+
+  const aiSpec = {
+    title: 'AI 星星收集',
+    genre: 'collect',
+    background: '#bfe6ff',
+    player: 'cat',
+    item: 'star',
+    enemy: 'ghost',
+    targetScore: 8,
+    speed: 6,
+    instruction: '收集 8 颗星星',
+    winText: '收集齐啦！',
+    loseText: '被幽灵碰到，再试一次',
+  };
+  await page.route('**/chat/completions', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ choices: [{ message: { content: JSON.stringify(aiSpec) } }] }),
+    }),
+  );
+  await page.getByTestId('ai-open').click();
+  await page.waitForSelector('[data-testid="ai-dialog"]', { timeout: 5000 });
+  await page.fill('[data-testid="ai-prompt"]', '做一个小猫收集星星的游戏');
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.getByTestId('ai-generate').click();
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 30000 });
+  await page.waitForTimeout(1200);
+  const aiName = await page.locator('.project-name-text').innerText();
+  const aiSprites = await page.locator('.sprite-card').count();
+  const aiBlocks = await page.evaluate(() => document.querySelectorAll('.blocklyBlockCanvas .blocklyDraggable').length);
+  record('ai creates project', aiName.includes('AI 星星') && aiSprites >= 2 && aiBlocks >= 15, `name=${aiName} sprites=${aiSprites} blocks=${aiBlocks}`);
+  await page.screenshot({ path: `${shotDir}/11-ai-game.png` });
 
   // 回到工程管理页，避免模板工程影响下次运行
   page.once('dialog', (dialog) => void dialog.accept());

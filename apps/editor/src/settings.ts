@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export const SETTINGS_KEY = 'cobble.settings';
+export const SETTINGS_KEY = 'cobbox.settings';
 
 /** 应用级设置（与具体工程无关，保存在浏览器本地） */
 export interface AppSettings {

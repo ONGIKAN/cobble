@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { switchLocale, type Locale } from '@cobble/i18n';
+import { switchLocale, type Locale } from '@cobbox/i18n';
 import { downloadProject, readProjectFile } from '../project-file';
 import {
   createEntry,
@@ -23,6 +23,7 @@ import { useEditorStore } from '../store';
 import type { TemplateDefinition } from '../templates';
 import { NewProjectDialog } from './NewProjectDialog';
 import { openSettings } from '../settings-dialog';
+import { openAi } from '../ai-dialog';
 
 /** 工程管理页：软件启动后的首页，管理浏览器里保存的所有工程 */
 export function ProjectHub() {
@@ -51,7 +52,7 @@ export function ProjectHub() {
   }, []);
 
   useEffect(() => {
-    document.title = `Cobble Studio — ${t('hub.title')}`;
+    document.title = `CobBox — ${t('hub.title')}`;
   }, [t]);
 
   const createFromTemplate = (template: TemplateDefinition): void => {
@@ -164,7 +165,10 @@ export function ProjectHub() {
                 event.target.value = '';
               }}
             />
-            <button type="button" className="btn" data-testid="hub-settings" onClick={openSettings}>
+            <button type="button" className="btn" data-testid="hub-ai" onClick={openAi}>
+              {t('ai.open')}
+            </button>
+            <button type="button" className="btn" data-testid="hub-settings" onClick={() => openSettings()}>
               {t('toolbar.settings')}
             </button>
             <button

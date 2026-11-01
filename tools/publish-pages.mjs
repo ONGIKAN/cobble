@@ -15,7 +15,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync, renameSync, rmSync, statSyn
 import { execFileSync, execSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 
-const REPO = process.env.REPO_SLUG ?? 'ONGIKAN/cobble';
+const REPO = process.env.REPO_SLUG ?? 'ONGIKAN/cobbox';
 const PAGES_BRANCH = process.env.PAGES_BRANCH ?? 'gh-pages';
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const git = 'git';
@@ -72,7 +72,7 @@ if (buildsStable) {
   execSync('npm run build:standalone', { stdio: 'inherit', cwd: root });
 
   console.log('== build editor (stable) ==');
-  execSync('npm --workspace @cobble/editor run build', {
+  execSync('npm --workspace @cobbox/editor run build', {
     stdio: 'inherit',
     cwd: root,
     env: { ...process.env, VITE_CHANNEL: 'stable' },
@@ -99,7 +99,7 @@ writeFileSync(join(staging, 'demo', '.nojekyll'), '');
 
 if (buildsBeta) {
   console.log('== build editor (beta) ==');
-  execSync('npm --workspace @cobble/editor run build', {
+  execSync('npm --workspace @cobbox/editor run build', {
     stdio: 'inherit',
     cwd: root,
     env: { ...process.env, VITE_CHANNEL: 'beta' },
@@ -141,7 +141,7 @@ if (process.argv.includes('--push')) {
   run(git, ['add', '-A'], { cwd: staging });
   run(
     git,
-    ['-c', `user.name=${REPO.split('/')[0]}`, '-c', `user.email=${REPO.split('/')[0]}@users.noreply.github.com`, 'commit', '-m', 'site: publish Cobble landing page + live demo'],
+    ['-c', `user.name=${REPO.split('/')[0]}`, '-c', `user.email=${REPO.split('/')[0]}@users.noreply.github.com`, 'commit', '-m', 'site: publish CobBox landing page + live demo'],
     { cwd: staging },
   );
   run(git, ['push', '--force', remote, `HEAD:${PAGES_BRANCH}`], { cwd: staging, capture: true });

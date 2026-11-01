@@ -1,8 +1,8 @@
 {
-  "name": "@cobble/game-player",
+  "name": "@cobbox/game-player",
   "private": true,
-  "version": "0.16.0",
-  "description": "Cobble Studio standalone game player (payload appended to exe)",
+  "version": "0.17.0",
+  "description": "CobBox standalone game player (payload appended to exe)",
   "scripts": {
     "build": "node ../../tools/build-game-player.mjs"
   }

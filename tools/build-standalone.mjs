@@ -11,7 +11,7 @@ const editorDir = path.join(root, 'apps', 'editor');
 console.log('[standalone] building IIFE player bundle…');
 execSync('npx vite build -c vite.standalone.config.ts', { stdio: 'inherit', cwd: editorDir });
 
-const bundlePath = path.join(editorDir, 'dist-standalone', 'cobble-player.js');
+const bundlePath = path.join(editorDir, 'dist-standalone', 'cobbox-player.js');
 const templatePath = path.join(root, 'tools', 'standalone', 'template.html');
 const outPath = path.join(editorDir, 'public', 'standalone-player.html');
 

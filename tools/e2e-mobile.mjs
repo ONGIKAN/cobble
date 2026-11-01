@@ -17,7 +17,7 @@ const browser = await chromium.launch({ channel: 'msedge' });
 async function runtimeState(page) {
   return page.evaluate(() => {
     const frame = document.querySelector('[data-testid="stage-iframe"]');
-    const runtime = frame?.contentWindow?.__cobbleRuntime;
+    const runtime = frame?.contentWindow?.__cobboxRuntime;
     if (!runtime) return null;
     const snake = runtime.getSpriteState('sprite_snake_head');
     const vars = runtime.getVariables();

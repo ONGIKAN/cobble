@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compileProject } from '@cobble/blocks';
-import { switchLocale, type Locale } from '@cobble/i18n';
+import { compileProject } from '@cobbox/blocks';
+import { switchLocale, type Locale } from '@cobbox/i18n';
 import { sendRun, sendStop } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';
 import { openAssetLibrary } from './AssetLibrary';
 import { openSettings } from '../settings-dialog';
+import { openAi } from '../ai-dialog';
 import { redo, undo, useHistoryStatus } from '../history';
 import { updateEntry } from '../library';
 import { routeToProjects } from '../routes';
@@ -26,7 +27,7 @@ export function Topbar() {
   const history = useHistoryStatus();
 
   useEffect(() => {
-    document.title = `${project.meta.name} — Cobble Studio`;
+    document.title = `${project.meta.name} — CobBox`;
   }, [project.meta.name]);
 
   const run = (): void => {
@@ -126,9 +127,18 @@ export function Topbar() {
 
         <button
           type="button"
+          className="btn ghost topbar-ai"
+          data-testid="ai-open"
+          onClick={openAi}
+        >
+          {t('ai.open')}
+        </button>
+
+        <button
+          type="button"
           className="btn ghost topbar-settings"
           data-testid="app-settings"
-          onClick={openSettings}
+          onClick={() => openSettings()}
         >
           {t('toolbar.settings')}
         </button>

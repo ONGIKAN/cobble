@@ -21,9 +21,9 @@ execSync('tools\\build-tauri.bat tauri --bundles nsis', {
 
 mkdirSync(out, { recursive: true });
 
-const exe = path.join(target, 'cobble-studio.exe');
+const exe = path.join(target, 'cobbox.exe');
 if (!existsSync(exe)) throw new Error(`missing exe: ${exe}`);
-const portable = path.join(out, `CobbleStudio-${version}-portable.exe`);
+const portable = path.join(out, `CobBox-${version}-portable.exe`);
 copyFileSync(exe, portable);
 
 const nsisDir = path.join(target, 'bundle/nsis');

@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Cobble Studio · 轻量 2D 积木游戏创作平台</title>
+    <title>CobBox · 轻量 2D 积木游戏创作平台</title>
     <meta
       name="description"
-      content="Cobble Studio 是一个轻量的 2D 积木游戏创作平台：拖积木拼逻辑，一键在浏览器里试玩。桌面、平板、手机都能用，支持深浅主题与中英双语。"
+      content="CobBox 是一个轻量的 2D 积木游戏创作平台：拖积木拼逻辑，一键在浏览器里试玩。桌面、平板、手机都能用，支持深浅主题与中英双语。"
     />
     <link rel="icon" href="./assets/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="./assets/logo.svg" />
@@ -27,8 +27,8 @@
     <header class="site-head">
       <a class="brand" href="./">
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
-        <span class="brand-name">Cobble Studio</span>
-        <span class="brand-ver" title="当前稳定版">v0.15.0</span>
+        <span class="brand-name">CobBox</span>
+        <span class="brand-ver" title="当前稳定版">v0.17.0</span>
       </a>
       <nav class="site-nav">
         <a href="#features"><span class="zh">功能</span><span class="en">Features</span></a>
@@ -38,7 +38,7 @@
         <a href="#download"><span class="zh">下载</span><span class="en">Download</span></a>
         <a href="./demo/"><span class="zh">在线演示</span><span class="en">Live demo</span></a>
         <a href="./demo-beta/"><span class="zh">测试版</span><span class="en">Beta demo</span></a>
-        <a href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/ONGIKAN/cobbox" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
       <button class="theme-btn" id="theme-toggle" type="button" aria-label="切换深浅主题 / Toggle theme"><span class="zh">深色</span><span class="en">Dark</span></button>
       <button class="lang-btn" id="lang-toggle" type="button" aria-label="切换语言 / Switch language">EN</button>
@@ -67,7 +67,7 @@
             <a class="btn btn-ghost" href="#download">
               <span class="zh">下载安装包</span><span class="en">Download apps</span>
             </a>
-            <a class="btn btn-ghost" href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer">
+            <a class="btn btn-ghost" href="https://github.com/ONGIKAN/cobbox" target="_blank" rel="noreferrer">
               <span class="zh">查看源码</span><span class="en">View source</span>
             </a>
           </div>
@@ -86,7 +86,7 @@
         </div>
         <figure class="hero-shot">
           <a href="./demo/" title="打开在线演示">
-            <img src="./assets/world-canvas.png" alt="Cobble Studio 编辑器无限画布与摄像机框（深色主题）" width="1440" height="900" />
+            <img src="./assets/world-canvas.png" alt="CobBox 编辑器无限画布与摄像机框（深色主题）" width="1440" height="900" />
           </a>
           <figcaption>
             <span class="zh">编辑器 · 无限画布 · 摄像机框内是运行时的游戏画面</span>
@@ -219,10 +219,10 @@
             <h3><span class="zh">安装版</span><span class="en">Installer</span></h3>
             <p class="download-meta">Tauri · NSIS · x64 · ~3.3 MB</p>
             <p class="download-desc">
-              <span class="zh">装到当前用户目录，开始菜单出现「Cobble Studio」；工程自动保存到应用数据目录。</span>
-              <span class="en">Installs to your user profile and adds Cobble Studio to the Start menu. Projects autosave into the app data folder.</span>
+              <span class="zh">装到当前用户目录，开始菜单出现「CobBox」；工程自动保存到应用数据目录。</span>
+              <span class="en">Installs to your user profile and adds CobBox to the Start menu. Projects autosave into the app data folder.</span>
             </p>
-            <a class="btn btn-primary" href="https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Setup.exe">
+            <a class="btn btn-primary" href="https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Windows-x64-Setup.exe">
               <span class="zh">下载安装版</span><span class="en">Download installer</span>
               <span class="arrow">↓</span>
             </a>
@@ -235,7 +235,7 @@
               <span class="zh">单文件绿色版，双击即用；请放在纯英文路径下（中文路径会导致 WebView2 无法创建窗口）。</span>
               <span class="en">Single-file, no install. Keep it on an ASCII-only path — WebView2 cannot create the window from a non-ASCII folder.</span>
             </p>
-            <a class="btn" href="https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Windows-x64-Portable.exe">
+            <a class="btn" href="https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Windows-x64-Portable.exe">
               <span class="zh">下载便携版</span><span class="en">Download portable</span>
               <span class="arrow">↓</span>
             </a>
@@ -248,15 +248,15 @@
               <span class="zh">适用于 Android 6.0 及以上；因为是调试签名，安装时需要允许「未知来源」，正式上架版本会换成发布签名。</span>
               <span class="en">Android 6.0+. It is debug-signed, so allow installs from unknown sources; a release-signed build will follow when it hits the store.</span>
             </p>
-            <a class="btn" href="https://github.com/ONGIKAN/cobble/releases/latest/download/CobbleStudio-Android.apk">
+            <a class="btn" href="https://github.com/ONGIKAN/cobbox/releases/latest/download/CobBox-Android.apk">
               <span class="zh">下载 APK</span><span class="en">Download APK</span>
               <span class="arrow">↓</span>
             </a>
           </article>
         </div>
         <p class="download-note">
-          <span class="zh">安装包未做代码签名：Windows 首次运行可能弹出 SmartScreen 提示，点「更多信息 → 仍要运行」即可。全部版本历史见 <a href="https://github.com/ONGIKAN/cobble/releases" target="_blank" rel="noreferrer">GitHub Releases</a>。</span>
-          <span class="en">Builds are not code-signed: Windows may show a SmartScreen prompt on first run — choose “More info → Run anyway”. See all versions on <a href="https://github.com/ONGIKAN/cobble/releases" target="_blank" rel="noreferrer">GitHub Releases</a>.</span>
+          <span class="zh">安装包未做代码签名：Windows 首次运行可能弹出 SmartScreen 提示，点「更多信息 → 仍要运行」即可。全部版本历史见 <a href="https://github.com/ONGIKAN/cobbox/releases" target="_blank" rel="noreferrer">GitHub Releases</a>。</span>
+          <span class="en">Builds are not code-signed: Windows may show a SmartScreen prompt on first run — choose “More info → Run anyway”. See all versions on <a href="https://github.com/ONGIKAN/cobbox/releases" target="_blank" rel="noreferrer">GitHub Releases</a>.</span>
         </p>
       </section>
 
@@ -391,13 +391,13 @@
             <span class="zh">需要 Node.js 20+。不需要后端，不需要登录。</span>
             <span class="en">Requires Node.js 20+. No backend, no sign-in.</span>
           </p>
-          <pre class="code"><code>git clone https://github.com/ONGIKAN/cobble.git
-cd cobble
+          <pre class="code"><code>git clone https://github.com/ONGIKAN/cobbox.git
+cd cobbox
 npm install
 npm run dev   # http://127.0.0.1:5183</code></pre>
           <div class="start-links">
             <a class="btn btn-primary" href="./demo/"><span class="zh">直接在线体验</span><span class="en">Open the live demo</span> <span class="arrow">→</span></a>
-            <a class="btn" href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer">GitHub</a>
+            <a class="btn" href="https://github.com/ONGIKAN/cobbox" target="_blank" rel="noreferrer">GitHub</a>
           </div>
         </div>
         <div class="start-side">
@@ -427,6 +427,20 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <h2><span class="zh">版本日志</span><span class="en">Release history</span></h2>
         <ol class="release-list">
           <li class="release is-current">
+            <div class="release-head">
+              <span class="release-ver">v0.17.0</span>
+              <span class="release-date"><time data-date="2026-11-01"></time></span>
+              <span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span>
+            </div>
+            <h4 class="release-title">CobBox 新名字 + AI 创作</h4>
+            <ul class="release-points">
+              <li><span class="zh">项目改名为 CobBox：全新品牌、安装包与本地数据目录，工程与配置自动迁移到新命名空间</span><span class="en">Renamed to CobBox: new brand, builds and data directory; projects and settings migrated to the new namespace</span></li>
+              <li><span class="zh">AI 创作：设置自己的 OpenAI 兼容接口后，用一句话生成可运行的收集 / 躲避 / 点击 / 贪吃蛇小游戏</span><span class="en">AI Create: connect your own OpenAI-compatible endpoint and generate a playable collect / avoid / clicker / snake game from one sentence</span></li>
+              <li><span class="zh">没有配置接口时点击 AI 创作会提示先设置，密钥只保存在本机浏览器</span><span class="en">Without a configured endpoint, AI Create tells you to set it up first; the key stays in your browser</span></li>
+              <li><span class="zh">手机 / 平板体验与角色分组（v0.16.0 内容）一并进入稳定版</span><span class="en">Mobile/tablet polish and sprite groups (from v0.16.0) land in stable too</span></li>
+            </ul>
+          </li>
+          <li class="release ">
             <div class="release-head">
               <span class="release-ver">v0.16.0</span>
               <span class="release-date"><time data-date="2026-11-01"></time></span>
@@ -623,7 +637,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
             <div class="release-head"><span class="release-ver">v0.2.1</span><span class="release-date"><time data-date="2026-10-30"></time></span><span class="release-tag is-stable"><span class="zh">稳定版</span><span class="en">stable</span></span></div>
             <p class="release-tagline"><span class="zh">品牌 logo 与桌面 / 移动壳</span><span class="en">Logo and desktop / mobile shells</span></p>
             <ul>
-              <li><span class="zh">加入 Cobble 品牌 logo，编辑器、官网与安装包统一图标</span><span class="en">Cobble logo across editor, site and installer icons</span></li>
+              <li><span class="zh">加入 CobBox 品牌 logo，编辑器、官网与安装包统一图标</span><span class="en">CobBox logo across editor, site and installer icons</span></li>
             </ul>
           </li>
           <li class="release">
@@ -648,7 +662,7 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
       <div class="foot-brand">
         <img class="brand-logo" src="./assets/logo.svg" alt="" />
         <div>
-          <strong>Cobble Studio</strong>
+          <strong>CobBox</strong>
           <p><span class="zh">轻量 2D 积木游戏创作平台 · v0.14.0</span><span class="en">A lightweight 2D block game maker · v0.14.0</span></p>
         </div>
       </div>
@@ -657,8 +671,8 @@ npm run dev   # http://127.0.0.1:5183</code></pre>
         <a href="#changelog"><span class="zh">版本日志</span><span class="en">Release log</span></a>
         <a href="./demo/"><span class="zh">在线演示</span><span class="en">Live demo</span></a>
         <a href="./demo-beta/"><span class="zh">测试版演示</span><span class="en">Beta demo</span></a>
-        <a href="https://github.com/ONGIKAN/cobble" target="_blank" rel="noreferrer"><span class="zh">GitHub 仓库</span><span class="en">GitHub repo</span></a>
-        <a href="https://github.com/ONGIKAN/cobble/blob/main/docs/技术方案-v1.md" target="_blank" rel="noreferrer"><span class="zh">技术方案</span><span class="en">Design doc</span></a>
+        <a href="https://github.com/ONGIKAN/cobbox" target="_blank" rel="noreferrer"><span class="zh">GitHub 仓库</span><span class="en">GitHub repo</span></a>
+        <a href="https://github.com/ONGIKAN/cobbox/blob/main/docs/技术方案-v1.md" target="_blank" rel="noreferrer"><span class="zh">技术方案</span><span class="en">Design doc</span></a>
       </nav>
       <p class="foot-community">
         <span class="zh">交流群：<a href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=424124959&card_type=group&source=qrcode">QQ 群 <b>424124959</b>（点击加群）</a> · 抖音群 <b>888985597118</b></span>

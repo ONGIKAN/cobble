@@ -1,5 +1,5 @@
 {
-  "name": "@cobble/engine-phaser",
+  "name": "@cobbox/engine-phaser",
   "version": "0.1.0",
   "private": true,
   "type": "module",

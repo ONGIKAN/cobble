@@ -1,5 +1,5 @@
 import i18n from 'i18next';
-import { defineAssetBlocks, defineGameBlocks } from '@cobble/blocks';
+import { defineAssetBlocks, defineGameBlocks } from '@cobbox/blocks';
 import { useEditorStore } from './store';
 
 export const translate = (key: string, options?: Record<string, unknown>): string =>

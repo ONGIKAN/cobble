@@ -1,9 +1,9 @@
-import { Runtime } from '@cobble/runtime';
-import { PhaserAdapter } from '@cobble/engine-phaser';
-import type { CompiledProject } from '@cobble/project';
+import { Runtime } from '@cobbox/runtime';
+import { PhaserAdapter } from '@cobbox/engine-phaser';
+import type { CompiledProject } from '@cobbox/project';
 
 // 单文件导出的播放器：读取内联 JSON（已编译的 IR 工程），不依赖 Blockly。
-const dataNode = document.getElementById('cobble-project');
+const dataNode = document.getElementById('cobbox-project');
 const stageNode = document.getElementById('stage');
 const hudNode = document.getElementById('hud');
 if (!dataNode || !stageNode || !hudNode) throw new Error('缺少播放器容器');
@@ -36,7 +36,7 @@ async function boot(): Promise<void> {
   await adapter.init(stage, project);
   const runtime = new Runtime(adapter, project);
   runtime.start();
-  (window as unknown as { __cobbleRuntime?: Runtime }).__cobbleRuntime = runtime;
+  (window as unknown as { __cobboxRuntime?: Runtime }).__cobboxRuntime = runtime;
   renderHud(runtime);
   window.setInterval(() => renderHud(runtime), 200);
 }

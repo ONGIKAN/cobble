@@ -18,7 +18,7 @@ fn load_game() -> Result<String, String> {
     let position = bytes
         .windows(marker_len)
         .rposition(|window| window == PAYLOAD_MARKER)
-        .ok_or_else(|| "游戏数据不存在：请使用 Cobble Studio 导出的 EXE 运行。".to_string())?;
+        .ok_or_else(|| "游戏数据不存在：请使用 CobBox 导出的 EXE 运行。".to_string())?;
     let payload = &bytes[position + marker_len..];
     let text = String::from_utf8(payload.to_vec()).map_err(|error| error.to_string())?;
     if text.trim().is_empty() {
@@ -31,5 +31,5 @@ fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![load_game])
         .run(tauri::generate_context!())
-        .expect("error while running Cobble Game");
+        .expect("error while running CobBox Game");
 }

@@ -331,7 +331,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "cobble-studio"
+name = "cobbox"
 version = "0.14.0"
 dependencies = [
  "serde_json",

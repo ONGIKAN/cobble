@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { AssetDef } from '@cobble/project';
+import type { AssetDef } from '@cobbox/project';
 import { useEditorStore } from '../store';
 import { readSettings } from '../settings';
 import { NumberInput } from './NumberInput';

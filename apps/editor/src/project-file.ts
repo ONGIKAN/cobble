@@ -1,8 +1,8 @@
-import { parseProject, type ProjectDoc } from '@cobble/project';
+import { parseProject, type ProjectDoc } from '@cobbox/project';
 
 /** .gproj 文件格式：外层包一层元信息，便于以后演进；老文件（裸 ProjectDoc）也能打开 */
 export interface ProjectFileShape {
-  format: 'cobble-studio';
+  format: 'cobbox';
   version: 1;
   project: ProjectDoc;
   workspaces: Record<string, unknown>;
@@ -28,7 +28,7 @@ export function projectFileName(project: ProjectDoc): string {
 
 export function serializeProject(project: ProjectDoc, workspaces: Record<string, unknown>): string {
   const doc: ProjectFileShape = {
-    format: 'cobble-studio',
+    format: 'cobbox',
     version: 1,
     // 积木数据放在 workspaces 里，工程文档里的 scripts 不再重复存
     project: { ...project, meta: { ...project.meta, updatedAt: new Date().toISOString() }, scripts: {} },

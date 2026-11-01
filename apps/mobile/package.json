@@ -1,8 +1,8 @@
 {
-  "name": "@cobble/mobile",
+  "name": "@cobbox/mobile",
   "private": true,
-  "version": "0.16.0",
-  "description": "Cobble Studio Android shell (Capacitor)",
+  "version": "0.17.0",
+  "description": "CobBox Android shell (Capacitor)",
   "scripts": {
     "sync": "cap sync android",
     "open": "cap open android",

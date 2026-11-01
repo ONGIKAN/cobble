@@ -27,7 +27,7 @@ let bootstrapped = false;
 // Ctrl/Cmd+C 复制的角色 id（粘贴时再复制一份）
 let clipboardSpriteId: string | null = null;
 
-const PANES_KEY = 'cobble.panes';
+const PANES_KEY = 'cobbox.panes';
 interface PaneSizes { rail: number; inspector: number; stage: number }
 
 function defaultPanes(): PaneSizes {
@@ -130,8 +130,8 @@ export function App({ projectId }: { projectId: string }) {
         event.preventDefault();
       }
     };
-    window.addEventListener('cobble:native-back', onNativeBack);
-    return () => window.removeEventListener('cobble:native-back', onNativeBack);
+    window.addEventListener('cobbox:native-back', onNativeBack);
+    return () => window.removeEventListener('cobbox:native-back', onNativeBack);
   }, [assetsOpen, blocksOpen]);
 
   // 常用快捷键：撤销/重做、复制/粘贴/克隆、保存、打开、导出

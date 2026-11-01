@@ -1,5 +1,5 @@
 {
-  "name": "@cobble/runtime",
+  "name": "@cobbox/runtime",
   "version": "0.1.0",
   "private": true,
   "type": "module",

@@ -1,4 +1,4 @@
-import type { InputConfig } from '@cobble/project';
+import type { InputConfig } from '@cobbox/project';
 
 export interface TouchControls {
   root: HTMLElement;

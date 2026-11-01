@@ -1,7 +1,7 @@
 import * as Blockly from 'blockly';
 import 'blockly/blocks';
-import { displayName, inputConfig, type ProjectDoc } from '@cobble/project';
-import type { TFunc } from '@cobble/i18n';
+import { displayName, inputConfig, type ProjectDoc } from '@cobbox/project';
+import type { TFunc } from '@cobbox/i18n';
 
 export const BLOCK_KEYS: Array<[string, string]> = [
   ['ArrowLeft', 'ArrowLeft'],

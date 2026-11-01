@@ -8,7 +8,7 @@ import {
   type WheelEvent as ReactWheelEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { SpriteDef } from '@cobble/project';
+import type { SpriteDef } from '@cobbox/project';
 import { ASSET_MIME, openAssetLibrary } from './AssetLibrary';
 import { useEditorStore } from '../store';
 

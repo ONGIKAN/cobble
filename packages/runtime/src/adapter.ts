@@ -1,4 +1,4 @@
-import type { CompiledProject } from '@cobble/project';
+import type { CompiledProject } from '@cobbox/project';
 
 /** 引擎无关的输入快照（坐标为 Scratch 坐标系） */
 export interface InputState {

@@ -58,8 +58,8 @@ const apply = (lang) => {
   if (button) button.textContent = lang === 'zh-CN' ? 'EN' : '中文';
   document.title =
     lang === 'zh-CN'
-      ? 'Cobble Studio · 轻量 2D 积木游戏创作平台'
-      : 'Cobble Studio · a lightweight 2D block game maker';
+      ? 'CobBox · 轻量 2D 积木游戏创作平台'
+      : 'CobBox · a lightweight 2D block game maker';
   renderReleaseDates(lang);
 };
 

@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
-import type { CompiledProject } from '@cobble/project';
-import type { EngineAdapter, InputState, SpriteVisual } from '@cobble/runtime';
+import type { CompiledProject } from '@cobbox/project';
+import type { EngineAdapter, InputState, SpriteVisual } from '@cobbox/runtime';
 import { mountTouchControls, type TouchControls } from './touch';
 
 const FALLBACK_GIF =

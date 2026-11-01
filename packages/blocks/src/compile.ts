@@ -1,6 +1,6 @@
 import * as Blockly from 'blockly';
 import 'blockly/blocks';
-import { DEFAULT_INPUT } from '@cobble/project';
+import { DEFAULT_INPUT } from '@cobbox/project';
 import type {
   ArithOp,
   CompareOp,
@@ -11,7 +11,7 @@ import type {
   IRNode,
   ProjectDoc,
   TouchingTarget,
-} from '@cobble/project';
+} from '@cobbox/project';
 
 const ZERO: IRExpr = { kind: 'const', value: 0 };
 

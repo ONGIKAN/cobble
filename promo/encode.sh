@@ -15,8 +15,8 @@ for pair in "169:16x9" "916:9x16"; do
     -c:v libx264 -preset slow -crf 17 -profile:v high -level 4.1 \
     -colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv \
     -pix_fmt yuv420p -movflags +faststart \
-    -metadata title="Cobble Studio 宣传片 ${label}" \
-    -metadata comment="Cobble Studio - 用积木拼出你的 2D 小游戏" \
+    -metadata title="CobBox 宣传片 ${label}" \
+    -metadata comment="CobBox - 用积木拼出你的 2D 小游戏" \
     "promo/cobble-promo-${label}.mp4"
 done
 

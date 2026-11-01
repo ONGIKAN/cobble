@@ -1,6 +1,6 @@
 {
-  "name": "@cobble/editor",
-  "version": "0.16.0",
+  "name": "@cobbox/editor",
+  "version": "0.17.0",
   "private": true,
   "type": "module",
   "scripts": {
