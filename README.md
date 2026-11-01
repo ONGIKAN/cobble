@@ -28,7 +28,7 @@
 
 ## 下载安装包
 
-稳定版 v0.13.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobble/#download>）：
+稳定版 v0.14.0 的安装包通过 GitHub Releases 分发（官方下载入口：<https://ongikan.github.io/cobble/#download>）：
 
 | 平台 | 文件 | 说明 |
 | --- | --- | --- |

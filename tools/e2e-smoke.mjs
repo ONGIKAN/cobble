@@ -39,6 +39,16 @@ try {
   await page.locator('[data-testid^="project-open-"]').first().click();
   await page.waitForTimeout(1500);
   record('open project from hub', page.url().includes('#/editor/'), page.url());
+  // 编辑模式 = 无限画布（v0.14.0）：世界画布可见、摄像机框可见、运行画面 iframe 隐藏
+  await page.waitForSelector('[data-testid="world-canvas"]', { timeout: 15000 });
+  const worldVisible = await page.locator('[data-testid="world-canvas"]').isVisible();
+  const cameraVisible = await page.locator('[data-testid="camera-frame"]').isVisible();
+  const stageHidden = await page.evaluate(() => {
+    const el = document.querySelector('[data-testid="stage-frame"]');
+    return !el || getComputedStyle(el).display === 'none';
+  });
+  record('edit mode world canvas', worldVisible && cameraVisible && stageHidden, `canvas=${worldVisible} camera=${cameraVisible} stageHidden=${stageHidden}`);
+  await page.screenshot({ path: `${shotDir}/01-editor-canvas.png` });
   await page.waitForSelector('[data-testid="blocks-host"] .blocklySvg', { timeout: 20000 });
 
   // 1. 编辑器加载
@@ -129,6 +139,8 @@ try {
     return !child?.contentWindow?.__cobbleRuntime;
   });
   record('stop clears runtime', stopped, 'iframe runtime gone');
+  await page.waitForSelector('[data-testid="world-canvas"]', { timeout: 10000 });
+  record('stop returns to world canvas', await page.locator('[data-testid="world-canvas"]').isVisible(), 'world canvas back');
 
   // 5. .gproj 保存：下载文件里应带工程与积木数据
   const downloadPromise = page.waitForEvent('download');
@@ -293,7 +305,7 @@ try {
   );
 
   const stageBox = await page.evaluate(() => {
-    const frame = document.querySelector('.stage-frame');
+    const frame = document.querySelector('[data-testid="world-canvas"]');
     const rect = frame.getBoundingClientRect();
     const dt = new DataTransfer();
     dt.setData(
@@ -443,12 +455,17 @@ try {
 
   // 10b. 贪吃蛇能跑：开局静止，按方向键后才开始移动
   await page.getByTestId('run').click();
-  await page.waitForTimeout(350);
+  await page.waitForTimeout(450);
   const snakeFrame = page.frames().find((item) => item.url().includes('player.html'));
   const headA = snakeFrame ? await snakeFrame.evaluate(() => window.__cobbleRuntime?.getSpriteState?.('sprite_snake_head')) : null;
-  await page.keyboard.press('ArrowUp');
-  await page.waitForTimeout(500);
+  await snakeFrame?.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', code: 'ArrowUp', bubbles: true }));
+  });
+  await page.waitForTimeout(600);
   const headB = snakeFrame ? await snakeFrame.evaluate(() => window.__cobbleRuntime?.getSpriteState?.('sprite_snake_head')) : null;
+  await snakeFrame?.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowUp', code: 'ArrowUp', bubbles: true }));
+  });
   record('snake game runs', Boolean(headA && headB) && Math.abs((headB?.x ?? 0) - (headA?.x ?? 0)) + Math.abs((headB?.y ?? 0) - (headA?.y ?? 0)) > 0, `head ${headA?.x},${headA?.y} -> ${headB?.x},${headB?.y}`);
 
   // 回到工程管理页，避免模板工程影响下次运行

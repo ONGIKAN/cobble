@@ -2,8 +2,11 @@
 // 用法：node tools/serve.mjs --port 8133 --root pages-dist  然后 node tools/e2e-pages.mjs
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright-core';
+import { readFileSync } from 'node:fs';
 
 const BASE = process.env.PAGES_BASE ?? 'http://127.0.0.1:8133';
+const APP_VERSION = JSON.parse(readFileSync('package.json', 'utf8')).version;
+const V = `v${APP_VERSION}`;
 const SITE = `${BASE}/`;
 const DEMO = `${BASE}/demo/`;
 const DEMO_BETA = `${BASE}/demo-beta/`;
@@ -50,6 +53,12 @@ const versionLogNav = await sitePage.locator('a[href="#changelog"]').first().inn
 check('site: version log wording', versionLogNav.includes('版本日志'), versionLogNav);
 check('site: stable tags', (await sitePage.locator('.release-tag.is-stable').count()) >= 5);
 check('site: stable tags', (await sitePage.locator('.release-tag.is-stable').count()) >= 10);
+const releaseDates = await sitePage.locator('#changelog .release-date').allInnerTexts();
+check(
+  'site: release dates computed',
+  releaseDates.length >= 10 && releaseDates.every((text) => /\d{4}-\d{2}-\d{2}/.test(text)),
+  releaseDates.slice(0, 2).join(' | '),
+);
 
 {
   const betaPage = await site.newPage();
@@ -65,7 +74,7 @@ check('site: stable tags', (await sitePage.locator('.release-tag.is-stable').cou
   check('beta: runtime running', Boolean(frame), betaPage.url());
   const status = await betaPage.locator('[data-testid="status-changelog-link"]').innerText();
   check('beta: status shows beta', status.includes('beta'), status);
-  check('beta: status version v0.13', status.includes('v0.13'), status);
+  check(`beta: status version ${V}`, status.includes(V), status);
   await betaPage.screenshot({ path: `${SHOTS}/pages-beta.png` });
   await betaPage.close();
 }
@@ -110,7 +119,7 @@ await sitePage.waitForTimeout(1200);
 const state = await runtimeState(sitePage);
 check('demo: runtime running', state?.running === true, JSON.stringify(state));
 const stableStatus = await sitePage.locator('[data-testid="status-changelog-link"]').innerText();
-check('demo: stable version v0.13', stableStatus.includes('v0.13') && !stableStatus.includes('beta'), stableStatus);
+check(`demo: stable version ${V}`, stableStatus.includes(V) && !stableStatus.includes('beta'), stableStatus);
 await sitePage.screenshot({ path: `${SHOTS}/pages-demo.png` });
 
 // 演示 -> 官网（链接存在且可点）

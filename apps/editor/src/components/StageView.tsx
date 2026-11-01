@@ -3,17 +3,16 @@ import {
   useEffect,
   useRef,
   useState,
-  type DragEvent as ReactDragEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compileProject } from '@cobble/blocks';
 import { inputConfig, type TouchButtonDef } from '@cobble/project';
-import { sendPreview, sendRun, sendTouch, setPlayerFrame } from '../bridge';
+import { sendTouch, setPlayerFrame } from '../bridge';
 import { ProjectFileButtons } from './ProjectFileButtons';
 import { openInputSettings } from '../input-settings';
 import { StageSettings } from './StageSettings';
-import { ASSET_MIME, openAssetLibrary } from './AssetLibrary';
+import { openAssetLibrary } from './AssetLibrary';
+import { WorldCanvas } from './WorldCanvas';
 import { useEditorStore } from '../store';
 import { useCoarsePointer } from '../useCompact';
 
@@ -28,15 +27,11 @@ interface Props {
 export function StageView({ compact = false }: Props) {
   const { t } = useTranslation();
   const project = useEditorStore((state) => state.project);
-  const workspaces = useEditorStore((state) => state.workspaces);
   const running = useEditorStore((state) => state.running);
-  const setRunning = useEditorStore((state) => state.setRunning);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const stageBodyRef = useRef<HTMLDivElement | null>(null);
-  const stageFrameRef = useRef<HTMLDivElement | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
   const touchSetRef = useRef<Set<string>>(new Set());
-  const lastDragRef = useRef(0);
   const joystickRef = useRef<HTMLDivElement | null>(null);
   const joyActiveRef = useRef(false);
   const [knob, setKnob] = useState({ x: 0, y: 0 });
@@ -51,17 +46,6 @@ export function StageView({ compact = false }: Props) {
   const [rotation, setRotation] = useState<Rotation>(0);
   const coarse = useCoarsePointer();
 
-  const sendPreviewNow = useCallback(() => {
-    const state = useEditorStore.getState();
-    sendPreview(compileProject(state.project, state.workspaces));
-  }, []);
-
-  const run = useCallback(() => {
-    const state = useEditorStore.getState();
-    sendRun(compileProject(state.project, state.workspaces));
-    setRunning(true);
-  }, [setRunning]);
-
   useEffect(() => {
     setPlayerFrame(iframeRef.current);
     const handleMessage = (event: MessageEvent) => {
@@ -70,18 +54,10 @@ export function StageView({ compact = false }: Props) {
       if (!data || typeof data !== 'object') return;
       if (data.type === 'ready') {
         setPlayerReady(true);
-        sendPreviewNow();
-      } else if (data.type === 'sprite-moved') {
-        const moved = data as { id?: string; x?: number; y?: number };
-        if (typeof moved.id === 'string' && typeof moved.x === 'number' && typeof moved.y === 'number') {
-          lastDragRef.current = Date.now();
-          useEditorStore.getState().updateSprite(moved.id, { x: moved.x, y: moved.y });
-        }
       } else if (data.type === 'stopped') {
         touchSetRef.current.clear();
         flushTouch();
         useEditorStore.getState().setRunning(false);
-        sendPreviewNow();
       }
     };
     window.addEventListener('message', handleMessage);
@@ -89,17 +65,7 @@ export function StageView({ compact = false }: Props) {
       window.removeEventListener('message', handleMessage);
       setPlayerFrame(null);
     };
-  }, [run, sendPreviewNow]);
-
-  // 编辑模式：工程/积木变化后刷新静态预览（运行中不刷新；刚拖动过精灵时也不立刻刷新）
-  useEffect(() => {
-    if (!playerReady || running) return;
-    const timer = window.setTimeout(() => {
-      if (Date.now() - lastDragRef.current < 600) return;
-      sendPreviewNow();
-    }, 400);
-    return () => window.clearTimeout(timer);
-  }, [playerReady, running, project, workspaces, sendPreviewNow]);
+  }, []);
 
   /**
    * 全屏时按游戏画幅（横屏/竖屏）适配设备方向：
@@ -166,7 +132,7 @@ export function StageView({ compact = false }: Props) {
     }
     setKnob({ x: dx, y: dy });
     for (const id of padDirections) touchSetRef.current.delete(id);
-    const deadzone = rect.width * 0.16;
+    const deadzone = rect.width * 0.12;
     if (dx < -deadzone) touchSetRef.current.add('left');
     if (dx > deadzone) touchSetRef.current.add('right');
     if (dy < -deadzone) touchSetRef.current.add('up');
@@ -210,30 +176,6 @@ export function StageView({ compact = false }: Props) {
 
   const buttonLabel = (button: TouchButtonDef): string =>
     button.label.startsWith('inputs.') ? t(button.label) : button.label;
-
-  /** 从资源库拖入素材：按落点在舞台上创建角色 */
-  const dropFromLibrary = (event: ReactDragEvent<HTMLDivElement>): void => {
-    event.preventDefault();
-    const raw = event.dataTransfer.getData(ASSET_MIME) || event.dataTransfer.getData('text/plain');
-    if (!raw) return;
-    let payload: { name?: string; dataUrl?: string };
-    try {
-      payload = JSON.parse(raw) as { name?: string; dataUrl?: string };
-    } catch {
-      return;
-    }
-    if (!payload?.dataUrl) return;
-    const rect = stageFrameRef.current?.getBoundingClientRect();
-    if (!rect || rect.width === 0 || rect.height === 0) return;
-    const stage = useEditorStore.getState().project.stage;
-    const x = Math.round(((event.clientX - rect.left) / rect.width - 0.5) * stage.width);
-    const y = Math.round((0.5 - (event.clientY - rect.top) / rect.height) * stage.height);
-    useEditorStore.getState().addSpriteFromAsset({ name: payload.name ?? 'Sprite', dataUrl: payload.dataUrl, x, y });
-    if (useEditorStore.getState().running) {
-      const state = useEditorStore.getState();
-      sendRun(compileProject(state.project, state.workspaces));
-    }
-  };
 
   const toggleFullscreen = useCallback(async () => {
     // 不要对 stage-body 本身进全屏：浏览器 UA 的 :fullscreen 规则会强制
@@ -297,23 +239,16 @@ export function StageView({ compact = false }: Props) {
         ref={stageBodyRef}
         className={`stage-body${fullscreen ? ' is-fullscreen' : ''}${rotation !== 0 ? ' is-rotated' : ''}`}
       >
-        <div
-          className="stage-frame"
-          ref={stageFrameRef}
-          onDragOver={(event) => {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'copy';
-          }}
-          onDrop={dropFromLibrary}
-        >
+        {!running && <WorldCanvas />}
+        <div className={`stage-frame${running ? '' : ' is-hidden'}`} data-testid="stage-frame">
           <iframe
-          ref={iframeRef}
-          className="stage-iframe"
-          data-testid="stage-iframe"
-          src={`${PLAYER_SRC}?touch=0`}
-          title={t('panels.stage')}
-          sandbox="allow-scripts allow-same-origin allow-pointer-lock"
-        />
+            ref={iframeRef}
+            className="stage-iframe"
+            data-testid="stage-iframe"
+            src={`${PLAYER_SRC}?touch=0`}
+            title={t('panels.stage')}
+            sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+          />
           {!playerReady && <div className="stage-loading">{t('stage.loading')}</div>}
         </div>
         {fullscreen && (
@@ -360,12 +295,8 @@ export function StageView({ compact = false }: Props) {
             {t('stage.directHint')}
           </div>
         )}
-        {!running && (
-          <div className="stage-edit-hint" data-testid="stage-edit-hint">
-            {t('stage.editHint')}
-          </div>
-        )}
       </div>
     </section>
   );
 }
+

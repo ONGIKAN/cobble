@@ -203,7 +203,9 @@ export const zhCN = {
     resize: '尺寸',
     fullscreen: '全屏',
     exitFullscreen: '退出全屏',
-    editHint: '编辑模式：拖动角色可调整位置，点「运行」开始游戏',
+    editHint: '编辑模式：拖动角色摆位置，拖动空白处平移画布，滚轮缩放；点「运行」进入游戏画面',
+    camera: '摄像机',
+    cameraNote: '框内 = 运行时的游戏画面，框外内容运行时不可见',
   },
   sprites: {
     costumeCount: '{{count}} 个造型',

@@ -205,7 +205,9 @@ export const en: Messages = {
     resize: 'Size',
     fullscreen: 'Fullscreen',
     exitFullscreen: 'Exit fullscreen',
-    editHint: 'Edit mode: drag sprites to reposition, press Run to play',
+    editHint: 'Edit mode: drag sprites to place them, drag empty space to pan, scroll to zoom; press Run to play',
+    camera: 'Camera',
+    cameraNote: 'Inside the frame = gameplay area; content outside is hidden while running',
   },
   sprites: {
     costumeCount: '{{count}} costume(s)',

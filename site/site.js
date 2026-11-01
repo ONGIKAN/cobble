@@ -9,6 +9,45 @@ const detect = () => {
   return languages.some((lang) => lang.toLowerCase().startsWith('zh')) ? 'zh-CN' : 'en';
 };
 
+// 版本日志日期：真实发布日期 + 浏览器自动换算相对时间（站点无需每天更新）。
+const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const parseDay = (value) => {
+  const [year, month, day] = value.split('-').map(Number);
+  return new Date(year, month - 1, day);
+};
+
+const relativeLabel = (diff, lang) => {
+  if (lang === 'zh-CN') {
+    if (diff <= 0) return '今天';
+    if (diff === 1) return '昨天';
+    if (diff < 30) return `${diff} 天前`;
+    if (diff < 365) return `${Math.floor(diff / 30)} 个月前`;
+    return `${Math.floor(diff / 365)} 年前`;
+  }
+  if (diff <= 0) return 'today';
+  if (diff === 1) return 'yesterday';
+  if (diff < 30) return `${diff} days ago`;
+  if (diff < 365) return `${Math.floor(diff / 30)} months ago`;
+  return `${Math.floor(diff / 365)} years ago`;
+};
+
+const renderReleaseDates = (lang) => {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  document.querySelectorAll('.release-date [data-date]').forEach((node) => {
+    const raw = node.dataset.date;
+    if (!raw) return;
+    const date = parseDay(raw);
+    const diff = Math.round((today - date) / 86400000);
+    if (lang === 'zh-CN') {
+      node.textContent = `${raw} · ${relativeLabel(diff, lang)}`;
+    } else {
+      node.textContent = `${MONTHS_EN[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()} · ${relativeLabel(diff, lang)}`;
+    }
+  });
+};
+
 const apply = (lang) => {
   document.documentElement.lang = lang;
   const button = document.getElementById('lang-toggle');
@@ -17,6 +56,7 @@ const apply = (lang) => {
     lang === 'zh-CN'
       ? 'Cobble Studio · 轻量 2D 积木游戏创作平台'
       : 'Cobble Studio · a lightweight 2D block game maker';
+  renderReleaseDates(lang);
 };
 
 let current = detect();
