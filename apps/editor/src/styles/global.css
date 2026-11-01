@@ -1908,7 +1908,8 @@ button {
 }
 
 .beta-badge {
-  margin-left: 8px;
+  vertical-align: middle;
+  margin-left: 10px;
   padding: 0 6px;
   background: var(--accent);
   color: var(--accent-text);

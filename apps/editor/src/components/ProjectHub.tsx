@@ -134,7 +134,7 @@ export function ProjectHub() {
       <main className="hub-main">
         <div className="hub-head">
           <div>
-            <h1>{IS_BETA ? <span className="beta-badge">BETA</span> : null}{t('hub.title')}</h1>
+            <h1>{t('hub.title')}{IS_BETA ? <span className="beta-badge">BETA</span> : null}</h1>
             <p className="hub-sub">
               {t('hub.subtitle', { count: entries.length })}
             </p>
