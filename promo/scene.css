@@ -1,0 +1,258 @@
+:root {
+  --bg: #0b0a12;
+  --bg2: #100d1c;
+  --cream: #f2efe6;
+  --dim: rgba(242, 239, 230, 0.6);
+  --faint: rgba(242, 239, 230, 0.28);
+  --purple: #8b5cf6;
+  --purple2: #6d3fdc;
+  --deep: #3a2370;
+  --vmin: 1vmin;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
+
+body {
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  color: var(--cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { position: absolute; inset: 0; overflow: hidden; }
+
+.bg-aurora {
+  position: absolute; inset: -20%;
+  background:
+    radial-gradient(38% 42% at 22% 18%, rgba(139, 92, 246, 0.32), transparent 70%),
+    radial-gradient(34% 38% at 82% 78%, rgba(109, 63, 220, 0.26), transparent 70%),
+    radial-gradient(26% 30% at 68% 22%, rgba(139, 92, 246, 0.14), transparent 70%);
+  filter: blur(0.4vmin);
+}
+
+.bg-grid {
+  position: absolute; inset: 0; opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(242, 239, 230, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242, 239, 230, 0.045) 1px, transparent 1px);
+  background-size: 6vmin 6vmin;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, #000 35%, transparent 100%);
+}
+
+.bg-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 55%, rgba(5, 4, 10, 0.75) 100%);
+}
+
+.floater {
+  position: absolute;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(58, 35, 112, 0.35));
+  border: 1px solid rgba(157, 123, 255, 0.35);
+  will-change: transform, opacity;
+}
+
+.scene { position: absolute; inset: 0; opacity: 0; will-change: opacity; }
+
+/* ---------- shared type ---------- */
+.kicker {
+  font-size: 2vmin; letter-spacing: 0.42em; color: #b79aff;
+  font-weight: 700; margin-bottom: 1.6vmin;
+}
+.cap-title { font-size: 7.4vmin; line-height: 1.08; font-weight: 900; letter-spacing: -0.01em; }
+.cap-sub { margin-top: 1.8vmin; font-size: 2.5vmin; color: var(--dim); font-weight: 400; }
+.cap-sub b { color: #c9b2ff; font-weight: 800; }
+
+.caption { position: absolute; width: 62%; }
+.caption-tl { left: 7%; top: 7%; }
+.caption-tr { right: 7%; top: 7%; text-align: right; }
+.caption-center { left: 50%; top: 7%; width: 84%; text-align: center; transform: translateX(-50%); }
+
+.shot-frame {
+  position: absolute; overflow: hidden;
+  border: 1px solid rgba(242, 239, 230, 0.16);
+  background: #0f0d18;
+  box-shadow: 0 5vmin 12vmin rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(139, 92, 246, 0.16);
+  will-change: transform, opacity;
+}
+.shot-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.shot-editor, .shot-run { left: 11%; top: 21%; width: 78%; aspect-ratio: 16 / 9; }
+
+/* s1 */
+#s1 { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.logo-wrap { width: 20vmin; height: 20vmin; }
+.logo-wrap img { width: 100%; height: 100%; display: block; filter: drop-shadow(0 2vmin 5vmin rgba(139, 92, 246, 0.45)); }
+.brand {
+  margin-top: 3vmin; font-size: 3.4vmin; font-weight: 800;
+  letter-spacing: 0.3em; padding-left: 0.3em; color: var(--cream);
+}
+.headline { margin-top: 3.4vmin; font-size: 10.4vmin; line-height: 1.06; font-weight: 900; letter-spacing: -0.015em; }
+.subline { margin-top: 3vmin; font-size: 2.8vmin; color: var(--dim); }
+.tagrow { margin-top: 3.4vmin; display: flex; gap: 1.6vmin; }
+.tag {
+  font-size: 1.9vmin; padding: 1vmin 2.2vmin; border: 1px solid rgba(242, 239, 230, 0.22);
+  color: rgba(242, 239, 230, 0.78); background: rgba(242, 239, 230, 0.04);
+}
+
+/* s2 */
+.ghost-block {
+  position: absolute; left: 30%; top: 58%;
+  display: inline-flex; align-items: center; gap: 1vmin;
+  padding: 1.3vmin 2.4vmin 1.3vmin 1.8vmin;
+  font-size: 2vmin; font-weight: 700; color: #1c1430;
+  background: #b6e3c6; border: 2px solid #8cc9a2;
+  box-shadow: 0 1.4vmin 3vmin rgba(0, 0, 0, 0.45);
+  will-change: transform, opacity;
+}
+.gb-notch { width: 1.6vmin; height: 1.6vmin; background: #1c1430; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.cursor { position: absolute; width: 2.6vmin; height: 2.6vmin; will-change: transform, opacity; }
+.cursor svg { width: 100%; height: 100%; fill: #fff; stroke: #0b0a12; stroke-width: 1.2; }
+
+/* s3 */
+.joy { position: absolute; left: 13%; bottom: 9%; width: 13vmin; height: 13vmin; will-change: transform, opacity; }
+.joy-base {
+  position: absolute; inset: 0; border: 2px solid rgba(242, 239, 230, 0.34);
+  background: rgba(15, 12, 26, 0.55); box-shadow: inset 0 0 2vmin rgba(139, 92, 246, 0.28);
+}
+.joy-knob {
+  position: absolute; left: 50%; top: 50%; width: 40%; height: 40%; margin: -20% 0 0 -20%;
+  background: var(--purple); box-shadow: 0 0 2.4vmin rgba(157, 123, 255, 0.6);
+  will-change: transform;
+}
+.score-chip {
+  position: absolute; right: 13%; top: 14%; font-size: 2.2vmin; font-weight: 700; color: #ffd97a;
+  background: rgba(15, 12, 26, 0.72); padding: 1vmin 2vmin; border: 1px solid rgba(255, 217, 122, 0.4);
+  will-change: transform, opacity;
+}
+
+/* s4 */
+.export-row { position: absolute; left: 0; right: 0; top: 33%; display: flex; justify-content: center; gap: 3.4vmin; }
+.ex-card {
+  width: 24%; padding: 4vmin 3vmin; text-align: center;
+  border: 1px solid rgba(242, 239, 230, 0.16); background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(15, 12, 26, 0.85));
+  will-change: transform, opacity; position: relative; overflow: hidden;
+}
+.ex-card::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--purple), transparent);
+}
+.ex-icon { width: 8vmin; height: 8vmin; margin: 0 auto 2.6vmin; }
+.ex-icon svg { width: 100%; height: 100%; display: block; }
+.ex-name { font-size: 3vmin; font-weight: 800; letter-spacing: 0.01em; }
+.ex-desc { margin-top: 1.4vmin; font-size: 1.9vmin; color: var(--dim); line-height: 1.5; }
+
+/* s5 */
+.phone-wrap { position: absolute; right: 5%; top: 9%; width: 40%; height: 82%; }
+.phone-frame {
+  position: absolute; overflow: hidden; border: 2px solid rgba(242, 239, 230, 0.28);
+  background: #0f0d18; box-shadow: 0 5vmin 12vmin rgba(0, 0, 0, 0.65);
+  border-radius: 1.6vmin; will-change: transform, opacity;
+}
+.phone-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.phone-front { width: 63%; right: 0; top: 4%; z-index: 2; }
+.phone-back { width: 54%; left: 0; top: 20%; opacity: 0.72; filter: saturate(0.85) brightness(0.8); }
+.float-note {
+  position: absolute; right: 8%; bottom: 8%;
+  font-size: 2vmin; padding: 1.1vmin 2.2vmin; color: #d9c8ff;
+  border: 1px solid rgba(157, 123, 255, 0.5); background: rgba(58, 35, 112, 0.4);
+  will-change: transform, opacity;
+}
+
+/* s6 */
+.chip-grid { position: absolute; left: 50%; top: 36%; transform: translateX(-50%); width: 76%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.2vmin; }
+.chip-x {
+  font-size: 2.2vmin; font-weight: 700; padding: 2.4vmin 2vmin; text-align: center;
+  border: 1px solid rgba(242, 239, 230, 0.18);
+  background: rgba(139, 92, 246, 0.08); color: rgba(242, 239, 230, 0.9);
+  will-change: transform, opacity;
+}
+
+/* s7 */
+#s7 { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.outro-logo { width: 15vmin; height: 15vmin; filter: drop-shadow(0 1.6vmin 4vmin rgba(139, 92, 246, 0.5)); }
+.outro-brand { margin-top: 2.2vmin; font-size: 2.8vmin; font-weight: 800; letter-spacing: 0.34em; padding-left: 0.34em; }
+.outro-title { margin-top: 3.6vmin; font-size: 7.2vmin; font-weight: 900; }
+.cta {
+  margin-top: 4vmin; font-size: 2.8vmin; font-weight: 800; color: #140f22;
+  padding: 2vmin 4.6vmin; background: var(--purple); box-shadow: 0 2vmin 5vmin rgba(139, 92, 246, 0.45);
+}
+.links { margin-top: 3.6vmin; font-size: 2.1vmin; color: var(--dim); display: flex; gap: 1.4vmin; }
+.links .dot { color: var(--faint); }
+.outro-note { margin-top: 2vmin; font-size: 1.7vmin; color: var(--faint); letter-spacing: 0.16em; }
+
+/* ================= 9:16 ================= */
+#root[data-ratio="916"] .headline { font-size: 13.4vmin; line-height: 1.1; }
+#root[data-ratio="916"] .logo-wrap { width: 26vmin; height: 26vmin; }
+#root[data-ratio="916"] .brand { font-size: 4vmin; margin-top: 2.4vmin; }
+#root[data-ratio="916"] .subline { font-size: 3.4vmin; margin-top: 2.6vmin; }
+#root[data-ratio="916"] .tagrow { gap: 2.2vmin; margin-top: 3vmin; }
+#root[data-ratio="916"] .tag { font-size: 2.4vmin; }
+
+#root[data-ratio="916"] .caption { width: 88%; left: 6%; top: 8%; }
+#root[data-ratio="916"] .cap-title { font-size: 8.4vmin; }
+#root[data-ratio="916"] .cap-sub { font-size: 3vmin; margin-top: 1.6vmin; }
+#root[data-ratio="916"] .kicker { font-size: 2.4vmin; }
+
+#root[data-ratio="916"] .shot-editor,
+#root[data-ratio="916"] .shot-run {
+  left: 21%; width: 58%; top: 30%; aspect-ratio: 1170 / 2532;
+}
+#root[data-ratio="916"] .joy { left: 26%; bottom: 22%; width: 16vmin; height: 16vmin; }
+#root[data-ratio="916"] .score-chip { right: 24%; top: 33%; font-size: 2.6vmin; }
+
+#root[data-ratio="916"] .export-row { flex-direction: column; align-items: center; top: 32%; gap: 3vmin; }
+#root[data-ratio="916"] .ex-card { width: 82%; padding: 3vmin; display: flex; align-items: center; gap: 3vmin; text-align: left; }
+#root[data-ratio="916"] .ex-icon { width: 9vmin; height: 9vmin; margin: 0; flex: none; }
+#root[data-ratio="916"] .ex-name { font-size: 3.4vmin; }
+#root[data-ratio="916"] .ex-desc { font-size: 2.2vmin; margin-top: 0.6vmin; }
+#root[data-ratio="916"] .ex-body { display: flex; flex-direction: column; }
+
+#root[data-ratio="916"] .phone-wrap { left: 0; right: 0; top: 26%; width: 100%; height: 62%; }
+#root[data-ratio="916"] .phone-front { width: 58%; left: 21%; right: auto; top: 2%; }
+#root[data-ratio="916"] .phone-back { width: 44%; left: 6%; top: 22%; }
+#root[data-ratio="916"] .float-note { left: 50%; transform: translateX(-50%); right: auto; bottom: 9%; }
+
+#root[data-ratio="916"] .chip-grid { width: 88%; grid-template-columns: repeat(2, 1fr); gap: 2.4vmin; top: 34%; }
+#root[data-ratio="916"] .chip-x { font-size: 2.6vmin; padding: 2.8vmin 2vmin; }
+
+#root[data-ratio="916"] .outro-title { font-size: 9.4vmin; }
+#root[data-ratio="916"] .outro-logo { width: 20vmin; height: 20vmin; }
+#root[data-ratio="916"] .outro-brand { font-size: 3.2vmin; }
+#root[data-ratio="916"] .cta { font-size: 3.2vmin; padding: 2.4vmin 5.4vmin; }
+#root[data-ratio="916"] .links { flex-direction: column; gap: 0.8vmin; font-size: 2.4vmin; }
+#root[data-ratio="916"] .links .dot { display: none; }
+
+
+/* ================= fine layout overrides ================= */
+#root[data-ratio="169"] .caption-bottom {
+  left: 50%; right: auto; top: auto; bottom: 3.4%;
+  width: 78%; transform: translateX(-50%); text-align: center;
+}
+#root[data-ratio="169"] .shot-editor,
+#root[data-ratio="169"] .shot-run { left: 15%; top: 7%; width: 70%; }
+#root[data-ratio="169"] .joy { left: 18%; top: auto; bottom: 23%; }
+#root[data-ratio="169"] .score-chip { right: 18%; top: 11%; }
+#root[data-ratio="169"] .ghost-block { left: 30%; top: 55%; }
+#root[data-ratio="169"] .phone-wrap { width: 33%; top: 12%; height: 80%; right: 6%; }
+#root[data-ratio="169"] .phone-front { width: 58%; }
+#root[data-ratio="169"] .phone-back { width: 50%; top: 18%; }
+#root[data-ratio="169"] .export-row { top: 30%; }
+
+#root[data-ratio="916"] .caption,
+#root[data-ratio="916"] .caption-tl,
+#root[data-ratio="916"] .caption-tr,
+#root[data-ratio="916"] .caption-bottom,
+#root[data-ratio="916"] .caption-center {
+  left: 6%; right: auto; top: 7%; bottom: auto;
+  width: 88%; text-align: left; transform: none;
+}
+#root[data-ratio="916"] .headline { font-size: 11.4vmin; }
+#root[data-ratio="916"] .shot-editor,
+#root[data-ratio="916"] .shot-run { left: 22%; top: 29%; width: 56%; }
+#root[data-ratio="916"] #joy3,
+#root[data-ratio="916"] #score3 { display: none; }
+#root[data-ratio="916"] .ghost-block { left: 15%; top: 41%; font-size: 2.4vmin; }
+#root[data-ratio="916"] .phone-wrap { top: 25%; }
+#root[data-ratio="916"] .phone-front { width: 56%; left: 22%; }
+#root[data-ratio="916"] .phone-back { width: 40%; left: 5%; top: 21%; }
+#root[data-ratio="916"] .export-row { top: 30%; }

@@ -18,3 +18,11 @@ dist-release/
 apps/game-player/src-tauri/target/
 apps/game-player/src-tauri/gen/
 apps/game-player/dist/
+
+# promo render artifacts
+promo/frames-*/
+promo/preview/
+promo/*.mp4
+promo/qa/
+promo/frames-*/
+promo/preview/

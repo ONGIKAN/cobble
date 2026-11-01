@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>Cobble Studio Promo</title>
+<link rel="stylesheet" href="scene.css" />
+</head>
+<body>
+<div id="root" data-ratio="169">
+  <div class="bg-aurora"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-vignette"></div>
+  <div id="floaters"></div>
+
+  <!-- S1: intro -->
+  <section class="scene" id="s1">
+    <div class="logo-wrap" id="logoWrap">
+      <img id="logo" src="assets/logo.svg" alt="Cobble Studio" />
+    </div>
+    <div class="brand" id="brand">COBBLE STUDIO</div>
+    <h1 class="headline" id="title">用积木拼出<br />你的 2D 小游戏</h1>
+    <div class="subline" id="subline">Cobble Studio · 轻量积木游戏创作平台</div>
+    <div class="tagrow" id="tagrow">
+      <span class="tag">跨平台</span><span class="tag">免费开源</span><span class="tag">中文 / English</span>
+    </div>
+  </section>
+
+  <!-- S2: build with blocks -->
+  <section class="scene" id="s2">
+    <div class="caption caption-tl caption-bottom" id="c2">
+      <div class="kicker" id="k2">BUILD</div>
+      <h2 class="cap-title" id="t2">拖一拖，就是一关</h2>
+      <p class="cap-sub" id="st2"><b id="blockCount">57</b> 种积木 · 9 大分类 · 积木即脚本</p>
+    </div>
+    <div class="shot-frame shot-editor" id="shot2">
+      <img id="img2" src="assets/desktop-edit.png" alt="editor" />
+    </div>
+    <div class="ghost-block" id="ghostBlock">
+      <span class="gb-notch"></span><span id="ghostText">如果&nbsp; 输入「右」是否激活？</span>
+    </div>
+    <div class="cursor" id="cursor2">
+      <svg viewBox="0 0 24 24"><path d="M4 2l16 9-7 1.6L10.6 20z" /></svg>
+    </div>
+  </section>
+
+  <!-- S3: run -->
+  <section class="scene" id="s3">
+    <div class="caption caption-tr caption-bottom" id="c3">
+      <div class="kicker" id="k3">RUN</div>
+      <h2 class="cap-title" id="t3">点运行，立刻试玩</h2>
+      <p class="cap-sub" id="st3">内置 60Hz 游戏运行时 · 不用装引擎</p>
+    </div>
+    <div class="shot-frame shot-run" id="shot3">
+      <img id="img3" src="assets/desktop-run.png" alt="gameplay" />
+    </div>
+    <div class="joy" id="joy3">
+      <div class="joy-base"></div>
+      <div class="joy-knob" id="joyKnob"></div>
+    </div>
+    <div class="score-chip" id="score3">分数 <b id="scoreNum">0</b></div>
+  </section>
+
+  <!-- S4: export -->
+  <section class="scene" id="s4">
+    <div class="caption caption-center" id="c4">
+      <div class="kicker" id="k4">SHIP</div>
+      <h2 class="cap-title" id="t4">做完就能发给朋友</h2>
+      <p class="cap-sub" id="st4">一键导出，双击即玩</p>
+    </div>
+    <div class="export-row" id="exportRow">
+      <div class="ex-card">
+        <div class="ex-icon" data-icon="html"></div>
+        <div class="ex-name">单文件 HTML5</div>
+        <div class="ex-desc">一个 .html 文件，打开就玩</div>
+      </div>
+      <div class="ex-card">
+        <div class="ex-icon" data-icon="win"></div>
+        <div class="ex-name">Windows EXE</div>
+        <div class="ex-desc">导出可双击的独立游戏</div>
+      </div>
+      <div class="ex-card">
+        <div class="ex-icon" data-icon="android"></div>
+        <div class="ex-name">Android</div>
+        <div class="ex-desc">内测中，敬请期待</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S5: mobile -->
+  <section class="scene" id="s5">
+    <div class="caption caption-tl" id="c5">
+      <div class="kicker" id="k5">PLAY ANYWHERE</div>
+      <h2 class="cap-title" id="t5">手机、平板也能玩</h2>
+      <p class="cap-sub" id="st5">触屏手柄 · 全屏 · 横竖屏自动适配</p>
+    </div>
+    <div class="phone-wrap" id="phoneWrap">
+      <div class="phone-frame phone-back" id="phoneBack">
+        <img id="img5b" src="assets/phone-edit.png" alt="phone editor" />
+      </div>
+      <div class="phone-frame phone-front" id="phoneFront">
+        <img id="img5" src="assets/phone-run.png" alt="phone game" />
+      </div>
+    </div>
+    <div class="float-note" id="note5">手机端打开即用</div>
+  </section>
+
+  <!-- S6: free & open -->
+  <section class="scene" id="s6">
+    <div class="caption caption-center" id="c6">
+      <div class="kicker" id="k6">FREE &amp; OPEN</div>
+      <h2 class="cap-title" id="t6">免费、开源、本地优先</h2>
+    </div>
+    <div class="chip-grid" id="chipGrid">
+      <div class="chip-x">工程本地保存</div>
+      <div class="chip-x">离线可玩</div>
+      <div class="chip-x">浅色 / 深色主题</div>
+      <div class="chip-x">Apache-2.0 开源</div>
+      <div class="chip-x">Windows 安装包</div>
+      <div class="chip-x">无需注册账号</div>
+    </div>
+  </section>
+
+  <!-- S7: outro -->
+  <section class="scene" id="s7">
+    <img class="outro-logo" id="outroLogo" src="assets/logo.svg" alt="Cobble Studio" />
+    <div class="outro-brand" id="outroBrand">COBBLE STUDIO</div>
+    <h2 class="outro-title" id="outroTitle">现在就开始做游戏</h2>
+    <div class="cta" id="cta">在线体验&nbsp; →</div>
+    <div class="links" id="links">
+      <span>ongikan.github.io/cobble</span>
+      <span class="dot">·</span>
+      <span>github.com/ONGIKAN/cobble</span>
+    </div>
+    <div class="outro-note" id="outroNote">v0.13.1 · 免费开源</div>
+  </section>
+</div>
+<script src="scene.js"></script>
+</body>
+</html>
